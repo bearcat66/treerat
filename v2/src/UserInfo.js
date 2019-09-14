@@ -9,11 +9,12 @@ export default class UserInfo extends React.Component {
         name: '',
         balance: '',
         paymail: '',
+	avatarUrl: ''
       };
     }
     componentDidMount() {
       this.props.userInfo.then(r => {
-        this.setState({id: r.id, name: r.name, balance: r.balance, paymail: r.paymail})
+        this.setState({id: r.id, name: r.name, balance: r.balance, paymail: r.paymail, avatarUrl: r.avatarUrl})
       })
     }
     render() {
@@ -21,13 +22,11 @@ export default class UserInfo extends React.Component {
         return null
       }
       return (
-        <Navbar.Collapse className="justify-content-end">
-          <Navbar.Text>
-            Welcome Back <h2><a size="lg" href="https://moneybutton.com" rel="noopener noreferrer" target="_blank">{this.state.name}</a></h2>
-            Balance: {this.state.balance}<br/>
-            Paymail: {this.state.paymail}
-          </Navbar.Text>
-        </Navbar.Collapse>
+        <div className="justify-content-end">
+          <a href='#' onClick={this.props.onUserClick} title={this.state.name}>
+	    {this.state.name}   <img className="navbar-expand-sm avatar-small" src={this.state.avatarUrl} />
+	  </a>
+        </div>
         );
     }
 }

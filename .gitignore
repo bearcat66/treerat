@@ -6,12 +6,15 @@
 .pnp.js
 /v1/node_modules
 /v2/node_modules
+/v2/react-backend/node_modules
 
 # testing
 /coverage
 
 # production
 /build
+/v2/build
+/v1/build
 
 # misc
 .DS_Store

@@ -6,7 +6,7 @@ export async function GetMBToken() {
   var mbclient = new MoneyButtonClient(MB_OAUTH_ID)
   try {
     mbclient.requestAuthorization(
-      'auth.user_identity:read users.profiles:read users.balance:read',
+      'auth.user_identity:read users.profiles:read',
       'http://localhost:3000/login'
     )
     await mbclient.handleAuthorizationResponse()
@@ -39,8 +39,9 @@ export async function IsLoggedIn() {
 }
 
 export async function GetMBUser() {
-  var mbclient2 = new MoneyButtonClient(MB_OAUTH_ID)
-  var user = await mbclient2.getIdentity()
-  return user
+  var mbclient = new MoneyButtonClient(MB_OAUTH_ID)
+  var user = await mbclient.getIdentity()
+  var profile = await mbclient.getUserProfile(user.id)
+  return {id: user.id, profile: profile}
 }
 

@@ -64,4 +64,19 @@ body {
   -o-background-size: cover;
 }
 
+.avatar-small {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
 
+
+.card-left-border {
+  border-left-style: solid;
+  border-left-width: 5px;
+  border-bottom-left-radius: 3px;
+  border-top-left-radius: 3px;
+  border-left-color: #5bc0de;
+  box-shadow: 3px 10px 10px grey;
+  margin-bottom: 15px;
+}
