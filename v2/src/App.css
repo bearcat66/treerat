@@ -44,7 +44,7 @@
 }
 
 .jumbotron-transparent-25 {
-  background-color: rgba(233,236,239,.25);
+  background-color: rgba(256,256,256, 0.8);
 }
 
 @keyframes App-logo-spin {
@@ -57,11 +57,27 @@
 }
 
 body {
-  background: url('./images/auto.jpg') no-repeat center center fixed;
+  background: no-repeat center center fixed;
+  background-color: #FEFFFF;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   background-size: cover;
   -o-background-size: cover;
 }
 
+.avatar-small {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
 
+
+.card-left-border {
+  border-left-style: solid;
+  border-left-width: 5px;
+  border-bottom-left-radius: 3px;
+  border-top-left-radius: 3px;
+  border-left-color: #5bc0de;
+  box-shadow: 3px 10px 10px grey;
+  margin-bottom: 15px;
+}

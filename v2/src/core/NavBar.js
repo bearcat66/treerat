@@ -1,51 +1,91 @@
 import React, {Component} from 'react';
 import UserInfo from '../UserInfo'
-import {MoneyButtonClient} from '@moneybutton/api-client'
-import {GetMBToken, LogOutOfMB, IsLoggedIn} from '../MB'
+import {GetMBToken, LogOutOfMB} from '../MB'
 import ButtonList from './navbar_helpers/ButtonList';
-const MB_OAUTH_ID = process.env.REACT_APP_MBOAUTHID
 
 class NavBar extends Component {
   constructor(props) {
     super (props)
     this.state = {
-      loggedIn: false
+      loggedIn: false,
+      user: {},
+      paymail: '',
+      navLocations: props.navLocations
     }
   }
   componentDidMount() {
-    IsLoggedIn().then(r => {
-      this.setState({loggedIn: r});
+    var loggedIn = false
+    if (this.props.user !== '') {
+      loggedIn = true
+    }
+    this.setState({
+      navLocations: this.props.navLocations,
+      loggedIn: loggedIn,
+      paymail: this.props.user,
+      name: this.props.name,
+      avatarUrl: this.props.avatarUrl
     })
+  }
+  componentDidUpdate(prevProps) {
+    if (this.props.navLocations.length !== prevProps.navLocations.length) {
+      this.setState({navLocations: this.props.navLocations})
+    }
+    if (this.props.user !== prevProps.user && this.props.user != null) {
+      this.setState({
+        paymail: this.props.user,
+        loggedIn: true,
+        user: {
+          name: this.props.name,
+          avatarUrl: this.props.avatarUrl,
+          paymail: this.props.user
+        }
+      })
+    }
+    if (this.props.tokens !== prevProps.tokens) {
+      this.setState({
+        tokens: this.props.tokens
+      })
+    }
   }
 
   render() {
     return (
       <nav className="navbar navbar-light bg-light navbar-expand-lg">
-	<button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-          <i className="material-icons">list</i>
-        </button>
-        <a className="navbar-brand" href="/">True Reviews</a>
-        <div className="collapse navbar-collapse" id="navbarContent">
-          <ButtonList links={this.props.navLocations} navFunction={this.props.navFunction} />
+        <div>
+          <div className="container-fluid">
+            <a className="navbar-brand" href="/">
+              <img alt="logo" src="tr-logo.png" height="50" width="150" style={{padding: '2px'}}/>
+            </a>
+          </div>
+          <div className='col'>
+	          <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+              <i className="material-icons">list</i>
+            </button>
+            <div className="collapse navbar-collapse" id="navbarContent">
+              <ButtonList links={this.state.navLocations} navigateTo={this.props.navigateTo} />
+            </div>
+          </div>
         </div>
-        <UserInfo userInfo={getMBInfo()}/>
-        <ul/>
-        {!this.state.loggedIn ? <button className="btn btn-link" onClick={GetMBToken}>Login in with MB</button> : null }
-        {this.state.loggedIn ? <button className="btn btn-link" onClick={LogOutOfMB}>Log Out</button> : null }
+        <div className='col justify-content-end text-right'>
+          <UserInfo userInfo={this.state.user} tokens={this.state.tokens} loadingUser={this.props.loadingUser} toggleNotifications={this.props.toggleNotifications} notifications={this.props.notifications}/>
+          <ul/>
+          {!this.state.loggedIn && !this.props.loadingUser ? <button className="btn btn-link" onClick={GetMBToken}>Login in with MB</button> : null }
+          {this.state.loggedIn ? <button className="btn btn-link" onClick={() => {
+            logOut(this.state.paymail)
+          }}>Log Out</button> : null }
+        </div>
       </nav>
     );
   }
 }
 
+async function logOut(user) {
+  var res = await fetch('/api/logout/'+user, {
+    headers: {'Content-Type': 'application/json'},
+    method: 'post'
+  })
+  window.location.reload()
+}
+
 export default NavBar
 
-async function getMBInfo() {
-  var mbclient = new MoneyButtonClient(MB_OAUTH_ID)
-  var identity = await mbclient.getIdentity()
-  await mbclient.getValidAccessToken()
-  var profile = await mbclient.getUserProfile(identity.id)
-  console.log(profile)
-  var bal = await mbclient.getBalance(identity.id)
-  console.log(bal)
-  return {id: identity.id, name: identity.name, balance: bal.amount, paymail: profile.primaryPaymail}
-}

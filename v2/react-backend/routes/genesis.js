@@ -1,0 +1,91 @@
+var mb = require('@moneybutton/api-client')
+var bsv = require('bsv')
+var ecies = require('bsv/ecies')
+
+var express = require('express');
+var router = express.Router();
+
+var query = {
+  "v": 3,
+    "q": {
+      "find": {"out.s2": "run", "out.s4": "TrueReviews"},
+      "limit": 10,
+      "project": {
+      "out.s5": 1
+    }
+  }
+}
+var queryb64 = btoa(JSON.stringify(query))
+var url = "https://genesis.bitdb.network/q/1FnauZ9aUH2Bex6JzdcV4eNX7oLSSEbxtN/"+queryb64
+var header = {
+  headers: {
+    key: UnwriterAPIKey
+  }
+}
+var l = fetch(url, header).then(function(r) {
+  return r.json()
+}).then(function(r) {
+  console.log(r)
+})
+
+
+//const Run = require('../lib/run.node.min')
+//const Jigs = require('../lib/jigs')
+//const run = Jigs.RunTrueReview
+const MB_OAUTH_ID = process.env.REACT_APP_MBOAUTHID
+const MB_REDIRECT_URI = process.env.REACT_APP_MB_REDIRECT_URI
+const MB_CLIENT_ID = process.env.MB_CLIENT_ID
+const MB_CLIENT_SECRET = process.env.MB_CLIENT_SECRET
+//const ownerPrivKey = bsv.PrivateKey.fromWIF(Jigs.OWNER_KEY)
+//const ownerPubKey = bsv.PublicKey.fromPrivateKey(ownerPrivKey)
+const logger = require('../src/logger')
+var log = logger.CreateLogger()
+
+
+router.post('/:id', function(req, res) {
+  //run.activate()
+  //ensureUserDBCreated()
+  loginUser(log, req.params.id, {code: req.body.code, state: req.body.state}).then(r=> {
+    req.session.user = {paymail: req.params.id, accessToken: r.accessToken, refreshToken: r.refreshToken, expires: r.expires}
+    res.json(r)
+  }).catch(e => {
+    log.error(e)
+    res.status(409).send(JSON.stringify({'error': e}))
+  })
+})
+
+async function loginUser(log, paymail, oauth) {
+  try {
+    var mbclient = new mb.MoneyButtonClient(MB_OAUTH_ID)
+    await mbclient.authorizeWithAuthFlowResponse(oauth, oauth.state, MB_REDIRECT_URI)
+    var refreshToken = mbclient.getRefreshToken()
+    var accessToken = await mbclient.getValidAccessToken()
+    var expiration = await mbclient.getExpirationTime()
+    var expire = new Date(expiration)
+  } catch(e) {
+    throw(e)
+  }
+  return {accessToken: accessToken, refreshToken: refreshToken, expires: expire}
+  /*await run.sync()
+  var db = getUserDB()
+  await db.sync()
+  var user = db.get(profile.primaryPaymail)
+  if (user != null) {
+    throw 'User already exists'
+  }
+  let userPrivKey = bsv.PrivateKey.fromRandom(bsv.Networks[Jigs.BSVNETWORK])
+  let userPubKey = bsv.PublicKey.fromPrivateKey(userPrivKey)
+
+  var keys = {privKey: userPrivKey.toWIF(), pubKey: userPubKey.toString()}
+  var msg = ecies.bitcoreECIES().privateKey(ownerPrivKey).publicKey(ownerPubKey).encrypt(JSON.stringify(keys))
+
+  var userProfile = {
+    profile: profile,
+    keys: new Uint8Array(msg),
+    businessAccount: isBusinessAccount
+  }
+  db.set(profile.primaryPaymail, userProfile)*/
+}
+
+
+module.exports = router;

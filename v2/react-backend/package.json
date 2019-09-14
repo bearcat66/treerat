@@ -1,0 +1,33 @@
+{
+  "name": "react-backend",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "PORT=3001 node ./bin/www"
+  },
+  "dependencies": {
+    "@moneybutton/api-client": "^0.31.0",
+    "@moneybutton/paymail-client": "^0.28.0",
+    "@twetch/sdk": "^0.1.7",
+    "axios": "^0.19.0",
+    "body-parser": "^1.19.0",
+    "bsv": "^0.30.0",
+    "clean-css": ">=4.1.11",
+    "connect-redis": "^4.0.3",
+    "constantinople": ">=3.1.1",
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "eccrypto": "^1.1.2",
+    "express": "~4.16.1",
+    "express-session": "^1.17.0",
+    "helmet": "^3.21.1",
+    "http-errors": "~1.6.3",
+    "jade": "~1.11.0",
+    "morgan": "~1.9.1",
+    "pg": "^7.14.0",
+    "redis": "^2.8.0",
+    "replace": "^1.1.1",
+    "simple-node-logger": "^18.12.23",
+    "uuid": "^3.3.3"
+  }
+}

@@ -6,12 +6,21 @@
 .pnp.js
 /v1/node_modules
 /v2/node_modules
+/v2/react-backend/node_modules
+/v2/react-backend/.*
+/v2/react-backend/package-lock.json
+/v2/react-backend/*.log
+/v2/package-lock.json
+/v2/build
+/v2/build/*
 
 # testing
 /coverage
 
 # production
 /build
+/v2/build
+/v1/build
 
 # misc
 .DS_Store

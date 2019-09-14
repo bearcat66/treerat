@@ -13,7 +13,7 @@
 //}
 // OWNER PRIV KwU2amxcNj1Ri7UihyVyNM8mJSzGiF9tLRwxYirX6WN3r6zT2Kf4
 // OWNER PUB ADDRESS 17irYtTUaWvkpYQ6CctoCuaweFPctVrEQN
-const OWNER_PRIVKEY = 'L2w31wT3VeqwuuKwDZSJsLN3BBRR45sb7LRkXveMnemZFAfSBNfW'
+const OWNER_PRIVKEY = 'L2sBKfbNx59GVMN2CRXdiDwTmXkAVrwTp8Mf7qBsdQvSxdAK7Nqc'
 const PURSE_PRIVKEY = 'Kyt9WKt8XTymzwyQcwQeWtpEoELNHgkiwwbCFuBBHLWVPrjo7xBV'
 
 const RunInstance = new Run({
@@ -27,29 +27,59 @@ class UserDB extends Run.Jig {
   get(key) {return this[key]}
 }
 
+class PointsDB extends Run.Jig {
+  get(key) {return this[key]}
+  addTen(key) {
+    var pts = this[key]
+    pts += 10
+    this.set(key, pts)
+    return pts
+  }
+  subtractFifty(key) {
+    var pts = this[key]
+    pts -= 50
+    this.set(key, pts)
+    return pts
+  }
+  newUser(key) {
+    this.set(key, 100)
+  }
+  addHundred(key) {
+    var pts = this[key]
+    pts += 100
+    this.set(key, pts)
+    return pts
+  }
+  set(key, value) {this[key] = value}
+}
+
+class TrueReviewToken extends Run.Token {
+}
+
 class AllLocations extends Run.Jig {
   set(key, value) {this[key] = value}
   get(key) {return this[key]}
 }
 
 class Location extends Run.Jig {
-  init(placeID, coords) {
+  init(placeID, coords, name) {
     this.placeID = placeID
     this.lat = coords.lat
     this.lng = coords.lng
+    this.name = name
     this.reviews = {}
+  }
+  send(to) {
+    this.owner = to
   }
   createReview(body, rating, id) {
     console.log('Creating review for location: '+ this.placeID)
     var rev = new Review(this, body, rating, id)
-    console.log(rev)
     if (this.reviews == null ) {
       this.reviews = {}
     }
     this.reviews[id] = rev
-    console.log(this.reviews)
-    //this.reviews.push(rev)
-    //return rev
+    return rev
   }
 }
 
@@ -69,4 +99,4 @@ Location.deps = {Review}
 class PlaceDB extends Run.Jig {
   set(key, value) {this[key] = value}
 }
-var Jigs = {Review, Location, PlaceDB, AllLocations, UserDB, RunInstance}
+var Jigs = {Review, Location, PlaceDB, AllLocations, UserDB, RunInstance, TrueReviewToken}
