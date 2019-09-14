@@ -1,0 +1,67 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 40vmin;
+  pointer-events: none;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+.tr-brand-jumbotron {
+  background: none;
+}
+
+.opaque-25 {
+  opacity: .25;
+}
+
+.opaque-50 {
+  opacity: .5;
+}
+
+.opaque-75 {
+  opacity: .75
+}
+
+.opaque-100 { 
+  opacity: 1;
+}
+
+.jumbotron-transparent-25 {
+  background-color: rgba(233,236,239,.25);
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+body {
+  background: url('./images/auto.jpg') no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  background-size: cover;
+  -o-background-size: cover;
+}
+
+
