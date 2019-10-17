@@ -65,7 +65,7 @@ async function createUser(id, profile, isBusinessAccount) {
   if (user != null) {
     throw 'User already exists'
   }
-  let userPrivKey = bsv.PrivateKey.fromRandom(bsv.Networks.mainnet)
+  let userPrivKey = bsv.PrivateKey.fromRandom(bsv.Networks[Jigs.BSVNETWORK])
   let userPubKey = bsv.PublicKey.fromPrivateKey(userPrivKey)
 
   var keys = {privKey: userPrivKey.toWIF(), pubKey: userPubKey.toString()}
@@ -84,6 +84,7 @@ async function createUser(id, profile, isBusinessAccount) {
   console.log('Address: '+ address)
   var token = new Jigs.TrueReviewAlphaTesterToken(1)
   token.send(keys.pubKey)
+  await run.sync()
   return {address: address.toString()}
 }
 
@@ -118,7 +119,7 @@ async function loadUserInfo(paymail) {
     throw e
   }
   var userRunInstance = new Run({
-    network: 'main',
+    network: Jigs.NETWORK,
     owner: keys.privKey,
     purse: Jigs.PURSE_KEY
   })
@@ -175,7 +176,7 @@ async function ensureUserDBCreated() {
   await run.sync()
   var dbjig = getUserDB()
   if (dbjig === null || dbjig == null) {
-    createUserDB()
+    await createUserDB()
   }
   return
 }

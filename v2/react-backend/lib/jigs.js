@@ -1,9 +1,10 @@
+const NETWORK = process.env.TR_NETWORK
 const OWNER = process.env.TR_OWNER
 const PURSE = process.env.TR_PURSE
 const PURSE2 = process.env.TR_PURSE2
 const Run = require('./run.node.min')
 const RunTrueReview = new Run ({
-  network: 'main',
+  network: NETWORK,
   owner: OWNER,
   purse: PURSE
 })
@@ -167,6 +168,8 @@ module.exports.RunTrueReview = RunTrueReview
 module.exports.TrueReview = TrueReview
 module.exports.ReviewPointsDB = ReviewPointsDB
 module.exports.BusinessCoupon = BusinessCoupon
+module.exports.NETWORK = NETWORK
+module.exports.BSVNETWORK = `${NETWORK}net`
 module.exports.OWNER_KEY = OWNER
 module.exports.PURSE_KEY = PURSE
 module.exports.PURSE2_KEY = PURSE2

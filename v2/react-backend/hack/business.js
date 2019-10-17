@@ -1,10 +1,11 @@
 const Run = require('../lib/run.node.min')
 var Jigs = require('../lib/jigs')
+const NETWORK = process.env.NETWORK
 const OWNER = process.env.TR_OWNER
 const PURSE = process.env.TR_PURSE
 
 const RunTrueReview = new Run ({
-  network: 'main',
+  network: NETWORK,
   owner: OWNER,
   purse: PURSE
 })

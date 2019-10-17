@@ -52,7 +52,7 @@ async function createTrueReview(placeID, businessID, amount) {
   var keys = JSON.parse(enc.toString())
 
   var userRunInstance = new Run({
-    network: 'main',
+    network: Jigs.NETWORK,
     owner: bsv.PrivateKey.fromWIF(keys.privKey),
     purse: Jigs.PURSE_KEY
   })
@@ -107,7 +107,7 @@ async function redeemCode(placeID, userID, code, dryRun) {
   var businessKeys = JSON.parse(enc.toString())
   console.log('Loading business run instance')
   var userRunInstance = new Run({
-    network: 'main',
+    network: Jigs.NETWORK,
     owner: bsv.PrivateKey.fromWIF(businessKeys.privKey),
     purse: Jigs.PURSE_KEY
   })
