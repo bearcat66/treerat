@@ -17,6 +17,7 @@ const {PaymailClient} = require('@moneybutton/paymail-client')
 const run = Jigs.RunTrueReview
 const MB_OAUTH_ID = process.env.REACT_APP_MBOAUTHID
 const ownerPrivKey = bsv.PrivateKey.fromWIF(Jigs.OWNER_KEY)
+const NETWORK = Jigs.NETWORK
 const PURSE_PRIVKEY = Jigs.PURSE_KEY
 const PURSE2_PRIVKEY = Jigs.PURSE2_KEY
 
@@ -83,7 +84,7 @@ async function downvoteReview(reviewID, downvotedUser) {
   }
   var tokes = new Jigs.BadReviewToken(3)
   tokes.send(rev.owner)
-  await pts.sync()
+  await run.sync()
   var newScore = pts.downvote(reviewID, downvotedUser)
 }
 
@@ -166,7 +167,7 @@ async function handleReviewCreate(locationOfJig, placeID, params) {
       var enc = ecies.bitcoreECIES().privateKey(ownerPrivKey).decrypt(bug)
       var keys = JSON.parse(enc.toString())
       var userRunInstance = new Run({
-        network: 'main',
+        network: NETWORK,
         owner: bsv.PrivateKey.fromWIF(keys.privKey),
         purse: PURSE_PRIVKEY
       })
@@ -224,18 +225,18 @@ function getAllLocationsJig() {
 function getPointsDBJig() {
   return run.owner.jigs.find(x => x.constructor.name === 'ReviewPointsDB')
 }
-function ensureLocationDBCreated() {
+async function ensureLocationDBCreated() {
   var dbjig = getAllLocationsJig()
   if (dbjig === null || dbjig == null) {
-    createAllLocations()
+    await createAllLocations()
   }
   return
 }
 
-function ensurePointsDBCreated() {
+async function ensurePointsDBCreated() {
   var dbjig = getPointsDBJig()
   if (dbjig === null || dbjig == null) {
-    createPointsDB()
+    await createPointsDB()
   }
   return
 }

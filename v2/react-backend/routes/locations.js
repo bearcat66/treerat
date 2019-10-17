@@ -66,6 +66,7 @@ async function transferLocation(placeID, recipientID) {
   var keys = JSON.parse(enc.toString())
   location.send(keys.pubKey)
   allLocs.set(placeID, {ownedBy: user.profile.primaryPaymail, location: loc.location, coords: loc.coords})
+  await run.sync()
   return
 }
 

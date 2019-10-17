@@ -2,13 +2,14 @@ const Run = require('../lib/run.node.min')
 var bsv = require('../node_modules/bsv')
 var ecies = require('../node_modules/bsv/ecies')
 var Jigs = require('../lib/jigs')
+const NETWORK = process.env.TR_NETWORK
 const OWNER = process.env.TR_OWNER
 const PURSE = process.env.TR_PURSE
 const ownerPriv = bsv.PrivateKey.fromWIF(OWNER)
 const ownerPub = bsv.PublicKey.fromPrivateKey(ownerPriv)
 
 const RunTrueReview = new Run ({
-  network: 'main',
+  network: NETWORK,
   owner: OWNER,
   purse: PURSE
 })
@@ -35,7 +36,7 @@ async function loadUserDB() {
       continue
     }
     console.log(key)
-    let userPrivKey = bsv.PrivateKey.fromRandom(bsv.Networks.mainnet)
+    let userPrivKey = bsv.PrivateKey.fromRandom(bsv.Networks[Jigs.BSVNETWORK])
     let userPubKey = bsv.PublicKey.fromPrivateKey(userPrivKey)
 
     var keys = {privKey: userPrivKey.toWIF(), pubKey: userPubKey.toString()}
