@@ -46,9 +46,6 @@ export default class ReviewForm extends React.Component {
       placeDescription: '',
       address: '',
       rating: '',
-      moneyButtonID: '',
-      paymail: '',
-      moneyButtonName: '',
       reviewTx: '',
       redeemCode: '',
       coords: {lat: 59.93, lng: 30.33},
@@ -122,7 +119,7 @@ export default class ReviewForm extends React.Component {
         method: 'post',
         body: JSON.stringify({
           code: this.state.redeemCode,
-          userID: this.state.paymail,
+          userID: this.state.user,
           dryRun: true
         })
       })
@@ -144,7 +141,7 @@ export default class ReviewForm extends React.Component {
         method: 'post',
         body: JSON.stringify({
           code: this.state.redeemCode,
-          userID: this.state.paymail,
+          userID: this.state.user,
           dryRun: false
         })
       })
@@ -154,7 +151,7 @@ export default class ReviewForm extends React.Component {
       var result = await res.json()
       console.log(result)
     }
-    console.log(this.state.paymail)
+    console.log(this.state.user)
     fetch('/api/review/'+this.state.placeID, {
       headers: {'Content-Type': 'application/json'},
       method: 'post',
@@ -163,17 +160,25 @@ export default class ReviewForm extends React.Component {
         coords: this.state.coords,
         reviewBody: this.state.body,
         rating: this.state.rating,
-        userID: this.state.paymail
+        userID: this.state.user
       })
-    }).then(res => res.json()).then(rev =>  {
+    }).then(res => {
+      if (res.status !== 200) {
+        throw('Something went wrong')
+      }
+      return res.json()
+    }).then(rev =>  {
       this.setState({renderSuccessModal: true, isLoading: false})
       console.log(rev)
+    }).catch(e => {
+      this.setState({isLoading: false, renderErrorModal: true})
     })
   }
 
   renderSubmitButton(){
     console.log('rendering submit button')
-    if (this.state.moneyButtonID === '' || this.state.badInput) {
+    console.log(this.state.user)
+    if (this.state.user === '' || this.state.badInput) {
       return (
         <Button variant="primary" type="submit" disabled>Submit Review</Button>
       )
@@ -198,19 +203,7 @@ export default class ReviewForm extends React.Component {
   }
 
   componentDidMount() {
-    fetch('/api/session').then(res => {
-      if (res.status === 404) {
-        throw 'Session not found'
-      }
-      return res.json()
-    }).then(r => {
-      console.log(r)
-    }).catch(e => {
-      console.error(e)
-    })
-    GetMBUser().then(r=> {
-      this.setState({moneyButtonID: r.id, moneyButtonName: r.name, paymail: r.profile.primaryPaymail})
-    })
+    this.setState({user: this.props.user})
   }
 
   //handle changes to the form entered by the user

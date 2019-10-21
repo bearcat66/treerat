@@ -25,22 +25,26 @@ class Home extends Component {
     }
   }
   componentDidMount() {
-    GetMBUser().then(r=> {
-      this.setState({moneyButtonID: r.id, showSpinner: false, isLoggedIn: true, userProfile: r.profile})
-      this.loadUserItems().then(r=> {
-        this.props.userExists(true)
-        this.setState({userLoaded: true})
-      }).catch(e => {
-        console.log('tt')
-        this.props.userExists(false)
-        console.error(e)
-        this.setState({userLoaded: true, userDoesNotExist: true})
-      })
+    if (this.props.user) {
+      this.getUserInfo(this.prop.user)
+    }
+  }
+  getUserInfo(user) {
+    this.setState({showSpinner: true})
+    fetch('/api/users/'+user).then(r => {
+      return r.json()
+    }).then(l => {
+      console.log(l)
+      this.setState({showSpinner: false, isLoggedIn: true, userLoaded: true})
     }).catch(e => {
       console.error(e)
       this.setState({showSpinner: false, isLoggedIn: false})
     })
-
+  }
+  componentDidUpdate(prevProps) {
+    if (prevProps.user !== this.props.user) {
+      this.getUserInfo(this.props.user)
+    }
   }
   renderSpinner() {
     if (this.state.showSpinner) {
@@ -167,6 +171,9 @@ class Home extends Component {
         </div>
       )
     }
+    if (this.state.showSpinner) {
+      return null
+    }
     if (!this.state.isLoggedIn || this.state.userDoesNotExist) {
       return (
         <div>
@@ -185,20 +192,6 @@ class Home extends Component {
         }}>View My Profile</Button>
       </div>
     )
-  }
-  async loadUserItems() {
-    if (this.props.user === '') {
-      throw 'User not logged in'
-    }
-    console.log('loading user items')
-    var res = await fetch('/api/users/' + this.state.userProfile.primaryPaymail, {credentials: 'same-origin'})
-    if (res.status === 404) {
-      throw 'User does not exist'
-    }
-    var userInfo = await res.json()
-    console.log(userInfo)
-    this.setState({userReviews: userInfo.reviews, userTokens: userInfo.tokens})
-    return userInfo
   }
 
   render() {

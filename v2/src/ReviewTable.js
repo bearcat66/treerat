@@ -11,15 +11,16 @@ export default class ReviewTable extends React.Component {
     this.state = {
       reviews: [],
       userID: '',
+      loadingReviews: false,
       upvoting: false,
       renderVoteModal: false
     };
   }
   componentDidMount() {
+    this.setState({loadingReviews: true, userID: this.props.userID})
     this.props.reviews.then(r => {
-      this.setState({reviews: r})
+      this.setState({reviews: r, loadingReviews: false})
     })
-    this.setState({userID: this.props.userID})
   }
   componentDidUpdate(prevProps) {
     this.props.reviews.then(r => {
@@ -33,14 +34,18 @@ export default class ReviewTable extends React.Component {
   }
   async upvoteReview(id) {
     this.setState({upvoting: true})
-    var res = await fetch('/api/review/'+id+'/upvote', {
-      headers: {'Content-Type': 'application/json'},
-      method: 'post',
-      body: JSON.stringify({
-        userID: this.state.userID
+    try {
+      var res = await fetch('/api/review/'+id+'/upvote', {
+        headers: {'Content-Type': 'application/json'},
+        method: 'post',
+        body: JSON.stringify({
+          userID: this.state.userID
+        })
       })
-    })
-    var s = await res.json()
+      var s = await res.json()
+    } catch(e) {
+      console.error(e)
+    }
     this.setState({upvoting: false})
   }
 
@@ -59,9 +64,17 @@ export default class ReviewTable extends React.Component {
 
   //this actually creates the cells in the reviewTable, if changing the properties when moving to jigs then we need to remove / update properties here (and remove headers from render fuinction)
   renderTableData() {
-    if (this.state.reviews == null) {
-      return null
+    if (this.state.reviews == null && !this.state.loadingReviews) {
+      return (
+        <div>
+          <h5>No reviews found</h5>
+          <Button onClick={() => {
+            this.props.navigateTo('submit')
+          }}>Create the first review!</Button>
+        </div>
+      )
     }
+
     var revs = this.state.reviews.sort(function(a,b){return b.points.score-a.points.score})
     return revs.map((review, index) => {
       var disableButton = false

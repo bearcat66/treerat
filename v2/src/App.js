@@ -86,13 +86,13 @@ class App extends Component {
     return (
       <div>
         <NavBar user={this.state.user} onUserClick={this.showProfilePage} navigateTo = {this.navigate} navLocations = {this.state.navLocations} />
-        {this.state.showPage === "home" ? <Home navigateTo={this.navigate} userExists={this.userExists} user={this.user}/> : null}
+        {this.state.showPage === "home" ? <Home navigateTo={this.navigate} userExists={this.userExists} user={this.state.user}/> : null}
         {this.state.showPage === "about" ? <About /> : null}
-        {this.state.showPage === "submit" ? <Submit navigateTo={this.navigate}/> : null}
-        {this.state.showPage === "browse" ? <Browse/> : null}
-        {this.state.showPage === "search" ? <Search/> : null}
+        {this.state.showPage === "submit" ? <Submit user={this.state.user} navigateTo={this.navigate}/> : null}
+        {this.state.showPage === "browse" ? <Browse user={this.state.user}/> : null}
+        {this.state.showPage === "search" ? <Search user={this.state.user} navigateTo={this.navigate}/> : null}
         {this.state.showPage === "redeem" ? <Redeem/> : null}
-        {this.state.showPage === "profile" ? <Profile/> : null}
+        {this.state.showPage === "profile" ? <Profile user={this.state.user}/> : null}
         {this.state.showPage === "contact" ? <Contact/> : null}
       </div>
     );

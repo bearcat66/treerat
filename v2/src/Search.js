@@ -1,5 +1,4 @@
 import React from 'react';
-import {GetMBUser} from './MB';
 import {Jumbotron, Button, Modal} from 'react-bootstrap'
 import GoogleMapLoader from 'react-google-maps-loader'
 import GooglePlacesSuggest from 'react-google-places-suggest'
@@ -27,16 +26,11 @@ export default class Search extends React.Component {
       reviewList: [],
       placeDescription: '',
       address: '',
-      moneyButtonID: '',
-      moneyButtonName: '',
       locationSelected: false,
       renderModal: false,
     };
   }
   componentDidMount() {
-    GetMBUser().then(r=> {
-      this.setState({moneyButtonID: r.id, moneyButtonName: r.name, paymail: r.profile.primaryPaymail})
-    })
   }
 
   handleInputChange(e) {
@@ -56,7 +50,7 @@ export default class Search extends React.Component {
   }
   renderReviewTable() {
     if (this.state.locationSelected) {
-      return <ReviewTable reviews={getReviews(this.state.placeID)} userID={this.state.paymail}/>
+      return <ReviewTable navigateTo={this.props.navigateTo} reviews={getReviews(this.state.placeID)} userID={this.props.user}/>
     }
     return null
   }
@@ -65,7 +59,7 @@ export default class Search extends React.Component {
   }
   renderClaimBusinessButton() {
     return null
-    if (this.state.locationSelected === false || this.state.moneyButtonID === '') {
+    if (this.state.locationSelected === false || this.props.user === '') {
       return null
     }
     return (
@@ -85,10 +79,14 @@ export default class Search extends React.Component {
       headers: {'Content-Type': 'application/json'},
       method: 'post',
       body: JSON.stringify({
-        businessID: this.state.paymail
+        businessID: this.props.user
       })
-    }).then(res => res.json()).then(rev =>  {
+    }).then(res =>  {
+      return res.json()
+    }).then(rev =>  {
       this.setState({renderSuccessModal: true})
+    }).catcn(e => {
+      console.error(e)
     })
   }
   renderClaimModal() {
@@ -166,6 +164,8 @@ function getReviews(placeID) {
     return res.json()
   }).then(r => {
     return r.reviews
+  }).catch(e => {
+    console.error(e)
   })
 }
 

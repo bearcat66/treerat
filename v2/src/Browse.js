@@ -1,6 +1,5 @@
 import React from 'react';
 import ReviewTable from './ReviewTable.js';
-import {GetMBUser, IsLoggedIn} from './MB';
 import {Jumbotron} from 'react-bootstrap';
 import './App.css';
 import GoogleMap from 'google-map-react';
@@ -16,8 +15,6 @@ export class Browse extends React.Component {
     this.handleMapClick = this.handleMapClick.bind(this)
     this.handleUpvote = this.handleUpvote.bind(this)
     this.state = {
-      userID: '',
-      paymail: '',
       loadingLocations: true,
       showMap: true,
       loggedIn: false,
@@ -29,12 +26,6 @@ export class Browse extends React.Component {
     }
   }
   componentDidMount() {
-    GetMBUser().then(r=>{
-      this.setState({userID: r.id, paymail: r.profile.primaryPaymail})
-    })
-    IsLoggedIn().then(r=>{
-      this.setState({loggedIn: r})
-    })
     this.getAllPlaces().then(r=>{
       this.setState({places: r, loadingLocations: false})
     })
@@ -67,7 +58,7 @@ export class Browse extends React.Component {
         <h5>Reviews for {this.state.placeName}</h5>
         <ReviewTable
           reviews={this.getPlace(this.state.placeID)}
-          userID={this.state.paymail}
+          userID={this.props.user}
           handleUpvote={this.handleUpvote}
         />
       </div>

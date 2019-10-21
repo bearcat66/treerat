@@ -33,6 +33,9 @@ router.post('/:placeID', function(req, res) {
   }
   handleReviewCreate(loc, req.params.placeID, req.body).then(r => {
     res.json({location: r.location})
+  }).catch(e => {
+    console.error(e)
+    res.status(500).send(JSON.stringify({error: e}))
   })
 })
 

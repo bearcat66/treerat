@@ -95,15 +95,13 @@ export default class Profile extends Component {
     )
   }
   componentDidMount() {
-    GetMBUser().then(r=> {
-      this.getUserInformation(r.profile.primaryPaymail).then(r => {
-        console.log(r)
-        if (r == null) {
-          this.setState({userExists: false})
-          return
-        }
-        this.setState({user: r.user, getUserDone: true, userReviews: r.reviews, businessLocations: r.user.locations, userExists: true})
-      })
+    this.getUserInformation(this.props.user).then(r => {
+      console.log(r)
+      if (r == null) {
+        this.setState({userExists: false})
+        return
+      }
+      this.setState({user: r.user, getUserDone: true, userReviews: r.reviews, businessLocations: r.user.locations, userExists: true})
     })
   }
   async loadBusinessLocations() {
