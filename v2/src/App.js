@@ -35,7 +35,9 @@ class App extends Component {
       }
       return res.json()
     }).then(r => {
+      console.log(r.user)
       this.setState({loggedIn: true, user: r.user})
+      this.setNavBarLocations()
     }).catch(e => {
       console.error(e)
       this.setState({loggedIn: false})
@@ -53,7 +55,7 @@ class App extends Component {
     this.setNavBarLocations()
   }
   setNavBarLocations() {
-    if (this.state.userExists) {
+    if (this.state.loggedIn) {
       this.setState({
         navLocations: [
           {title: "About", navLocation: "about"},
@@ -84,7 +86,7 @@ class App extends Component {
     return (
       <div>
         <NavBar user={this.state.user} onUserClick={this.showProfilePage} navigateTo = {this.navigate} navLocations = {this.state.navLocations} />
-        {this.state.showPage === "home" ? <Home navigateTo={this.navigate} userExists={this.userExists}/> : null}
+        {this.state.showPage === "home" ? <Home navigateTo={this.navigate} userExists={this.userExists} user={this.user}/> : null}
         {this.state.showPage === "about" ? <About /> : null}
         {this.state.showPage === "submit" ? <Submit navigateTo={this.navigate}/> : null}
         {this.state.showPage === "browse" ? <Browse/> : null}

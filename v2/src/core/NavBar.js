@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import UserInfo from '../UserInfo'
-import {MoneyButtonClient} from '@moneybutton/api-client'
-import {GetMBToken, LogOutOfMB, IsLoggedIn} from '../MB'
+import {GetMBToken, LogOutOfMB} from '../MB'
 import ButtonList from './navbar_helpers/ButtonList';
 const MB_OAUTH_ID = process.env.REACT_APP_MBOAUTHID
 

@@ -1,10 +1,8 @@
 import React, {Component} from 'react';
 import {GetMBUser, GetMBToken} from './MB';
 import {Button, Table} from 'react-bootstrap';
-import {MoneyButtonClient} from '@moneybutton/api-client'
 const run = window.Jigs.RunInstance
 const Run = window.Run
-const PURSE_PRIVKEY = 'Kyt9WKt8XTymzwyQcwQeWtpEoELNHgkiwwbCFuBBHLWVPrjo7xBV'
 const MB_OAUTH_ID = process.env.REACT_APP_MBOAUTHID
 
 class Home extends Component {
@@ -189,7 +187,7 @@ class Home extends Component {
     )
   }
   async loadUserItems() {
-    if (this.state.moneyButtonID === '') {
+    if (this.props.user === '') {
       throw 'User not logged in'
     }
     console.log('loading user items')
