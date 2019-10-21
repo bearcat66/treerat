@@ -20,6 +20,11 @@ async function createUser() {
         .then(() => knownUsers.add(randomPaymail))
         .then(() => console.log(`Created ${randomPaymail}`))
 }
+async function createReview() {
+  const randomUser = getRandomUser()
+  console.log(`Creating review for user ${randomPaymail}`)
+
+}
 
 async function getUsers() {
     console.log('Getting users')
