@@ -10,28 +10,35 @@ class NavBar extends Component {
     super (props)
     this.state = {
       loggedIn: false,
+      user: {},
+      paymail: '',
       navLocations: props.navLocations
     }
   }
   componentDidMount() {
-    IsLoggedIn().then(r => {
-      this.setState({loggedIn: r});
-    })
-    console.log('props')
-    console.log(this.props)
-    this.setState({navLocations: this.props.navLocations})
+    var loggedIn = false
+    if (Object.entries(this.props.user).length !== 0) {
+      loggedIn = true
+    }
+    this.setState({navLocations: this.props.navLocations, loggedIn: loggedIn, paymail: this.props.user})
   }
   componentDidUpdate(prevProps) {
-    console.log('update')
-    console.log(this.props.navLocations)
     if(this.props.navLocations.length != prevProps.navLocations.length) {
-      console.log('here')
       this.setState({navLocations: this.props.navLocations})
     }
+    if(Object.entries(this.props.user).length !== Object.entries(prevProps.user).length) {
+      this.setState({paymail: this.props.user, loggedIn: true})
+      this.getMBInfo(this.props.user)
+    }
+  }
+  async getMBInfo(paymail) {
+    var res = await fetch('/api/users/'+paymail)
+    var user = await res.json()
+  
+    this.setState({user: {id: user.profile.id, name: user.profile.name, paymail: user.profile.primaryPaymail, avatarUrl: user.profile.avatarUrl}})
   }
 
   render() {
-    console.log('render')
     return (
       <nav className="navbar navbar-light bg-light navbar-expand-lg">
         <div>
@@ -43,12 +50,12 @@ class NavBar extends Component {
               <i className="material-icons">list</i>
             </button>
             <div className="collapse navbar-collapse" id="navbarContent">
-              <ButtonList links={this.state.navLocations} navFunction={this.props.navFunction} />
+              <ButtonList links={this.state.navLocations} navigateTo={this.props.navigateTo} />
             </div>
           </div>
         </div>
         <div className='col justify-content-end text-right'>
-          <UserInfo onUserClick={this.props.onUserClick} userInfo={getMBInfo()}/>
+          <UserInfo onUserClick={this.props.onUserClick} userInfo={this.state.user}/>
           <ul/>
           {!this.state.loggedIn ? <button className="btn btn-link" onClick={GetMBToken}>Login in with MB</button> : null }
           {this.state.loggedIn ? <button className="btn btn-link" onClick={LogOutOfMB}>Log Out</button> : null }
@@ -60,11 +67,3 @@ class NavBar extends Component {
 
 export default NavBar
 
-async function getMBInfo() {
-  var mbclient = new MoneyButtonClient(MB_OAUTH_ID)
-  var identity = await mbclient.getIdentity()
-  await mbclient.getValidAccessToken()
-  var profile = await mbclient.getUserProfile(identity.id)
-  console.log(profile)
-  return {id: identity.id, name: identity.name, paymail: profile.primaryPaymail, avatarUrl: profile.avatarUrl}
-}

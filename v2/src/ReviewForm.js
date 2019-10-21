@@ -105,7 +105,9 @@ export default class ReviewForm extends React.Component {
 
         <Modal.Footer>
           <Button onClick={this.closeModal} variant="secondary">Close</Button>
-          <Button onClick={this.props.showProfilePage} variant="primary">View Review</Button>
+          <Button onClick={() => {
+            this.props.navigateTo('profile')
+          }} variant="primary">View Review</Button>
         </Modal.Footer>
       </Modal.Dialog>
     )
@@ -196,6 +198,16 @@ export default class ReviewForm extends React.Component {
   }
 
   componentDidMount() {
+    fetch('/api/session').then(res => {
+      if (res.status === 404) {
+        throw 'Session not found'
+      }
+      return res.json()
+    }).then(r => {
+      console.log(r)
+    }).catch(e => {
+      console.error(e)
+    })
     GetMBUser().then(r=> {
       this.setState({moneyButtonID: r.id, moneyButtonName: r.name, paymail: r.profile.primaryPaymail})
     })

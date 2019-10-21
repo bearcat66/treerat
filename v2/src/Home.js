@@ -182,7 +182,9 @@ class Home extends Component {
         <h5>Your True Review Statistics</h5>
         <h6>Review Count: {this.state.userReviews.length}</h6>
         <h6>Reputation: {this.state.userTokens}</h6>
-        <Button variant="primary" size="lg" onClick={this.props.showProfilePage}>View My Profile</Button>
+        <Button variant="primary" size="lg" onClick={() => {
+          this.props.navigateTo('profile')
+        }}>View My Profile</Button>
       </div>
     )
   }
@@ -191,7 +193,7 @@ class Home extends Component {
       throw 'User not logged in'
     }
     console.log('loading user items')
-    var res = await fetch('/api/users/' + this.state.userProfile.primaryPaymail)
+    var res = await fetch('/api/users/' + this.state.userProfile.primaryPaymail, {credentials: 'same-origin'})
     if (res.status === 404) {
       throw 'User does not exist'
     }

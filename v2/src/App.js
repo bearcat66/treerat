@@ -16,7 +16,8 @@ class App extends Component {
     super(props);
     this.state = {
       showPage: "home",
-      userExists: false,
+      user: '',
+      loggedIn: false,
       navLocations: [
         {title: "About", navLocation: "about"},
         {title: "Contact", navLocation: "contact"},
@@ -27,7 +28,19 @@ class App extends Component {
     this.userExists = this.userExists.bind(this)
     this.navigate = this.navigate.bind(this);
   }
-
+  componentDidMount() {
+    fetch('/api/session').then(res => {
+      if (res.status === 404) {
+        throw 'Session not found'
+      }
+      return res.json()
+    }).then(r => {
+      this.setState({loggedIn: true, user: r.user})
+    }).catch(e => {
+      console.error(e)
+      this.setState({loggedIn: false})
+    })
+  }
   navigate(newPage) {
     this.setState({showPage: newPage});
   }
@@ -36,7 +49,7 @@ class App extends Component {
   }
   userExists(yes) {
     console.log(yes)
-    this.setState({userExists: yes})
+    this.setState({loggedIn: yes})
     this.setNavBarLocations()
   }
   setNavBarLocations() {
@@ -61,14 +74,19 @@ class App extends Component {
       })
     }
   }
+  renderLoginModal(){
+    if (this.state.loggedIn) {
+    }
+  }
+
 
   render() {
     return (
       <div>
-        <NavBar onUserClick={this.showProfilePage} navFunction = {this.navigate} navLocations = {this.state.navLocations} />
-        {this.state.showPage === "home" ? <Home showProfilePage={this.showProfilePage} userExists={this.userExists}/> : null}
+        <NavBar user={this.state.user} onUserClick={this.showProfilePage} navigateTo = {this.navigate} navLocations = {this.state.navLocations} />
+        {this.state.showPage === "home" ? <Home navigateTo={this.navigate} userExists={this.userExists}/> : null}
         {this.state.showPage === "about" ? <About /> : null}
-        {this.state.showPage === "submit" ? <Submit showProfilePage={this.showProfilePage}/> : null}
+        {this.state.showPage === "submit" ? <Submit navigateTo={this.navigate}/> : null}
         {this.state.showPage === "browse" ? <Browse/> : null}
         {this.state.showPage === "search" ? <Search/> : null}
         {this.state.showPage === "redeem" ? <Redeem/> : null}

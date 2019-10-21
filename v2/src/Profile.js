@@ -43,7 +43,11 @@ export default class Profile extends Component {
     return codes
   }
   async getUserInformation(id) {
-    var res = await fetch('/api/users/'+id)
+    var res = await fetch(
+      '/api/users/'+id, {
+        credentials: 'same-origin'
+      }
+    )
     if (res.status === 404) {
       return
     }

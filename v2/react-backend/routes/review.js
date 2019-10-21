@@ -163,13 +163,14 @@ async function handleReviewCreate(locationOfJig, placeID, params) {
     var loca = locs.get(placeID)
     if (loca.ownedBy != null) {
       var business = userdb.get(loca.ownedBy)
-      var bug = new Buffer(business.keys)
+      var bug = Buffer.from(business.keys)
       var enc = ecies.bitcoreECIES().privateKey(ownerPrivKey).decrypt(bug)
       var keys = JSON.parse(enc.toString())
       var userRunInstance = new Run({
         network: NETWORK,
         owner: bsv.PrivateKey.fromWIF(keys.privKey),
-        purse: PURSE_PRIVKEY
+        purse: PURSE_PRIVKEY,
+        app: Jigs.APP_ID
       })
       userRunInstance.activate()
       userRunInstance.sync()
@@ -181,7 +182,7 @@ async function handleReviewCreate(locationOfJig, placeID, params) {
   var rev = loc.createReview(params.reviewBody, params.rating, params.userID)
   await loc.sync()
   console.log(params.userID+ ' Successfully created a review for: ' + params.locationName)
-  var bug = new Buffer(user.keys)
+  var bug = Buffer.from(user.keys)
   var enc = ecies.bitcoreECIES().privateKey(ownerPrivKey).decrypt(bug)
   var keys = JSON.parse(enc.toString())
   console.log('Sending review to user: ' + params.userID)

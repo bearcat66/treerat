@@ -8,7 +8,7 @@ export default class Submit extends React.Component {
   render() {
     return (
       <div className="jumbotron jumbotron-transparent-25">    
-        <ReviewForm showProfilePage={this.props.showProfilePage}/>
+        <ReviewForm navigateTo={this.props.navigateTo}/>
       </div>
     );
   }

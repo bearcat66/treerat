@@ -2,6 +2,8 @@ import React from 'react';
 import {Redirect} from 'react-router-dom';
 import {MoneyButtonClient} from '@moneybutton/api-client'
 import MoneyButton from '@moneybutton/react-money-button'
+import QueryString from 'query-string'
+import {GetMBToken} from './MB'
 //import { PaymailClient } from '@moneybutton/paymail-client'
 const MB_OAUTH_ID = process.env.REACT_APP_MBOAUTHID
 
@@ -24,15 +26,31 @@ export default class Login extends React.Component {
 
   componentDidMount() {
     console.log("Login component did mount called");
+    var params = QueryString.parse(this.props.location.search)
+    console.log(params)
+    fetch('/api/session').then(res => {
+      if (res.status === 404) {
+        throw 'Session not found'
+      }
+      return res.json()
+    }).then(r => {
+      this.setState({redirect: true})
+      console.log(r)
+    }).catch(e => {
+      console.error(e)
+      this.setState({loggedIn: false})
+    })
     handleAuth().then(u => {
-      console.log(u)
-      this.setState({user: u})
+      loginUser(params, u.profile.primaryPaymail)
       //this.setState({redirect: true});
       //here u has the user's MB information
       //this is where we need to create UserDB objects and save pubKeys
       this.getUser(u)
+      this.setState({user: u})
+    }).catch(e => {
+      console.error(e)
+      GetMBToken()
     })
-
   }
   
   renderRedirect() {
@@ -81,7 +99,7 @@ export default class Login extends React.Component {
         <h2>Please swipe the MoneyButton to register:</h2>
         <MoneyButton
           to='truereviews@moneybutton.com'
-          amount='.5'
+          amount='.001'
           currency='USD'
           label='Register'
           onPayment={this.onPaymentSuccessBusiness}
@@ -132,3 +150,14 @@ async function handleAuth() {
   return {id: identity.id, profile: profile}
 }
 
+async function loginUser(params, paymail) {
+  var res = await fetch('/api/login/'+paymail, {
+    headers: {'Content-Type': 'application/json'},
+    method: 'post',
+    body: JSON.stringify({
+      code: params.code,
+      state: params.state
+    })
+  })
+  console.log(res.status)
+}

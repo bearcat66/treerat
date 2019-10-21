@@ -47,7 +47,7 @@ async function createTrueReview(placeID, businessID, amount) {
   if (user == null) {
     throw 'Business user not found'
   }
-  var bug = new Buffer(user.keys)
+  var bug = Buffer.from(user.keys)
   var enc = ecies.bitcoreECIES().privateKey(ownerPrivKey).decrypt(bug)
   var keys = JSON.parse(enc.toString())
 
@@ -102,14 +102,15 @@ async function redeemCode(placeID, userID, code, dryRun) {
     throw 'Business user not found'
   }
 
-  var bug = new Buffer(business.keys)
+  var bug = Buffer.from(business.keys)
   var enc = ecies.bitcoreECIES().privateKey(ownerPrivKey).decrypt(bug)
   var businessKeys = JSON.parse(enc.toString())
   console.log('Loading business run instance')
   var userRunInstance = new Run({
     network: Jigs.NETWORK,
     owner: bsv.PrivateKey.fromWIF(businessKeys.privKey),
-    purse: Jigs.PURSE_KEY
+    purse: Jigs.PURSE_KEY,
+    app: Jigs.APP_ID
   })
   userRunInstance.activate()
   await userRunInstance.sync()
@@ -137,7 +138,7 @@ async function redeemCode(placeID, userID, code, dryRun) {
     }
 
     console.log("Attempting redeem")
-    bug = new Buffer(user.keys)
+    bug = Buffer.from(user.keys)
     enc = ecies.bitcoreECIES().privateKey(ownerPrivKey).decrypt(bug)
     userKeys = JSON.parse(enc.toString())
     try {

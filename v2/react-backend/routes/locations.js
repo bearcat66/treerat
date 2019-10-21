@@ -61,7 +61,7 @@ async function transferLocation(placeID, recipientID) {
   }
   var location = await run.load(loc.location)
   await location.sync()
-  var bug = new Buffer(user.keys)
+  var bug = Buffer.from(user.keys)
   var enc = ecies.bitcoreECIES().privateKey(ownerPrivKey).decrypt(bug)
   var keys = JSON.parse(enc.toString())
   location.send(keys.pubKey)

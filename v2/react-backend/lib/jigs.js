@@ -2,11 +2,13 @@ const NETWORK = process.env.TR_NETWORK
 const OWNER = process.env.TR_OWNER
 const PURSE = process.env.TR_PURSE
 const PURSE2 = process.env.TR_PURSE2
+const APP_ID = "TrueReviews"
 const Run = require('./run.node.min')
 const RunTrueReview = new Run ({
   network: NETWORK,
   owner: OWNER,
-  purse: PURSE
+  purse: PURSE,
+  app: APP_ID
 })
 
 class UserDB extends Run.Jig {
@@ -173,3 +175,4 @@ module.exports.BSVNETWORK = `${NETWORK}net`
 module.exports.OWNER_KEY = OWNER
 module.exports.PURSE_KEY = PURSE
 module.exports.PURSE2_KEY = PURSE2
+module.exports.APP_ID = APP_ID

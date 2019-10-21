@@ -28,6 +28,7 @@ router.get('/', function(req, res, next) {
 router.get('/:id', function(req, res, next) {
   run.activate()
   //ensureUserDBCreated()
+  //console.log(req.session.user.accessToken)
   loadUserInfo(req.params.id).then(r=> {
     run.activate()
     res.json(r)
@@ -53,6 +54,7 @@ router.post('/:id', function(req, res) {
   createUser(req.params.id, req.body.profile, req.body.businessAccount).then(r=> {
     res.json(r)
   }).catch(e => {
+    console.error(e)
     res.status(409).send(JSON.stringify({'error': e}))
   })
 })
@@ -101,8 +103,13 @@ async function loadUserProfile(id) {
   return {profile: user.profile}
 }
 
-async function loadUserInfo(paymail) {
+async function loadUserInfo(paymail, accessToken) {
   console.log('Loading user info for: ' + paymail)
+  var mbclient = new mb.MoneyButtonClient(MB_OAUTH_ID)
+  //await mbclient.setAccessToken(accessToken)
+  //var expiration = await mbclient.getExpirationTime()
+  //console.log(expiration)
+  //console.log(Date(expiration))
   run.activate()
   await run.sync()
   var db = getUserDB()
@@ -112,7 +119,7 @@ async function loadUserInfo(paymail) {
     throw 'User not found'
   }
   try {
-    var bug = new Buffer(user.keys)
+    var bug = Buffer.from(user.keys)
     var enc = ecies.bitcoreECIES().privateKey(ownerPrivKey).decrypt(bug)
     var keys = JSON.parse(enc.toString())
   } catch(e) {
@@ -121,7 +128,8 @@ async function loadUserInfo(paymail) {
   var userRunInstance = new Run({
     network: Jigs.NETWORK,
     owner: keys.privKey,
-    purse: Jigs.PURSE_KEY
+    purse: Jigs.PURSE_KEY,
+    app: Jigs.APP_ID
   })
   userRunInstance.activate()
   await userRunInstance.sync()

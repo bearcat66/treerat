@@ -4,7 +4,8 @@ class ButtonList extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      links: props.links
+      links: props.links,
+      activeLocation: ''
     };
 
     this.handleClick = this.handleClick.bind(this);
@@ -12,7 +13,8 @@ class ButtonList extends Component {
 
   handleClick(key) {
     var navLocation = this.props.links[key].navLocation;
-    this.props.navFunction(navLocation);
+    this.setState({activeLocation: navLocation})
+    this.props.navigateTo(navLocation);
   }
 
   componentDidUpdate(prevProps) {
@@ -24,9 +26,14 @@ class ButtonList extends Component {
     }
   }
   renderLinks() {
-    return this.state.links.map((item, key) =>
-      <li key={key} className="nav-item"><button className='btn btn-link nav-link' aria-expanded='false' aria-controls='navbarContent' data-toggle='collapse' data-target='#navbarContent' onClick={() => this.handleClick(key)}>{item.title}</button></li>
-    );
+    var buttonList = []
+    this.state.links.map((item, key) => {
+      if (this.state.activeLocation === item.title) {
+        buttonList.push(<h1>test</h1>)
+      }
+      buttonList.push(<li key={key} className="nav-item"><button className='btn btn-link nav-link' aria-expanded='false' aria-controls='navbarContent' data-toggle='collapse' data-target='#navbarContent' onClick={() => this.handleClick(key)}>{item.title}</button></li>)
+    });
+    return buttonList
   }
 
 
