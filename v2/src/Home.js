@@ -1,66 +1,18 @@
 import React, {Component} from 'react';
-import {GetMBUser, GetMBToken} from './MB';
-import {Button, Table} from 'react-bootstrap';
-const run = window.Jigs.RunInstance
-const Run = window.Run
-const MB_OAUTH_ID = process.env.REACT_APP_MBOAUTHID
+import {GetMBToken} from './MB';
+import {Button} from 'react-bootstrap';
+import {Link} from 'react-router-dom';
 
 class Home extends Component {
 
   constructor(props) {
     super(props)
     this.state = {
-      pubkey: '',
-      moneyButtonID: '',
-      isLoggedIn: false,
-      showSpinner: true,
-      userReviews: [],
-      userProfile: {},
-      userLocations: [],
-      userTokens: 0,
-      topReviewers: [],
-      userLoaded: false,
-      userDoesNotExist: false,
-      topReviewersLoaded: false,
+      user: this.props.user,
+      isLoggedIn: this.props.isLoggedIn,
     }
-  }
-  componentDidMount() {
-    if (this.props.user) {
-      this.getUserInfo(this.prop.user)
-    }
-  }
-  getUserInfo(user) {
-    this.setState({showSpinner: true})
-    fetch('/api/users/'+user).then(r => {
-      return r.json()
-    }).then(l => {
-      console.log(l)
-      this.setState({showSpinner: false, isLoggedIn: true, userLoaded: true})
-    }).catch(e => {
-      console.error(e)
-      this.setState({showSpinner: false, isLoggedIn: false})
-    })
-  }
-  componentDidUpdate(prevProps) {
-    if (prevProps.user !== this.props.user) {
-      this.getUserInfo(this.props.user)
-    }
-  }
-  renderSpinner() {
-    if (this.state.showSpinner) {
-      return (
-        <div className="container text-center">
-          <p>Loading User Information...</p>
-          <div className="spinner-grow"/>
-        </div>
-      )
-    }
-    return null
   }
   renderPlaceHolder() {
-    if (this.state.showSpinner) {
-      return null
-    }
     return (
       <div className="container text-center">
         <h1>True Reviews</h1>
@@ -68,90 +20,6 @@ class Home extends Component {
       </div>
     )
   }
-    /*renderTopReviewers() {
-    if (!this.state.topReviewersLoaded) {
-      return (
-        <div class="text-center">
-          <p>Loading top reviewers...</p>
-          <div className="spinner-grow">
-            <span className="sr-only">Loading...</span>
-          </div>
-        </div>
-      )
-    }
-    return (
-      <div className="container text-center">
-        <h2>Top True Reviewers!</h2>
-        <Table striped bordered variant="dark">
-          <thead>
-            <tr>
-              <th text-center="true">User</th>
-              <th text-center="true">Reputation</th>
-            </tr>
-          </thead>
-          <tbody>
-            {this.renderTopReviewersData()}
-          </tbody>
-        </Table>
-      </div>
-    )
-  }
-  renderTopReviewersData() {
-    return this.state.topReviewers.map((account, index) => {
-      return (
-        <tr>
-          <td>{account.user}</td>
-          <td>{account.reputation}</td>
-        </tr>
-      )
-    })
-  }
-  getTopReviewers() {
-    if (this.state.moneyButtonID === '' || this.state.userLoaded === false || this.state.topReviewersLoaded === true) {
-      return
-    }
-    this.loadTopReviewers().then(r => {
-      if (r == null) {
-        return
-      }
-      this.setState({topReviewers: r, topReviewersLoaded: true})
-    })
-  }
-  async loadTopReviewers() {
-    run.activate()
-    await run.sync()
-    var userdb = run.owner.jigs.find(x => x.constructor.name === 'UserDB')
-    if (userdb == null) {
-      return null
-    }
-    var userEntries = Object.entries(userdb)
-    var topReviewers = []
-    for (var [key, value] of userEntries) {
-      if (key === 'owner' || key === 'satoshis' || key === 'location' || key === 'origin') {
-        continue
-      }
-      var userRunInstance = new Run({
-        network: 'main',
-        owner: value.privKey,
-        purse: PURSE_PRIVKEY,
-      })
-      userRunInstance.activate()
-      await userRunInstance.sync()
-      var tokens = 0
-      var jigs = userRunInstance.owner.jigs
-      for (var i=0; i<jigs.length; i++) {
-        if (jigs[i].constructor.name === 'TrueReviewToken') {
-          tokens += jigs[i].amount
-        }
-      }
-      var mbclient = new MoneyButtonClient(MB_OAUTH_ID)
-      var profile = await mbclient.getUserProfile(key)
-      console.log(profile)
-      topReviewers.push({user: profile.name, reputation: tokens})
-    }
-    topReviewers.sort(function(a,b){return b.reputation - a.reputation})
-    return topReviewers.slice(0, 3)
-  }*/
   renderLoginSnippet() {
     return (
       <div className="text-center">
@@ -161,20 +29,7 @@ class Home extends Component {
     )
   }
   renderUserItems() {
-    if (!this.state.userLoaded && this.state.isLoggedIn) {
-      return (
-        <div class="text-center">
-          <p>Loading user stats...</p>
-          <div className="spinner-grow">
-            <span className="sr-only">Loading...</span>
-          </div>
-        </div>
-      )
-    }
-    if (this.state.showSpinner) {
-      return null
-    }
-    if (!this.state.isLoggedIn || this.state.userDoesNotExist) {
+    if (!this.state.isLoggedIn) {
       return (
         <div>
           {this.renderLoginSnippet()}
@@ -184,12 +39,8 @@ class Home extends Component {
 
     return (
       <div className="container text-center">
-        <h5>Your True Review Statistics</h5>
-        <h6>Review Count: {this.state.userReviews.length}</h6>
-        <h6>Reputation: {this.state.userTokens}</h6>
-        <Button variant="primary" size="lg" onClick={() => {
-          this.props.navigateTo('profile')
-        }}>View My Profile</Button>
+        <h5>Welcome back {this.state.user}!</h5>
+        <Link to='/profile'><Button variant="primary" size="lg">View My Profile</Button></Link>
       </div>
     )
   }
@@ -197,7 +48,6 @@ class Home extends Component {
   render() {
     return(
       <div className="jumbotron jumbotron-fluid tr-brand-jumbotron">
-        {this.renderSpinner()}
         <div className="container-fluid">
           <div className="row">
             {this.renderPlaceHolder()}

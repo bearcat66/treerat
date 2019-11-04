@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import UserInfo from '../UserInfo'
 import {GetMBToken, LogOutOfMB} from '../MB'
 import ButtonList from './navbar_helpers/ButtonList';
-const MB_OAUTH_ID = process.env.REACT_APP_MBOAUTHID
 
 class NavBar extends Component {
   constructor(props) {
@@ -16,22 +15,28 @@ class NavBar extends Component {
   }
   componentDidMount() {
     var loggedIn = false
-    if (Object.entries(this.props.user).length !== 0) {
+    if (this.props.user !== '') {
       loggedIn = true
+      this.getMBInfo(this.props.user)
     }
     this.setState({navLocations: this.props.navLocations, loggedIn: loggedIn, paymail: this.props.user})
   }
   componentDidUpdate(prevProps) {
-    if(this.props.navLocations.length != prevProps.navLocations.length) {
+    if(this.props.navLocations.length !== prevProps.navLocations.length) {
       this.setState({navLocations: this.props.navLocations})
     }
-    if(Object.entries(this.props.user).length !== Object.entries(prevProps.user).length) {
+    if(this.props.user !== prevProps.user) {
       this.setState({paymail: this.props.user, loggedIn: true})
       this.getMBInfo(this.props.user)
     }
   }
   async getMBInfo(paymail) {
+    console.log('getting MB info')
     var res = await fetch('/api/users/'+paymail)
+    if (res.status !== 200) {
+      console.error('Failed to load user')
+      return
+    }
     var user = await res.json()
   
     this.setState({user: {id: user.profile.id, name: user.profile.name, paymail: user.profile.primaryPaymail, avatarUrl: user.profile.avatarUrl}})

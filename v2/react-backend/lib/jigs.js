@@ -91,6 +91,12 @@ class BadReviewToken extends Run.Token {
 class TrueReviewAlphaTesterToken extends Run.Token {
 }
 
+class ReviewToken extends Run.Token {
+}
+
+class VoteToken extends Run.Token {
+}
+
 
 class AllLocations extends Run.Jig {
   set(key, value) {this[key] = value}

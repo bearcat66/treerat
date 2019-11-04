@@ -1,13 +1,11 @@
 import React from 'react';
 import ReviewTable from './ReviewTable.js';
-import {Jumbotron} from 'react-bootstrap';
 import './App.css';
 import GoogleMap from 'google-map-react';
 import {geolocated} from 'react-geolocated';
 import Place from './Place';
  
 const MY_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY
-const run = window.Jigs.RunInstance
 
 export class Browse extends React.Component {
   constructor(props) {
@@ -15,6 +13,7 @@ export class Browse extends React.Component {
     this.handleMapClick = this.handleMapClick.bind(this)
     this.handleUpvote = this.handleUpvote.bind(this)
     this.state = {
+      average: 0,
       loadingLocations: true,
       showMap: true,
       loggedIn: false,
@@ -26,16 +25,15 @@ export class Browse extends React.Component {
     }
   }
   componentDidMount() {
-    this.getAllPlaces().then(r=>{
+    loadPlaces().then(r=>{
       this.setState({places: r, loadingLocations: false})
     })
   }
   handleMapClick(event) {
     this.setState({placeID: this.state.places[event].id, isLoading: true, placeName: this.state.places[event].locationName})
-    this.getPlace(this.state.places[event].id).then(r=>{
-      this.setState({reviews: r.reviews, isLoading: false})
+    loadPlace(this.state.places[event].id).then(r=>{
+      this.setState({reviews: r.reviews, isLoading: false, average: r.average})
     })
-    console.log(this.state.reviews)
   }
   handleUpvote() {
     this.setState({placeID: this.state.placeID})
@@ -55,12 +53,24 @@ export class Browse extends React.Component {
     return (
       <div className='container-fluid'>
         <hr/>
-        <h5>Reviews for {this.state.placeName}</h5>
         <ReviewTable
-          reviews={this.getPlace(this.state.placeID)}
+          reviews={this.state.reviews}
           userID={this.props.user}
           handleUpvote={this.handleUpvote}
+          navigateTo={this.props.navigateTo}
+          averageRating={this.state.average}
         />
+      </div>
+    )
+  }
+  renderLocationInfo() {
+    if (this.state.placeID === '') {
+      return null
+    }
+    return (
+      <div>
+        <hr/>
+        <h3>{this.state.placeName}</h3>
       </div>
     )
   }
@@ -103,16 +113,6 @@ export class Browse extends React.Component {
       </div>
     )
   }
-  getPlace(id) {
-    return loadPlace(id).then(r => {
-      return r.reviews
-    })
-  }
-  getAllPlaces() {
-    return loadPlaces().then(r => {
-      return r
-    })
-  }
   render () {
     return (
       <div className="jumbotron jumbotron-transparent-25">
@@ -120,6 +120,7 @@ export class Browse extends React.Component {
           <h3>Browse All Locations</h3>
           <hr/>
           {this.renderMap()}
+          {this.renderLocationInfo()}
           {this.renderReviewTable()}
         </div>
       </div>

@@ -1,18 +1,20 @@
 import React, {Component} from 'react';
-import {GetMBUser} from './MB'
 import {Button, Modal} from 'react-bootstrap';
 
 export default class Profile extends Component {
   constructor(props) {
     super(props)
+    console.log(props.id)
     this.mintCoupon = this.mintCoupon.bind(this)
     this.getCodes = this.getCodes.bind(this)
     this.renderRedemptionCodeModal = this.renderRedemptionCodeModal.bind(this)
     this.closeModal = this.closeModal.bind(this)
     this.state = {
       user: {},
+      paymail: this.props.user,
       userExists: true,
       isLoadingBusiness: false,
+      isLoadingUser: false,
       mintSuccess: false,
       userReviews: [],
       codeList: [],
@@ -20,6 +22,7 @@ export default class Profile extends Component {
       newlyMintedCode: '',
       businessLocations: []
     }
+    this.getUserInformation(this.props.user)
   }
   async getCodes(placeID) {
     var codes = []
@@ -43,6 +46,11 @@ export default class Profile extends Component {
     return codes
   }
   async getUserInformation(id) {
+    if (id === '') {
+      console.error('No user found')
+      this.setState({userExists: false})
+      return
+    }
     var res = await fetch(
       '/api/users/'+id, {
         credentials: 'same-origin'
@@ -54,7 +62,7 @@ export default class Profile extends Component {
     var user = await res.json()
     res = await fetch('/api/review/user/' + id)
     var reviews = await res.json()
-    return {user: user, reviews: reviews}
+    this.setState({user: user, getUserDone: true, userReviews: reviews, businessLocations: user.locations, userExists: true, isLoadingUser: false})
   }
   async mintCoupon(placeID) {
     this.setState({isLoadingBusiness: true})
@@ -93,18 +101,6 @@ export default class Profile extends Component {
         </Modal.Footer>
       </Modal.Dialog>
     )
-  }
-  componentDidMount() {
-    this.getUserInformation(this.props.user).then(r => {
-      console.log(r)
-      if (r == null) {
-        this.setState({userExists: false})
-        return
-      }
-      this.setState({user: r.user, getUserDone: true, userReviews: r.reviews, businessLocations: r.user.locations, userExists: true})
-    })
-  }
-  async loadBusinessLocations() {
   }
   renderCodes() {
     return this.state.codeList.map((code, index) => {
@@ -170,7 +166,7 @@ export default class Profile extends Component {
       console.log(location)
       return (
         <div className="container text-center">
-          <h1>My Business Details</h1>
+          <h1>Business Details</h1>
           <div class="card" styles="width: 18rem;">
             <div class="card-body">
               <h5 class="card-title">{location.name}</h5>
@@ -228,6 +224,8 @@ export default class Profile extends Component {
       <div>
         <h3>Paymail: {this.state.user.profile.primaryPaymail}</h3>
         <h3>Reputation: {this.state.user.tokens}</h3>
+        <h4>Run Address: {this.state.user.address}</h4>
+        <hr/>
       </div>
     )
   }
@@ -258,7 +256,7 @@ export default class Profile extends Component {
     return (
       <div class="card" styles="width: 18rem;">
         <div class="card-body">
-          <img src="logocrop.png" width="100" height="100"/>
+          <img alt="logo" src="logocrop.png" width="100" height="100"/>
           <h3 class="card-title">True Review Alpha Tester</h3>
           <h5 class="card-text">Thanks for being a True Review Alpha Tester!</h5>
         </div>
@@ -278,18 +276,18 @@ export default class Profile extends Component {
       <div className="jumbotron jumbotron-transparent-25">
       <div className="container-fluid text-center">
         <div>
-          <h1>My Profile</h1>
+          <h1>Profile</h1>
           <hr/>
           {this.renderUserInfo()}
           {this.renderSpinner()}
         </div>
         <div className="row">
           <div className="col">
-            <h3>My Reviews</h3>
+            <h3>Reviews</h3>
             {this.renderUserReviews()}
           </div>
           <div className="col">
-            <h3>My Rewards</h3>
+            <h3>Rewards</h3>
             {this.renderCoupons()}
             {this.renderAlphaTester()}
           </div>

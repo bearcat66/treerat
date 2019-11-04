@@ -1,15 +1,30 @@
 import React, {Component} from 'react';
+import './App.css';
+import Login from './Login';
 import NavBar from './core/NavBar';
+import Transaction from './Transaction';
 import Home from './Home.js';
 import Submit from './Submit.js';
 import Browse from './Browse.js';
 import Search from './Search.js';
-import Redeem from './Redeem.js';
+//import Redeem from './Redeem.js';
 import Profile from './Profile.js';
 import About from './About.js';
 import Contact from './Contact.js';
-import './App.css';
+import {Route, Switch, useParams} from "react-router-dom";
+function Tx() {
+  var {id} = useParams()
+  return (
+    <Transaction id={id}/>
+  )
+}
 
+function User() {
+  var {id} = useParams()
+  return (
+    <Profile user={id}/>
+  )
+}
 
 class App extends Component {
   constructor(props) {
@@ -18,6 +33,7 @@ class App extends Component {
       showPage: "home",
       user: '',
       loggedIn: false,
+      profileUser: '',
       navLocations: [
         {title: "About", navLocation: "about"},
         {title: "Contact", navLocation: "contact"},
@@ -25,17 +41,15 @@ class App extends Component {
 
     };
     this.showProfilePage = this.showProfilePage.bind(this)
-    this.userExists = this.userExists.bind(this)
-    this.navigate = this.navigate.bind(this);
   }
   componentDidMount() {
     fetch('/api/session').then(res => {
       if (res.status === 404) {
-        throw 'Session not found'
+        throw new Error('Session not found')
       }
       return res.json()
     }).then(r => {
-      console.log(r.user)
+      console.log(r)
       this.setState({loggedIn: true, user: r.user})
       this.setNavBarLocations()
     }).catch(e => {
@@ -43,8 +57,9 @@ class App extends Component {
       this.setState({loggedIn: false})
     })
   }
-  navigate(newPage) {
-    this.setState({showPage: newPage});
+  navigate(newPage, profileUser) {
+    console.log(profileUser)
+    this.setState({showPage: newPage, profileUser: profileUser});
   }
   showProfilePage() {
     this.setState({showPage: 'profile'})
@@ -76,27 +91,51 @@ class App extends Component {
       })
     }
   }
-  renderLoginModal(){
-    if (this.state.loggedIn) {
-    }
-  }
-
-
   render() {
+    const App = () => (
+      <div>
+        <Switch>
+          <Route exact path="/">
+            <Home user={this.state.user} isLoggedIn={this.state.loggedIn}/>
+          </Route>
+          <Route path="/about">
+            <About/>
+          </Route>
+          <Route path="/browse">
+            <Browse/>
+          </Route>
+          <Route path="/contact">
+            <Contact/>
+          </Route>
+          <Route path="/profile">
+            <Profile user={this.state.user}/>
+          </Route>
+          <Route path="/search">
+            <Search/>
+          </Route>
+          <Route path="/submit">
+            <Submit user={this.state.user}/>
+          </Route>
+          <Route path="/tx/:id">
+            <Tx/>
+          </Route>
+          <Route path="/user/:id">
+            <User/>
+          </Route>
+          <Route path="/login/" component={Login} />
+        </Switch>
+      </div>
+    )
     return (
       <div>
         <NavBar user={this.state.user} onUserClick={this.showProfilePage} navigateTo = {this.navigate} navLocations = {this.state.navLocations} />
-        {this.state.showPage === "home" ? <Home navigateTo={this.navigate} userExists={this.userExists} user={this.state.user}/> : null}
-        {this.state.showPage === "about" ? <About /> : null}
-        {this.state.showPage === "submit" ? <Submit user={this.state.user} navigateTo={this.navigate}/> : null}
-        {this.state.showPage === "browse" ? <Browse user={this.state.user}/> : null}
-        {this.state.showPage === "search" ? <Search user={this.state.user} navigateTo={this.navigate}/> : null}
-        {this.state.showPage === "redeem" ? <Redeem/> : null}
-        {this.state.showPage === "profile" ? <Profile user={this.state.user}/> : null}
-        {this.state.showPage === "contact" ? <Contact/> : null}
+        <Switch>
+          <App/>
+        </Switch>
       </div>
     );
   }
 }
+
 
 export default App;

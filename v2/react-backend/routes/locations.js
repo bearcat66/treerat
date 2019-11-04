@@ -71,16 +71,32 @@ async function transferLocation(placeID, recipientID) {
 }
 
 async function loadLocation (location) {
+  run.activate()
   await run.sync()
   var l = await run.load(location)
   await l.sync()
   var location = {placeID: l.placeID, lat: l.lat, lng: l.lng, name: l.name, reviews: []}
+  console.log(l.reviews)
   var entries = Object.entries(l.reviews)
+  var total = entries.length
+  var totalScore = 0
   for (var [key, value] of entries) {
+    console.log(key)
+    if (key == null || key == 'undefined') {
+      console.error('Found null user key')
+      // I don't know how this got here. Not good!!
+      continue
+    }
+    console.log('here')
     var profile = await users.LoadUserProfile(key)
     var score = await review.GetScore(value.origin)
+    totalScore += value.rating
     location.reviews.push({user: profile.profile.primaryPaymail, userID: profile.profile.id, body: value.body, rating: value.rating, origin: value.origin, points: score})
   }
+  var avg = totalScore / total
+  avg = Math.round(avg * 10) / 10
+  console.log(avg)
+  location.average = avg
   return location
 }
 

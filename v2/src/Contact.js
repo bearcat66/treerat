@@ -1,9 +1,6 @@
 import React from 'react';
 import {TwitterFollowButton} from 'react-twitter-embed';
 export default class Contact extends React.Component {
-  constructor(props) {
-    super(props);
-  };
   render() {
     return (
       <div className="jumbotron jumbotron-transparent-25">

@@ -6,13 +6,6 @@ import GoogleMap from 'google-map-react'
 import Place from './Place';
 import GoogleMapLoader from 'react-google-maps-loader'
 import GooglePlacesSuggest from 'react-google-places-suggest'
-const Review = window.Jigs.Review
-const Location = window.Jigs.Location
-const AllLocations = window.Jigs.AllLocations
-//const UserDB = window.Jigs.UserDB
-
-//const Run = window.Run
-const run = window.Jigs.RunInstance
 
 
 

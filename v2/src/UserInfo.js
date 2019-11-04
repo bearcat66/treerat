@@ -1,5 +1,5 @@
 import React from 'react';
-import {Navbar} from 'react-bootstrap'
+import {Link} from 'react-router-dom';
 
 export default class UserInfo extends React.Component {
   constructor(props) {
@@ -24,9 +24,9 @@ export default class UserInfo extends React.Component {
     }
     return (
       <div className="justify-content-end">
-        <a href='#' onClick={this.props.onUserClick} title={this.state.user.name}>
-          {this.state.user.name}   <img className="navbar-expand-sm avatar-small" src={this.state.user.avatarUrl} />
-        </a>
+        <Link to='/profile' title={this.state.user.name}>
+            {this.state.user.name}   <img alt='avatar' className="navbar-expand-sm avatar-small" src={this.state.user.avatarUrl} />
+        </Link>
       </div>
     );
   }

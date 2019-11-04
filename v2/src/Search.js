@@ -1,5 +1,5 @@
 import React from 'react';
-import {Jumbotron, Button, Modal} from 'react-bootstrap'
+import {Button, Modal} from 'react-bootstrap'
 import GoogleMapLoader from 'react-google-maps-loader'
 import GooglePlacesSuggest from 'react-google-places-suggest'
 import ReviewTable from './ReviewTable.js';
@@ -10,7 +10,6 @@ const MY_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY
 //const AllLocations = window.Jigs.AllLocations
 
 //const Run = window.Run
-const run = window.Jigs.RunInstance
 
 
 export default class Search extends React.Component {
@@ -58,7 +57,9 @@ export default class Search extends React.Component {
     this.setState({renderModal: true})
   }
   renderClaimBusinessButton() {
+    // DISABLE BUTTONG
     return null
+    // REMOVE THIS
     if (this.state.locationSelected === false || this.props.user === '') {
       return null
     }
@@ -159,7 +160,7 @@ export default class Search extends React.Component {
 function getReviews(placeID) {
   return fetch('/api/locations/'+placeID).then(res=> {
     if (res.status === 404) {
-      throw 'Location not found'
+      throw new Error('Location not found')
     }
     return res.json()
   }).then(r => {
@@ -167,29 +168,4 @@ function getReviews(placeID) {
   }).catch(e => {
     console.error(e)
   })
-}
-
-async function loadJigs(placeID) {
-  run.activate()
-  var locs = run.owner.jigs.find(x => x.constructor.name === 'AllLocations')
-  if (locs == null) {
-    return null
-  }
-  var loc = locs.get(placeID)
-  if (loc == null) {
-    console.log("No location found")
-    return null
-  }
-  console.log('location found: ' + loc)
-  var jig = await run.load(loc)
-  await jig.sync()
-  var revs = Object.entries(jig.reviews)
-  var reviewList = []
-  for (var [key, value] of revs) {
-    console.log('User: ' + key + ' review: ' + value.location)
-    var rev = await run.load(value.location)
-    console.log('Loading review...')
-    reviewList.push({locationName: jig.name, rating: rev.rating, reviewBody: rev.body, mbName: rev.user})
-  }
-  return reviewList
 }

@@ -23,6 +23,7 @@ var reviewRouter = require('./routes/review');
 var trueReviewRouter = require('./routes/truereview');
 var loginRouter = require('./routes/login');
 var sessionRouter = require('./routes/session');
+var txRouter = require('./routes/transaction');
 
 var app = express();
 
@@ -80,6 +81,7 @@ app.use('/api/locations', locationsRouter);
 app.use('/api/review', reviewRouter);
 app.use('/api/truereview', trueReviewRouter);
 app.use('/api/login', loginRouter);
+app.use('/api/transaction', txRouter);
 
 
 // catch 404 and forward to error handler

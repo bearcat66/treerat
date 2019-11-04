@@ -7,11 +7,6 @@ import {GetMBToken} from './MB'
 //import { PaymailClient } from '@moneybutton/paymail-client'
 const MB_OAUTH_ID = process.env.REACT_APP_MBOAUTHID
 
-const UserDB = window.Jigs.UserDB
-//const Run = window.Run
-const run = window.Jigs.RunInstance
-
-
 export default class Login extends React.Component {
   constructor(props) {
     super(props)
@@ -30,7 +25,7 @@ export default class Login extends React.Component {
     console.log(params)
     fetch('/api/session').then(res => {
       if (res.status === 404) {
-        throw 'Session not found'
+        throw new Error('Session not found')
       }
       return res.json()
     }).then(r => {
