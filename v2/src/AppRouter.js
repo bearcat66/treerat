@@ -50,7 +50,7 @@ class App extends Component {
       return res.json()
     }).then(r => {
       console.log(r)
-      this.setState({loggedIn: true, user: r.user})
+      this.setState({loggedIn: true, user: r.user, avatar: r.avatarUrl, name: r.name})
       this.setNavBarLocations()
     }).catch(e => {
       console.error(e)
@@ -128,7 +128,7 @@ class App extends Component {
     )
     return (
       <div>
-        <NavBar user={this.state.user} onUserClick={this.showProfilePage} navigateTo = {this.navigate} navLocations = {this.state.navLocations} />
+        <NavBar user={this.state.user} avatarUrl={this.state.avatar} name={this.state.name} onUserClick={this.showProfilePage} navigateTo = {this.navigate} navLocations = {this.state.navLocations} />
         <Switch>
           <App/>
         </Switch>

@@ -3,6 +3,7 @@ var bsv = require('bsv')
 var ecies = require('bsv/ecies')
 
 var express = require('express');
+var users = require('./users.js');
 var router = express.Router();
 
 //const Run = require('../lib/run.node.min')
@@ -35,7 +36,9 @@ router.get('/', function(req, res) {
       req.session.save()
     })
   }
-  res.send(JSON.stringify({user: req.session.user.paymail}))
+  users.LoadUserProfile(req.session.user.paymail).then(r => {
+    res.send(JSON.stringify({user: req.session.user.paymail, avatarUrl: r.profile.avatarUrl, name: r.profile.name}))
+  })
 })
 
 async function getNewAccessToken(accessToken, refreshToken, expires) {

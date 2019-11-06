@@ -17,29 +17,16 @@ class NavBar extends Component {
     var loggedIn = false
     if (this.props.user !== '') {
       loggedIn = true
-      this.getMBInfo(this.props.user)
     }
-    this.setState({navLocations: this.props.navLocations, loggedIn: loggedIn, paymail: this.props.user})
+    this.setState({navLocations: this.props.navLocations, loggedIn: loggedIn, paymail: this.props.user, name: this.props.name, avatarUrl: this.props.avatarUrl})
   }
   componentDidUpdate(prevProps) {
     if(this.props.navLocations.length !== prevProps.navLocations.length) {
       this.setState({navLocations: this.props.navLocations})
     }
     if(this.props.user !== prevProps.user) {
-      this.setState({paymail: this.props.user, loggedIn: true})
-      this.getMBInfo(this.props.user)
+      this.setState({paymail: this.props.user, loggedIn: true, user: {name: this.props.name, avatarUrl: this.props.avatarUrl}})
     }
-  }
-  async getMBInfo(paymail) {
-    console.log('getting MB info')
-    var res = await fetch('/api/users/'+paymail)
-    if (res.status !== 200) {
-      console.error('Failed to load user')
-      return
-    }
-    var user = await res.json()
-  
-    this.setState({user: {id: user.profile.id, name: user.profile.name, paymail: user.profile.primaryPaymail, avatarUrl: user.profile.avatarUrl}})
   }
 
   render() {

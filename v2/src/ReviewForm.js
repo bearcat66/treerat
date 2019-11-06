@@ -5,6 +5,7 @@ import GoogleMap from 'google-map-react'
 import Place from './Place';
 import GoogleMapLoader from 'react-google-maps-loader'
 import GooglePlacesSuggest from 'react-google-places-suggest'
+import {Link} from 'react-router-dom'
 
 const MY_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY
 
@@ -77,6 +78,7 @@ export default class ReviewForm extends React.Component {
     if (this.state.renderSuccessModal === false) {
       return null
     }
+    var txUrl = '/tx/'+this.state.reviewTx
     return (
       <Modal.Dialog>
         <Modal.Header closeButton>
@@ -90,9 +92,7 @@ export default class ReviewForm extends React.Component {
 
         <Modal.Footer>
           <Button onClick={this.closeModal} variant="secondary">Close</Button>
-          <Button onClick={() => {
-            this.props.navigateTo('profile')
-          }} variant="primary">View Review</Button>
+          <Link to={txUrl}><Button variant="primary">View Review</Button></Link>
         </Modal.Footer>
       </Modal.Dialog>
     )
@@ -156,7 +156,8 @@ export default class ReviewForm extends React.Component {
       }
       return res.json()
     }).then(rev =>  {
-      this.setState({renderSuccessModal: true, isLoading: false})
+      var tx = rev.location.split('_')[0]
+      this.setState({renderSuccessModal: true, isLoading: false, reviewTx: tx})
       console.log(rev)
     }).catch(e => {
       this.setState({isLoading: false, renderErrorModal: true})

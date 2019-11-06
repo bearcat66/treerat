@@ -103,7 +103,7 @@ async function loadUserProfile(id) {
   return {profile: user.profile}
 }
 
-async function loadUserInfo(paymail, accessToken) {
+async function loadUserInfo(paymail) {
   console.log('Loading user info for: ' + paymail)
   var mbclient = new mb.MoneyButtonClient(MB_OAUTH_ID)
   //await mbclient.setAccessToken(accessToken)

@@ -10,6 +10,8 @@
   opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
   -webkit-transition: .2s; /* 0.2 seconds transition on hover */
   transition: opacity .2s;
+  padding-right: 0px;
+  padding-left: 0px;
 }
 
 /* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */ 
@@ -48,7 +50,7 @@
   text-align: center;
   width: 1px;
   background: #D3D3D3;
-  height: 10px;
-  line-height: 40px;
-  margin: 0 0 20px 0;
+  height: 15px;
+  line-height: 60px;
+  margin: 0 0 30px 0;
 }

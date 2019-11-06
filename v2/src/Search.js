@@ -27,6 +27,7 @@ export default class Search extends React.Component {
       address: '',
       locationSelected: false,
       renderModal: false,
+      locationDNE: false,
     };
   }
   componentDidMount() {
@@ -37,7 +38,16 @@ export default class Search extends React.Component {
   }
 
   handleSelectSuggest(geocodedPrediction, originalPrediction) {
-    this.setState({search: '', address: geocodedPrediction.formatted_address, placeID: geocodedPrediction.place_id, placeDescription: originalPrediction.description, locationSelected: true})
+    this.setState({search: '', address: geocodedPrediction.formatted_address, placeID: geocodedPrediction.place_id, placeDescription: originalPrediction.description})
+    getReviews(geocodedPrediction.place_id).then(r => {
+      if (r == null) {
+        this.setState({locationDNE: true})
+        return
+      }
+      this.setState({reviews: r.reviews, average: r.average, locationSelected: true, locationDNE: false})
+    }).catch(e => {
+      console.error(e)
+    })
   }
   
   handleNoResult() {
@@ -48,8 +58,21 @@ export default class Search extends React.Component {
   handleStatusUpdate(status) {
   }
   renderReviewTable() {
+    if (this.state.locationDNE) {
+      return (
+        <div>
+          <hr/>
+          <h4>No Reviews Found</h4>
+        </div>
+      )
+    }
     if (this.state.locationSelected) {
-      return <ReviewTable navigateTo={this.props.navigateTo} reviews={getReviews(this.state.placeID)} userID={this.props.user}/>
+      return <ReviewTable
+                navigateTo={this.props.navigateTo}
+                reviews={this.state.reviews}
+                userID={this.props.user}
+                averageRating={this.state.average}
+              />
     }
     return null
   }
@@ -164,7 +187,7 @@ function getReviews(placeID) {
     }
     return res.json()
   }).then(r => {
-    return r.reviews
+    return r
   }).catch(e => {
     console.error(e)
   })

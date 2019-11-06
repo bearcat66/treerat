@@ -9,12 +9,10 @@ export default class UserInfo extends React.Component {
     };
   }
   componentDidMount() {
-    console.log(this.props.userInfo)
     this.setState({user: this.props.userInfo})
   }
   componentDidUpdate(prevProps) {
-    if (Object.entries(prevProps.userInfo).length !== Object.entries(this.props.userInfo).length) {
-      console.log(this.props.user)
+    if (Object.entries(prevProps.userInfo).length !== Object.entries(this.props.userInfo).length && Object.entries(this.props.userInfo).length > 0) {
       this.setState({user: this.props.userInfo})
     }
   }

@@ -110,13 +110,13 @@ export default class ReviewTable extends React.Component {
       var profileLink = '/user/' + review.user
       return (
         <div>
-        <div class="card" styles="width: 10rem;">
-          <div class="card-body">
-            <h5 class="card-title">User: {review.user}</h5>
-            <h6 class="card-subtitle mb-2 text-right">Rating: {review.rating}</h6>
-            <h6 class="card-subtitle mb-2 text-right">Score: {review.points.score}</h6>
-            <p class="card-text">{review.body}</p>
-            <div class="card-text text-center">
+        <div className="card" styles="width: 10rem;">
+          <div className="card-body">
+            <h5 className="card-title">User: {review.user}</h5>
+            <h6 className="card-subtitle mb-2 text-right">Rating: {review.rating}</h6>
+            <h6 className="card-subtitle mb-2 text-right">Score: {review.points.score}</h6>
+            <p className="card-text">{review.body}</p>
+            <div className="card-text text-center">
               <Button disabled={disableButton} variant="primary" size="sm" onClick={() => {
                 review.points.score += 5
                 review.points.upvotedUsers.push(this.state.userID)
@@ -129,17 +129,17 @@ export default class ReviewTable extends React.Component {
               }}>{downvoteButtonText}</Button>
           </div>
           <ul/>
-          <div class="card-text text-center">
-            <h6 class="card-subtitle mb-2 text-center">Leave a tip!</h6>
+          <div className="card-text text-center">
+            <h6 className="card-subtitle mb-2 text-center">Leave a tip!</h6>
             <MoneyButton
               to={review.userID}
-              editable='true'
               currency='USD'
+              editable
             />
           </div>
           <hr/>
-          <Link to={txUrl} class="card-link">View TX</Link>
-          <Link to={profileLink} class="card-link">{review.user}'s Profile</Link>
+          <Link to={txUrl} className="card-link">View TX</Link>
+          <Link to={profileLink} className="card-link">{review.user}'s Profile</Link>
           </div>
         </div>
       </div>
