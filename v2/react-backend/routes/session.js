@@ -4,6 +4,7 @@ var ecies = require('bsv/ecies')
 
 var express = require('express');
 var users = require('./users.js');
+var tokens = require('./tokens.js');
 var router = express.Router();
 
 //const Run = require('../lib/run.node.min')
@@ -38,6 +39,9 @@ router.get('/', function(req, res) {
   }
   users.LoadUserProfile(req.session.user.paymail).then(r => {
     res.send(JSON.stringify({user: req.session.user.paymail, avatarUrl: r.profile.avatarUrl, name: r.profile.name}))
+  }).catch(e => {
+    console.error(e)
+    res.status(500).send(JSON.stringify({error: 'failed loading session'}))
   })
 })
 

@@ -204,12 +204,12 @@ export default class Profile extends Component {
     console.log(this.state.userReviews)
     return this.state.userReviews.reviews.map((review, index) => {
       return (
-        <div class="card" styles="width: 18rem;">
-          <div class="card-body">
-            <h5 class="card-title">{review.locationName}</h5>
-            <h6 class="card-subtitle mb-2 text-right">Rating: {review.rating}</h6>
-            <h6 class="card-subtitle mb-2 text-right">Score: {review.points.score}</h6>
-            <p class="card-text">{review.body}</p>
+        <div className="card" styles="width: 18rem;">
+          <div className="card-body">
+            <h5 className="card-title">{review.locationName}</h5>
+            <h6 className="card-subtitle mb-2 text-right">Rating: {review.rating}</h6>
+            <h6 className="card-subtitle mb-2 text-right">Score: {review.points.score}</h6>
+            <p className="card-text">{review.body}</p>
           </div>
         </div>
       )
@@ -254,11 +254,11 @@ export default class Profile extends Component {
       return null
     }
     return (
-      <div class="card" styles="width: 18rem;">
-        <div class="card-body">
+      <div className="card" styles="width: 18rem;">
+        <div className="card-body">
           <img alt="logo" src="logocrop.png" width="100" height="100"/>
-          <h3 class="card-title">True Review Alpha Tester</h3>
-          <h5 class="card-text">Thanks for being a True Review Alpha Tester!</h5>
+          <h3 className="card-title">True Review Alpha Tester</h3>
+          <h5 className="card-text">Thanks for being a True Review Alpha Tester!</h5>
         </div>
       </div>
     )

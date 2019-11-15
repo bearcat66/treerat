@@ -33,6 +33,7 @@ export default class ReviewTable extends React.Component {
     } catch(e) {
       console.error(e)
     }
+    this.props.loadTokens(this.state.userID)
     this.setState({upvoting: false})
   }
 
@@ -47,6 +48,7 @@ export default class ReviewTable extends React.Component {
     })
     var s = await res.json()
     console.log(s)
+    this.props.loadTokens(this.state.userID)
     this.setState({downvoting: false})
   }
   renderLocationInfo() {
@@ -76,13 +78,11 @@ export default class ReviewTable extends React.Component {
     return revs.map((review, index) => {
       var tx = review.origin.split("_")[0]
       var txUrl = '/tx/'+tx
-      console.log(txUrl)
       var disableButton = false
       var upvoted = false
       var downvoted = false
       var upvoteButtonText = 'Great Review!'
       var downvoteButtonText = 'Bad Review'
-      console.log(review.points)
       if (review.points.upvotedUsers == null) {
         return null
       }
@@ -109,7 +109,7 @@ export default class ReviewTable extends React.Component {
       }
       var profileLink = '/user/' + review.user
       return (
-        <div>
+        <div key={index}>
         <div className="card" styles="width: 10rem;">
           <div className="card-body">
             <h5 className="card-title">User: {review.user}</h5>

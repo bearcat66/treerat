@@ -139,7 +139,6 @@ export default class ReviewForm extends React.Component {
       result = await res.json()
       console.log(result)
     }
-    console.log(this.state.user)
     fetch('/api/review/'+this.state.placeID, {
       headers: {'Content-Type': 'application/json'},
       method: 'post',
@@ -157,8 +156,8 @@ export default class ReviewForm extends React.Component {
       return res.json()
     }).then(rev =>  {
       var tx = rev.location.split('_')[0]
+      this.props.loadTokens(this.props.user)
       this.setState({renderSuccessModal: true, isLoading: false, reviewTx: tx})
-      console.log(rev)
     }).catch(e => {
       this.setState({isLoading: false, renderErrorModal: true})
     })
@@ -301,7 +300,7 @@ export default class ReviewForm extends React.Component {
       <div className="form-group" id="reviewFormRating">
         <label>Rating: {this.state.rating}</label>
         <input className="form-control slider" value={this.state.rating} type="range" min="0" max="10" step="0.1" onInput={this.handleReviewRatingChange} required/>
-        <div class="sliderticks">
+        <div className="sliderticks">
           <p>0</p>
           <p>1</p>
           <p>2</p>
@@ -330,10 +329,6 @@ export default class ReviewForm extends React.Component {
   render() {
       return (
         <div>
-          <div className="container-fluid text-center">
-            <h3>Submit a New Review</h3>
-            <hr/>
-          </div>
           <div className="container-fluid">
             {this.renderForm()}
             {this.renderSubmissionModal()}

@@ -7,10 +7,12 @@ import Home from './Home.js';
 import Submit from './Submit.js';
 import Browse from './Browse.js';
 import Search from './Search.js';
+import Purchase from './Purchase.js';
 //import Redeem from './Redeem.js';
 import Profile from './Profile.js';
 import About from './About.js';
 import Contact from './Contact.js';
+import App from './App.js';
 import {Route, Switch, useParams} from "react-router-dom";
 function Tx() {
   var {id} = useParams()
@@ -26,7 +28,7 @@ function User() {
   )
 }
 
-class App extends Component {
+class AppRouter extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -41,10 +43,12 @@ class App extends Component {
 
     };
     this.showProfilePage = this.showProfilePage.bind(this)
+    this.loadTokens = this.loadTokens.bind(this)
+    this.updateSession = this.updateSession.bind(this)
   }
   componentDidMount() {
     fetch('/api/session').then(res => {
-      if (res.status === 404) {
+      if (res.status === 404 || res.status === 500) {
         throw new Error('Session not found')
       }
       return res.json()
@@ -52,15 +56,45 @@ class App extends Component {
       console.log(r)
       this.setState({loggedIn: true, user: r.user, avatar: r.avatarUrl, name: r.name})
       this.setNavBarLocations()
+      this.loadTokens(r.user)
     }).catch(e => {
       console.error(e)
       this.setState({loggedIn: false})
     })
   }
-  navigate(newPage, profileUser) {
-    console.log(profileUser)
-    this.setState({showPage: newPage, profileUser: profileUser});
+  loadTokens(user) {
+    fetch('/api/tokens/user/'+user, {
+      headers: {'Cache-Control': 'no-cache'},
+    }).then(res => {
+      return res.json()
+    }).then(r => {
+      this.setState({
+        tokens: {
+          reviews: r.reviews,
+          votes: r.votes
+        }
+      })
+    }).catch(e => {
+      console.error(e)
+    })
   }
+  updateSession() {
+    fetch('/api/session').then(res => {
+      if (res.status === 404 || res.status === 500) {
+        throw new Error('Session not found')
+      }
+      return res.json()
+    }).then(r => {
+      console.log(r)
+      this.setState({loggedIn: true, user: r.user, avatar: r.avatarUrl, name: r.name})
+      this.setNavBarLocations()
+      this.loadTokens(r.user)
+    }).catch(e => {
+      console.error(e)
+      this.setState({loggedIn: false})
+    })
+  }
+
   showProfilePage() {
     this.setState({showPage: 'profile'})
   }
@@ -77,6 +111,7 @@ class App extends Component {
           {title: "Submit", navLocation: "submit"},
           {title: "Browse", navLocation: "browse"},
           {title: "Search", navLocation: "search"},
+          {title: "Purchase", navLocation: "purchase"},
           //{title: "Redeem", navLocation: "redeem"},
           {title: "Contact", navLocation: "contact"},
         ]
@@ -92,45 +127,23 @@ class App extends Component {
     }
   }
   render() {
-    const App = () => (
-      <div>
-        <Switch>
-          <Route exact path="/">
-            <Home user={this.state.user} isLoggedIn={this.state.loggedIn}/>
-          </Route>
-          <Route path="/about">
-            <About/>
-          </Route>
-          <Route path="/browse">
-            <Browse/>
-          </Route>
-          <Route path="/contact">
-            <Contact/>
-          </Route>
-          <Route path="/profile">
-            <Profile user={this.state.user}/>
-          </Route>
-          <Route path="/search">
-            <Search/>
-          </Route>
-          <Route path="/submit">
-            <Submit user={this.state.user}/>
-          </Route>
-          <Route path="/tx/:id">
-            <Tx/>
-          </Route>
-          <Route path="/user/:id">
-            <User/>
-          </Route>
-          <Route path="/login/" component={Login} />
-        </Switch>
-      </div>
-    )
     return (
       <div>
-        <NavBar user={this.state.user} avatarUrl={this.state.avatar} name={this.state.name} onUserClick={this.showProfilePage} navigateTo = {this.navigate} navLocations = {this.state.navLocations} />
+        <NavBar
+          user={this.state.user}
+          avatarUrl={this.state.avatar}
+          name={this.state.name}
+          navLocations = {this.state.navLocations}
+          tokens={this.state.tokens}
+        />
         <Switch>
-          <App/>
+          <App
+            updateSession={this.updateSession}
+            loadTokens={this.loadTokens}
+            tokens={this.state.tokens}
+            user={this.state.user}
+            loggedIn={this.state.loggedIn}
+          />
         </Switch>
       </div>
     );
@@ -138,4 +151,4 @@ class App extends Component {
 }
 
 
-export default App;
+export default AppRouter;

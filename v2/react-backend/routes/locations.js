@@ -87,7 +87,6 @@ async function loadLocation (location) {
       // I don't know how this got here. Not good!!
       continue
     }
-    console.log('here')
     var profile = await users.LoadUserProfile(key)
     var score = await review.GetScore(value.origin)
     totalScore += value.rating

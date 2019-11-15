@@ -37,6 +37,7 @@ export class Browse extends React.Component {
   }
   handleUpvote() {
     this.setState({placeID: this.state.placeID})
+    this.props.loadTokens()
   }
   renderReviewTable() {
     if (this.state.placeID === '') {
@@ -59,6 +60,8 @@ export class Browse extends React.Component {
           handleUpvote={this.handleUpvote}
           navigateTo={this.props.navigateTo}
           averageRating={this.state.average}
+          tokens={this.props.tokens}
+          loadTokens={this.props.loadTokens}
         />
       </div>
     )
@@ -130,14 +133,12 @@ export class Browse extends React.Component {
 
 async function loadPlace(id) {
   return fetch('/api/locations/'+id).then(res=>res.json()).then(l => {
-    console.log(l)
     return l
   })
 }
 
 async function loadPlaces() {
   return fetch('/api/locations').then(res=>res.json()).then(l => {
-    console.log(l)
     return l
   })
 }

@@ -34,7 +34,6 @@ async function loginUser(paymail, oauth) {
     var refreshToken = mbclient.getRefreshToken()
     var accessToken = await mbclient.getValidAccessToken()
     var expiration = await mbclient.getExpirationTime()
-    console.log(expiration)
     var expire = new Date(expiration)
   } catch(e) {
     throw(e)

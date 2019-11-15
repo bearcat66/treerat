@@ -18,14 +18,32 @@ class NavBar extends Component {
     if (this.props.user !== '') {
       loggedIn = true
     }
-    this.setState({navLocations: this.props.navLocations, loggedIn: loggedIn, paymail: this.props.user, name: this.props.name, avatarUrl: this.props.avatarUrl})
+    this.setState({
+      navLocations: this.props.navLocations,
+      loggedIn: loggedIn,
+      paymail: this.props.user,
+      name: this.props.name,
+      avatarUrl: this.props.avatarUrl
+    })
   }
   componentDidUpdate(prevProps) {
-    if(this.props.navLocations.length !== prevProps.navLocations.length) {
+    if (this.props.navLocations.length !== prevProps.navLocations.length) {
       this.setState({navLocations: this.props.navLocations})
     }
-    if(this.props.user !== prevProps.user) {
-      this.setState({paymail: this.props.user, loggedIn: true, user: {name: this.props.name, avatarUrl: this.props.avatarUrl}})
+    if (this.props.user !== prevProps.user && this.props.user != null) {
+      this.setState({
+        paymail: this.props.user,
+        loggedIn: true,
+        user: {
+          name: this.props.name,
+          avatarUrl: this.props.avatarUrl
+        }
+      })
+    }
+    if (this.props.tokens !== prevProps.tokens) {
+      this.setState({
+        tokens: this.props.tokens
+      })
     }
   }
 
@@ -46,14 +64,24 @@ class NavBar extends Component {
           </div>
         </div>
         <div className='col justify-content-end text-right'>
-          <UserInfo onUserClick={this.props.onUserClick} userInfo={this.state.user}/>
+          <UserInfo userInfo={this.state.user} tokens={this.state.tokens}/>
           <ul/>
           {!this.state.loggedIn ? <button className="btn btn-link" onClick={GetMBToken}>Login in with MB</button> : null }
-          {this.state.loggedIn ? <button className="btn btn-link" onClick={LogOutOfMB}>Log Out</button> : null }
+          {this.state.loggedIn ? <button className="btn btn-link" onClick={() => {
+            logOut(this.state.paymail)
+          }}>Log Out</button> : null }
         </div>
       </nav>
     );
   }
+}
+
+async function logOut(user) {
+  var res = await fetch('/api/logout/'+user, {
+    headers: {'Content-Type': 'application/json'},
+    method: 'post'
+  })
+  window.location.reload()
 }
 
 export default NavBar

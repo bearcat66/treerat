@@ -29,7 +29,7 @@ class Home extends Component {
     )
   }
   renderUserItems() {
-    if (!this.state.isLoggedIn) {
+    if (!this.props.isLoggedIn) {
       return (
         <div>
           {this.renderLoginSnippet()}

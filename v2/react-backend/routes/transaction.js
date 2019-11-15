@@ -24,6 +24,7 @@ router.get('/:id', function(req, res) {
 })
 
 async function loadTx(id) {
+  run.activate()
   await run.sync()
   var t = await run.blockchain.fetch(id)
   var jigs = []

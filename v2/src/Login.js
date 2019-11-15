@@ -24,7 +24,7 @@ export default class Login extends React.Component {
     var params = QueryString.parse(this.props.location.search)
     console.log(params)
     fetch('/api/session').then(res => {
-      if (res.status === 404) {
+      if (res.status === 404 || res.status === 500) {
         throw new Error('Session not found')
       }
       return res.json()
@@ -53,6 +53,7 @@ export default class Login extends React.Component {
       return null
     }
     console.log("Login redirect called");
+    this.props.updateSession()
     return (<Redirect to="/"/>)
   }
   renderSpinner() {
@@ -87,9 +88,9 @@ export default class Login extends React.Component {
     return (
       <div className="container-fluid text-center">
         <h1>Welcome to TrueReviews Alpha</h1>
-        <h1 class='text-primary'>{this.state.user.profile.primaryPaymail}!</h1>
+        <h1 className='text-primary'>{this.state.user.profile.primaryPaymail}!</h1>
         <hr/>
-        <h3 class='text-danger'>Note: You will be registered with the primary paymail associated with your MoneyButton account.</h3>
+        <h3 className='text-danger'>Note: You will be registered with the primary paymail associated with your MoneyButton account.</h3>
         <h3>If you would like to register with a different paymail please change your settings on moneybutton.com. You may need to log out and log back in.</h3>
         <h2>Please swipe the MoneyButton to register:</h2>
         <MoneyButton
@@ -154,5 +155,6 @@ async function loginUser(params, paymail) {
       state: params.state
     })
   })
-  console.log(res.status)
+  var result = await res.json()
+  return result
 }
