@@ -36,11 +36,11 @@ export default class Login extends React.Component {
       this.setState({loggedIn: false})
     })
     handleAuth().then(u => {
-      loginUser(params, u.profile.primaryPaymail)
-      //this.setState({redirect: true});
-      //here u has the user's MB information
-      //this is where we need to create UserDB objects and save pubKeys
-      this.getUser(u)
+      loginUser(params, u.profile.primaryPaymail).then(r => {
+        this.getUser(u)
+      }).catch(e => {
+        console.error(e)
+      })
       this.setState({user: u})
     }).catch(e => {
       console.error(e)
