@@ -1,15 +1,12 @@
 import React from 'react';
 
 export default class About extends React.Component {
-  constructor(props) {
-    super(props);
-  };
   render() {
     return (
       <div className="jumbotron jumbotron-transparent-25">
+        <h3 className="text-center">About Us</h3>
+        <hr/>
         <div className="container bg-light">
-          <h3 className="text-center">About Us</h3>
-          <hr/>
           <h5 className="text-center">What is True Reviews?</h5>
           <p>TrueReviews is an online review platform that enables businesses
             to incentivize more reviews for their businesses and for users to
@@ -36,7 +33,7 @@ export default class About extends React.Component {
             Reviews have a few main components:
             <li>Location: This is the Google Search location being reviewed</li>
             <li>Review Body: This is the text of your review</li>
-            <li>Rating: A 1-10 rating system that accepts and rating to one decimal place (ie 5.4, 7.8, etc)</li>
+            <li>Rating: A 1-10 rating system that accepts a rating to one decimal place (ie 5.4, 7.8, etc)</li>
             <li>True Review Code: A manual way of entering a redeemable code for rewards. This will most likely not be used during the Alpha testing.</li>
             <ul/>
             Reviews can be searched for and voted on with a simple positive or negative score.
@@ -53,9 +50,9 @@ export default class About extends React.Component {
             mints these tokens and distributes them to users based on the
             following criteria:
             <ul/>
-            Creating a review: 1 positive reputation token
-            Review earns a “like”: 5 positive reputation tokens
-            Reviews earns a “dislike”: 5 negative reputation tokens. 
+            <li>Creating a review: 1 positive reputation token</li>
+            <li>Review earns a “like”: 5 positive reputation tokens</li>
+            <li>Reviews earns a “dislike”: 5 negative reputation tokens.</li>
             <ul/>
             Your total reputation across the site is the calculated difference
             between your Positive Reputation tokens and your Negative

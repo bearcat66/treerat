@@ -1,5 +1,5 @@
 import React from 'react';
-import {Jumbotron, Button, Modal} from 'react-bootstrap'
+import {Button, Modal} from 'react-bootstrap'
 import GoogleMapLoader from 'react-google-maps-loader'
 import GooglePlacesSuggest from 'react-google-places-suggest'
 import ReviewTable from './ReviewTable.js';
@@ -10,7 +10,6 @@ const MY_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY
 //const AllLocations = window.Jigs.AllLocations
 
 //const Run = window.Run
-const run = window.Jigs.RunInstance
 
 
 export default class Search extends React.Component {
@@ -28,6 +27,7 @@ export default class Search extends React.Component {
       address: '',
       locationSelected: false,
       renderModal: false,
+      locationDNE: false,
     };
   }
   componentDidMount() {
@@ -38,7 +38,16 @@ export default class Search extends React.Component {
   }
 
   handleSelectSuggest(geocodedPrediction, originalPrediction) {
-    this.setState({search: '', address: geocodedPrediction.formatted_address, placeID: geocodedPrediction.place_id, placeDescription: originalPrediction.description, locationSelected: true})
+    this.setState({search: '', address: geocodedPrediction.formatted_address, placeID: geocodedPrediction.place_id, placeDescription: originalPrediction.description})
+    getReviews(geocodedPrediction.place_id).then(r => {
+      if (r == null) {
+        this.setState({locationDNE: true})
+        return
+      }
+      this.setState({reviews: r.reviews, average: r.average, locationSelected: true, locationDNE: false})
+    }).catch(e => {
+      console.error(e)
+    })
   }
   
   handleNoResult() {
@@ -49,8 +58,21 @@ export default class Search extends React.Component {
   handleStatusUpdate(status) {
   }
   renderReviewTable() {
+    if (this.state.locationDNE) {
+      return (
+        <div>
+          <hr/>
+          <h4>No Reviews Found</h4>
+        </div>
+      )
+    }
     if (this.state.locationSelected) {
-      return <ReviewTable navigateTo={this.props.navigateTo} reviews={getReviews(this.state.placeID)} userID={this.props.user}/>
+      return <ReviewTable
+                navigateTo={this.props.navigateTo}
+                reviews={this.state.reviews}
+                userID={this.props.user}
+                averageRating={this.state.average}
+              />
     }
     return null
   }
@@ -58,7 +80,9 @@ export default class Search extends React.Component {
     this.setState({renderModal: true})
   }
   renderClaimBusinessButton() {
+    // DISABLE BUTTONG
     return null
+    // REMOVE THIS
     if (this.state.locationSelected === false || this.props.user === '') {
       return null
     }
@@ -159,37 +183,12 @@ export default class Search extends React.Component {
 function getReviews(placeID) {
   return fetch('/api/locations/'+placeID).then(res=> {
     if (res.status === 404) {
-      throw 'Location not found'
+      throw new Error('Location not found')
     }
     return res.json()
   }).then(r => {
-    return r.reviews
+    return r
   }).catch(e => {
     console.error(e)
   })
-}
-
-async function loadJigs(placeID) {
-  run.activate()
-  var locs = run.owner.jigs.find(x => x.constructor.name === 'AllLocations')
-  if (locs == null) {
-    return null
-  }
-  var loc = locs.get(placeID)
-  if (loc == null) {
-    console.log("No location found")
-    return null
-  }
-  console.log('location found: ' + loc)
-  var jig = await run.load(loc)
-  await jig.sync()
-  var revs = Object.entries(jig.reviews)
-  var reviewList = []
-  for (var [key, value] of revs) {
-    console.log('User: ' + key + ' review: ' + value.location)
-    var rev = await run.load(value.location)
-    console.log('Loading review...')
-    reviewList.push({locationName: jig.name, rating: rev.rating, reviewBody: rev.body, mbName: rev.user})
-  }
-  return reviewList
 }

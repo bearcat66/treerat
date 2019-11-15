@@ -1,5 +1,6 @@
 var mb = require('@moneybutton/api-client')
 var users = require('./users.js')
+var tokens= require('./tokens.js')
 
 var Mnemonic = require('bsv/mnemonic')
 var moment = require('moment')
@@ -89,6 +90,7 @@ async function downvoteReview(reviewID, downvotedUser) {
   tokes.send(rev.owner)
   await run.sync()
   var newScore = pts.downvote(reviewID, downvotedUser)
+  await tokens.RedeemVote(downvotedUser)
 }
 
 async function upvoteReview(reviewID, upvotedUser) {
@@ -121,6 +123,7 @@ async function upvoteReview(reviewID, upvotedUser) {
   var out = bsv.Transaction.Output({satoshis: 5000, script: output})
   var tx = new bsv.Transaction().from(utxos).change(purseAddress).addOutput(out).sign(PURSE2_PRIVKEY)
   await run.blockchain.broadcast(tx)
+  await tokens.RedeemVote(upvotedUser)
   console.log("Successfully sent ["+rev.user+"] 5000 satoshis")
 }
  
@@ -182,27 +185,30 @@ async function handleReviewCreate(locationOfJig, placeID, params) {
     var loc = await instance.load(locationOfJig.location)
     await loc.sync()
   }
+  run.transaction.begin()
   var rev = loc.createReview(params.reviewBody, params.rating, params.userID)
-  await loc.sync()
+  //await loc.sync()
   console.log(params.userID+ ' Successfully created a review for: ' + params.locationName)
   var bug = Buffer.from(user.keys)
   var enc = ecies.bitcoreECIES().privateKey(ownerPrivKey).decrypt(bug)
   var keys = JSON.parse(enc.toString())
   console.log('Sending review to user: ' + params.userID)
   rev.send(keys.pubKey)
+  run.transaction.end()
   await rev.sync()
   console.log('Successfully sent review to user: ' + params.userID)
   run.activate()
   await run.sync()
+  run.transaction.begin()
   pointsdb.set(rev.origin, {score: 0, upvotedUsers: [], downvotedUsers: []})
   console.log('Issuing 1 reputation point to: ' + params.userID)
   var token = new Jigs.TrueReviewToken(1)
   token.send(keys.pubKey)
-  await token.sync()
+  await run.transaction.end()
+  await run.sync()
   // Send user 1000 satoshis
   console.log('Sending '+params.userID+' 1000 satoshis')
   var paymailClient = new PaymailClient(dns, fetch)
-  await run.sync()
   var purseAddress = new bsv.PrivateKey(PURSE2_PRIVKEY).toAddress().toString()
   var utxos = await run.blockchain.utxos(purseAddress)
   var output = await paymailClient.getOutputFor(params.userID, {
@@ -215,6 +221,7 @@ async function handleReviewCreate(locationOfJig, placeID, params) {
   var tx = new bsv.Transaction().from(utxos).change(purseAddress).addOutput(out).sign(PURSE2_PRIVKEY)
   await run.blockchain.broadcast(tx)
   console.log("Successfully sent ["+rev.user+"] 1000 satoshis")
+  await tokens.RedeemReview(params.userID)
   return rev
 }
 

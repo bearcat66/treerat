@@ -9,6 +9,7 @@ var router = express.Router();
 //const Jigs = require('../lib/jigs')
 //const run = Jigs.RunTrueReview
 const MB_OAUTH_ID = process.env.REACT_APP_MBOAUTHID
+const MB_REDIRECT_URI = process.env.REACT_APP_MB_REDIRECT_URI
 const MB_CLIENT_ID = process.env.MB_CLIENT_ID
 const MB_CLIENT_SECRET = process.env.MB_CLIENT_SECRET
 //const ownerPrivKey = bsv.PrivateKey.fromWIF(Jigs.OWNER_KEY)
@@ -30,11 +31,10 @@ router.post('/:id', function(req, res) {
 async function loginUser(paymail, oauth) {
   try {
     var mbclient = new mb.MoneyButtonClient(MB_OAUTH_ID)
-    await mbclient.authorizeWithAuthFlowResponse(oauth, oauth.state, 'http://localhost:3000/login')
+    await mbclient.authorizeWithAuthFlowResponse(oauth, oauth.state, MB_REDIRECT_URI)
     var refreshToken = mbclient.getRefreshToken()
     var accessToken = await mbclient.getValidAccessToken()
     var expiration = await mbclient.getExpirationTime()
-    console.log(expiration)
     var expire = new Date(expiration)
   } catch(e) {
     throw(e)

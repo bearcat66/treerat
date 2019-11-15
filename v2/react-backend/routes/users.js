@@ -60,6 +60,7 @@ router.post('/:id', function(req, res) {
 })
 
 async function createUser(id, profile, isBusinessAccount) {
+  run.activate()
   await run.sync()
   var db = getUserDB()
   await db.sync()
@@ -80,12 +81,18 @@ async function createUser(id, profile, isBusinessAccount) {
   }
   db.set(profile.primaryPaymail, userProfile)
   console.log('User [' + profile.primaryPaymail+'] uploaded to userDB object')
-  await run.sync()
   await db.sync()
   var address = bsv.Address.fromPublicKey(userPubKey)
   console.log('Address: '+ address)
-  var token = new Jigs.TrueReviewAlphaTesterToken(1)
-  token.send(keys.pubKey)
+  var token = await loadAlphaTesterToken()
+  var reviews = await loadReviewToken()
+  var votes = await loadVoteToken()
+  run.activate()
+  run.transaction.begin()
+  token.send(keys.pubKey, 1)
+  reviews.send(keys.pubKey, 5)
+  votes.send(keys.pubKey, 10)
+  run.transaction.end()
   await run.sync()
   return {address: address.toString()}
 }
@@ -103,7 +110,7 @@ async function loadUserProfile(id) {
   return {profile: user.profile}
 }
 
-async function loadUserInfo(paymail, accessToken) {
+async function loadUserInfo(paymail) {
   console.log('Loading user info for: ' + paymail)
   var mbclient = new mb.MoneyButtonClient(MB_OAUTH_ID)
   //await mbclient.setAccessToken(accessToken)
@@ -225,7 +232,58 @@ async function loadAllUsers() {
   return userList
 }
 
+function decryptKeys(keys) {
+  try {
+    var bug = Buffer.from(keys)
+    var enc = ecies.bitcoreECIES().privateKey(ownerPrivKey).decrypt(bug)
+    var keys = JSON.parse(enc.toString())
+  } catch(e) {
+    throw e
+  }
+  return keys
+}
+
+async function loadReviewToken() {
+  run.activate()
+  await run.sync()
+  var token = run.owner.jigs.find(function(i) {
+    return i.constructor.name === 'ReviewToken' && i.amount > 100
+  })
+  return token
+}
+
+async function loadVoteToken() {
+  run.activate()
+  await run.sync()
+  var token = run.owner.jigs.find(function(i) {
+    return i.constructor.name === 'VoteToken' && i.amount > 100
+  })
+  return token
+}
+
+async function loadAlphaTesterToken() {
+  run.activate()
+  await run.sync()
+  var token = run.owner.jigs.find(function(i) {
+    return i.constructor.name === 'TrueReviewAlphaTesterToken' && i.amount > 10
+  })
+  return token
+}
+async function loadUserRunInstance(keys) {
+  var userRunInstance = new Run({
+    network: Jigs.NETWORK,
+    owner: keys.privKey,
+    purse: Jigs.PURSE_KEY,
+    app: Jigs.APP_ID
+  })
+  userRunInstance.activate()
+  await userRunInstance.sync()
+  return userRunInstance
+}
+
 module.exports = router;
 module.exports.LoadUser = loadUserInfo
 module.exports.LoadUserProfile = loadUserProfile
 module.exports.GetUserDB = getUserDB
+module.exports.DecryptKeys = decryptKeys
+module.exports.LoadUserRunInstance = loadUserRunInstance

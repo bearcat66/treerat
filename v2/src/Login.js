@@ -7,11 +7,6 @@ import {GetMBToken} from './MB'
 //import { PaymailClient } from '@moneybutton/paymail-client'
 const MB_OAUTH_ID = process.env.REACT_APP_MBOAUTHID
 
-const UserDB = window.Jigs.UserDB
-//const Run = window.Run
-const run = window.Jigs.RunInstance
-
-
 export default class Login extends React.Component {
   constructor(props) {
     super(props)
@@ -29,8 +24,8 @@ export default class Login extends React.Component {
     var params = QueryString.parse(this.props.location.search)
     console.log(params)
     fetch('/api/session').then(res => {
-      if (res.status === 404) {
-        throw 'Session not found'
+      if (res.status === 404 || res.status === 500) {
+        throw new Error('Session not found')
       }
       return res.json()
     }).then(r => {
@@ -41,11 +36,11 @@ export default class Login extends React.Component {
       this.setState({loggedIn: false})
     })
     handleAuth().then(u => {
-      loginUser(params, u.profile.primaryPaymail)
-      //this.setState({redirect: true});
-      //here u has the user's MB information
-      //this is where we need to create UserDB objects and save pubKeys
-      this.getUser(u)
+      loginUser(params, u.profile.primaryPaymail).then(r => {
+        this.getUser(u)
+      }).catch(e => {
+        console.error(e)
+      })
       this.setState({user: u})
     }).catch(e => {
       console.error(e)
@@ -58,6 +53,7 @@ export default class Login extends React.Component {
       return null
     }
     console.log("Login redirect called");
+    this.props.updateSession()
     return (<Redirect to="/"/>)
   }
   renderSpinner() {
@@ -92,9 +88,9 @@ export default class Login extends React.Component {
     return (
       <div className="container-fluid text-center">
         <h1>Welcome to TrueReviews Alpha</h1>
-        <h1 class='text-primary'>{this.state.user.profile.primaryPaymail}!</h1>
+        <h1 className='text-primary'>{this.state.user.profile.primaryPaymail}!</h1>
         <hr/>
-        <h3 class='text-danger'>Note: You will be registered with the primary paymail associated with your MoneyButton account.</h3>
+        <h3 className='text-danger'>Note: You will be registered with the primary paymail associated with your MoneyButton account.</h3>
         <h3>If you would like to register with a different paymail please change your settings on moneybutton.com. You may need to log out and log back in.</h3>
         <h2>Please swipe the MoneyButton to register:</h2>
         <MoneyButton
@@ -159,5 +155,6 @@ async function loginUser(params, paymail) {
       state: params.state
     })
   })
-  console.log(res.status)
+  var result = await res.json()
+  return result
 }

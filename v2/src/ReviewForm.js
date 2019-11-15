@@ -1,22 +1,11 @@
 import React from 'react';
-import {GetMBUser} from './MB';
-//import MoneyButton from '@moneybutton/react-money-button'
+import './ReviewForm.css'
 import {Jumbotron, Button, Modal, Spinner} from 'react-bootstrap'
 import GoogleMap from 'google-map-react'
 import Place from './Place';
 import GoogleMapLoader from 'react-google-maps-loader'
 import GooglePlacesSuggest from 'react-google-places-suggest'
-const Review = window.Jigs.Review
-const Location = window.Jigs.Location
-const AllLocations = window.Jigs.AllLocations
-//const UserDB = window.Jigs.UserDB
-
-
-//const Run = window.Run
-const run = window.Jigs.RunInstance
-
-
-
+import {Link} from 'react-router-dom'
 
 const MY_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY
 
@@ -45,7 +34,7 @@ export default class ReviewForm extends React.Component {
       placeID: '',
       placeDescription: '',
       address: '',
-      rating: '',
+      rating: '5',
       reviewTx: '',
       redeemCode: '',
       coords: {lat: 59.93, lng: 30.33},
@@ -89,6 +78,7 @@ export default class ReviewForm extends React.Component {
     if (this.state.renderSuccessModal === false) {
       return null
     }
+    var txUrl = '/tx/'+this.state.reviewTx
     return (
       <Modal.Dialog>
         <Modal.Header closeButton>
@@ -102,9 +92,7 @@ export default class ReviewForm extends React.Component {
 
         <Modal.Footer>
           <Button onClick={this.closeModal} variant="secondary">Close</Button>
-          <Button onClick={() => {
-            this.props.navigateTo('profile')
-          }} variant="primary">View Review</Button>
+          <Link to={txUrl}><Button variant="primary">View Review</Button></Link>
         </Modal.Footer>
       </Modal.Dialog>
     )
@@ -125,7 +113,7 @@ export default class ReviewForm extends React.Component {
       })
       if (res.status === 500) {
         this.setState({renderErrorModal: true, codeValid: false, errorMessage: 'Failed to redeem True Review code', isLoading: false})
-        throw "Failed to redeem code"
+        throw new Error("Failed to redeem code")
       }
       var result = await res.json()
       this.setState({codeValid: true})
@@ -136,7 +124,7 @@ export default class ReviewForm extends React.Component {
     }
 
     if (this.state.redeemCode !== '') {
-      var res = await fetch('/api/truereview/'+this.state.placeID+'/redeem', {
+      res = await fetch('/api/truereview/'+this.state.placeID+'/redeem', {
         headers: {'Content-Type': 'application/json'},
         method: 'post',
         body: JSON.stringify({
@@ -146,12 +134,11 @@ export default class ReviewForm extends React.Component {
         })
       })
       if (res.status !== 200) {
-        throw 'Redeeming failed'
+        throw new Error('Redeeming failed')
       }
-      var result = await res.json()
+      result = await res.json()
       console.log(result)
     }
-    console.log(this.state.user)
     fetch('/api/review/'+this.state.placeID, {
       headers: {'Content-Type': 'application/json'},
       method: 'post',
@@ -164,12 +151,13 @@ export default class ReviewForm extends React.Component {
       })
     }).then(res => {
       if (res.status !== 200) {
-        throw('Something went wrong')
+        throw new Error('Something went wrong')
       }
       return res.json()
     }).then(rev =>  {
-      this.setState({renderSuccessModal: true, isLoading: false})
-      console.log(rev)
+      var tx = rev.location.split('_')[0]
+      this.props.loadTokens(this.props.user)
+      this.setState({renderSuccessModal: true, isLoading: false, reviewTx: tx})
     }).catch(e => {
       this.setState({isLoading: false, renderErrorModal: true})
     })
@@ -224,7 +212,6 @@ export default class ReviewForm extends React.Component {
   }
 
   handleReviewRatingChange(event) {
-    event.preventDefault()
     this.setState({rating: event.target.value})
   }
 
@@ -311,8 +298,21 @@ export default class ReviewForm extends React.Component {
         <textarea className="form-control" rows="3" onChange={this.handleReviewBodyChange} required/>
       </div>
       <div className="form-group" id="reviewFormRating">
-        <label>Rating</label>
-        <input className="form-control" type="number" min="0" max="10" step=".1" onInput={this.handleReviewRatingChange}  required/>
+        <label>Rating: {this.state.rating}</label>
+        <input className="form-control slider" value={this.state.rating} type="range" min="0" max="10" step="0.1" onInput={this.handleReviewRatingChange} required/>
+        <div className="sliderticks">
+          <p>0</p>
+          <p>1</p>
+          <p>2</p>
+          <p>3</p>
+          <p>4</p>
+          <p>5</p>
+          <p>6</p>
+          <p>7</p>
+          <p>8</p>
+          <p>9</p>
+          <p>10</p>
+        </div>
       </div>
       <div className="form-group" id="reviewFormRedeemCode">
         <label>True Review Code (Optional)</label>
@@ -329,10 +329,6 @@ export default class ReviewForm extends React.Component {
   render() {
       return (
         <div>
-          <div className="container-fluid text-center">
-            <h3>Submit a New Review</h3>
-            <hr/>
-          </div>
           <div className="container-fluid">
             {this.renderForm()}
             {this.renderSubmissionModal()}

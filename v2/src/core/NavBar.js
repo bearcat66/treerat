@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import UserInfo from '../UserInfo'
 import {GetMBToken, LogOutOfMB} from '../MB'
 import ButtonList from './navbar_helpers/ButtonList';
-const MB_OAUTH_ID = process.env.REACT_APP_MBOAUTHID
 
 class NavBar extends Component {
   constructor(props) {
@@ -16,25 +15,36 @@ class NavBar extends Component {
   }
   componentDidMount() {
     var loggedIn = false
-    if (Object.entries(this.props.user).length !== 0) {
+    if (this.props.user !== '') {
       loggedIn = true
     }
-    this.setState({navLocations: this.props.navLocations, loggedIn: loggedIn, paymail: this.props.user})
+    this.setState({
+      navLocations: this.props.navLocations,
+      loggedIn: loggedIn,
+      paymail: this.props.user,
+      name: this.props.name,
+      avatarUrl: this.props.avatarUrl
+    })
   }
   componentDidUpdate(prevProps) {
-    if(this.props.navLocations.length != prevProps.navLocations.length) {
+    if (this.props.navLocations.length !== prevProps.navLocations.length) {
       this.setState({navLocations: this.props.navLocations})
     }
-    if(Object.entries(this.props.user).length !== Object.entries(prevProps.user).length) {
-      this.setState({paymail: this.props.user, loggedIn: true})
-      this.getMBInfo(this.props.user)
+    if (this.props.user !== prevProps.user && this.props.user != null) {
+      this.setState({
+        paymail: this.props.user,
+        loggedIn: true,
+        user: {
+          name: this.props.name,
+          avatarUrl: this.props.avatarUrl
+        }
+      })
     }
-  }
-  async getMBInfo(paymail) {
-    var res = await fetch('/api/users/'+paymail)
-    var user = await res.json()
-  
-    this.setState({user: {id: user.profile.id, name: user.profile.name, paymail: user.profile.primaryPaymail, avatarUrl: user.profile.avatarUrl}})
+    if (this.props.tokens !== prevProps.tokens) {
+      this.setState({
+        tokens: this.props.tokens
+      })
+    }
   }
 
   render() {
@@ -54,14 +64,24 @@ class NavBar extends Component {
           </div>
         </div>
         <div className='col justify-content-end text-right'>
-          <UserInfo onUserClick={this.props.onUserClick} userInfo={this.state.user}/>
+          <UserInfo userInfo={this.state.user} tokens={this.state.tokens}/>
           <ul/>
           {!this.state.loggedIn ? <button className="btn btn-link" onClick={GetMBToken}>Login in with MB</button> : null }
-          {this.state.loggedIn ? <button className="btn btn-link" onClick={LogOutOfMB}>Log Out</button> : null }
+          {this.state.loggedIn ? <button className="btn btn-link" onClick={() => {
+            logOut(this.state.paymail)
+          }}>Log Out</button> : null }
         </div>
       </nav>
     );
   }
+}
+
+async function logOut(user) {
+  var res = await fetch('/api/logout/'+user, {
+    headers: {'Content-Type': 'application/json'},
+    method: 'post'
+  })
+  window.location.reload()
 }
 
 export default NavBar

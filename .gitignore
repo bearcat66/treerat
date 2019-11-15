@@ -10,6 +10,8 @@
 /v2/react-backend/.*
 /v2/react-backend/package-lock.json
 /v2/package-lock.json
+/v2/build
+/v2/build/*
 
 # testing
 /coverage

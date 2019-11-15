@@ -1,102 +1,72 @@
-import React, {Component} from 'react';
-import NavBar from './core/NavBar';
+import React from 'react';
+import Login from './Login';
+import Transaction from './Transaction';
 import Home from './Home.js';
 import Submit from './Submit.js';
 import Browse from './Browse.js';
 import Search from './Search.js';
-import Redeem from './Redeem.js';
+import Purchase from './Purchase.js';
+//import Redeem from './Redeem.js';
 import Profile from './Profile.js';
 import About from './About.js';
 import Contact from './Contact.js';
-import './App.css';
+import {Route, Switch, useParams} from "react-router-dom";
+function Tx() {
+  var {id} = useParams()
+  return (
+    <Transaction id={id}/>
+  )
+}
 
+function User() {
+  var {id} = useParams()
+  return (
+    <Profile user={id}/>
+  )
+}
 
-class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      showPage: "home",
-      user: '',
-      loggedIn: false,
-      navLocations: [
-        {title: "About", navLocation: "about"},
-        {title: "Contact", navLocation: "contact"},
-      ]
-
-    };
-    this.showProfilePage = this.showProfilePage.bind(this)
-    this.userExists = this.userExists.bind(this)
-    this.navigate = this.navigate.bind(this);
-  }
-  componentDidMount() {
-    fetch('/api/session').then(res => {
-      if (res.status === 404) {
-        throw 'Session not found'
-      }
-      return res.json()
-    }).then(r => {
-      console.log(r.user)
-      this.setState({loggedIn: true, user: r.user})
-      this.setNavBarLocations()
-    }).catch(e => {
-      console.error(e)
-      this.setState({loggedIn: false})
-    })
-  }
-  navigate(newPage) {
-    this.setState({showPage: newPage});
-  }
-  showProfilePage() {
-    this.setState({showPage: 'profile'})
-  }
-  userExists(yes) {
-    console.log(yes)
-    this.setState({loggedIn: yes})
-    this.setNavBarLocations()
-  }
-  setNavBarLocations() {
-    if (this.state.loggedIn) {
-      this.setState({
-        navLocations: [
-          {title: "About", navLocation: "about"},
-          {title: "Submit", navLocation: "submit"},
-          {title: "Browse", navLocation: "browse"},
-          {title: "Search", navLocation: "search"},
-          //{title: "Redeem", navLocation: "redeem"},
-          {title: "Contact", navLocation: "contact"},
-        ]
-      })
-    } else {
-      console.log('not logged in updating navLocations')
-      this.setState({
-        navLocations: [
-          {title: "About", navLocation: "about"},
-          {title: "Contact", navLocation: "contact"},
-        ]
-      })
-    }
-  }
-  renderLoginModal(){
-    if (this.state.loggedIn) {
-    }
-  }
-
-
+export default class App extends React.Component {
   render() {
     return (
       <div>
-        <NavBar user={this.state.user} onUserClick={this.showProfilePage} navigateTo = {this.navigate} navLocations = {this.state.navLocations} />
-        {this.state.showPage === "home" ? <Home navigateTo={this.navigate} userExists={this.userExists} user={this.state.user}/> : null}
-        {this.state.showPage === "about" ? <About /> : null}
-        {this.state.showPage === "submit" ? <Submit user={this.state.user} navigateTo={this.navigate}/> : null}
-        {this.state.showPage === "browse" ? <Browse user={this.state.user}/> : null}
-        {this.state.showPage === "search" ? <Search user={this.state.user} navigateTo={this.navigate}/> : null}
-        {this.state.showPage === "redeem" ? <Redeem/> : null}
-        {this.state.showPage === "profile" ? <Profile user={this.state.user}/> : null}
-        {this.state.showPage === "contact" ? <Contact/> : null}
+        <Switch>
+          <Route exact path="/">
+            <Home user={this.props.user} isLoggedIn={this.props.loggedIn}/>
+          </Route>
+          <Route path="/about">
+            <About/>
+          </Route>
+          <Route path="/browse">
+            <Browse user={this.props.user} tokens={this.props.tokens} loadTokens={this.props.loadTokens}/>
+          </Route>
+          <Route path="/contact">
+            <Contact/>
+          </Route>
+          <Route path="/profile">
+            <Profile user={this.props.user}/>
+          </Route>
+          <Route path="/search">
+            <Search user={this.props.user} tokens={this.props.tokens} loadTokens={this.props.loadTokens}/>
+          </Route>
+          <Route path="/submit">
+            <Submit user={this.props.user} tokens={this.props.tokens} loadTokens={this.props.loadTokens}/>
+          </Route>
+          <Route path="/tx/:id">
+            <Tx/>
+          </Route>
+          <Route path="/user/:id">
+            <User/>
+          </Route>
+          <Route path="/purchase">
+            <Purchase user={this.props.user} loadTokens={this.props.loadTokens}/>
+          </Route>
+          <Route
+            path="/login/"
+            render={(props) => <Login {...props} updateSession={this.props.updateSession}/>}
+          />
+        </Switch>
       </div>
-    );
+    )
   }
 }
 
-export default App;

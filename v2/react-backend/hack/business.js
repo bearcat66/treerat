@@ -1,6 +1,6 @@
 const Run = require('../lib/run.node.min')
 var Jigs = require('../lib/jigs')
-const NETWORK = process.env.NETWORK
+const NETWORK = process.env.TR_NETWORK
 const OWNER = process.env.TR_OWNER
 const PURSE = process.env.TR_PURSE
 
@@ -20,7 +20,8 @@ async function loadDB() {
   var userdb = run.owner.jigs.find(x => x.constructor.name === 'UserDB')
   await db.sync()
   await userdb.sync()
-  var loc = db.get('ChIJmTCFBohRrIkR8JgjZs6wABY')
+  console.log(db)
+  var loc = db.get('ChIJ4-kNJeRZrIkR37ySykhZp1Q')
   var location = await run.load(loc.location)
   console.log(location)
 }
