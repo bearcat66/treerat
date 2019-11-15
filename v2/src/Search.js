@@ -72,6 +72,8 @@ export default class Search extends React.Component {
                 reviews={this.state.reviews}
                 userID={this.props.user}
                 averageRating={this.state.average}
+                tokens={this.props.tokens}
+                loadTokens={this.props.loadTokens}
               />
     }
     return null
