@@ -39,7 +39,7 @@ class Home extends Component {
 
     return (
       <div className="container text-center">
-        <h5>Welcome back {this.state.user}!</h5>
+        <h5>Welcome back {this.props.user}!</h5>
         <Link to='/profile'><Button variant="primary" size="lg">View My Profile</Button></Link>
       </div>
     )

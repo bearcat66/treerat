@@ -1,13 +1,14 @@
 import {MoneyButtonClient} from '@moneybutton/api-client'
 
 const MB_OAUTH_ID = process.env.REACT_APP_MBOAUTHID
+const MB_REDIRECT_URI = process.env.REACT_APP_MB_REDIRECT_URI
 
 export async function GetMBToken() {
   var mbclient = new MoneyButtonClient(MB_OAUTH_ID)
   try {
     mbclient.requestAuthorization(
       'auth.user_identity:read users.profiles:read',
-      'http://localhost:3000/login'
+      MB_REDIRECT_URI
     )
     await mbclient.handleAuthorizationResponse()
   } catch (err) {
