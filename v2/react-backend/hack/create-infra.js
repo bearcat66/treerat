@@ -15,9 +15,9 @@ const RunTrueReview = new Run ({
 })
 
 var run = RunTrueReview
-//ensureUserDBCreated()
-//ensurePointsDBCreated()
-//ensureLocationDBCreated()
+ensureUserDBCreated()
+ensurePointsDBCreated()
+ensureLocationDBCreated()
 mintTokens()
 
 
@@ -87,9 +87,9 @@ async function loadPointsDB() {
 async function mintTokens() {
   run.activate()
   await run.sync()
-  //var revs = new Jigs.ReviewToken(100000)
-  //var votes = new Jigs.VoteToken(100000)
-  var alpha = new Jigs.TrueReviewAlphaTesterToken(300)
+  var revs = new Jigs.ReviewToken(100000)
+  var votes = new Jigs.VoteToken(100000)
+  //var alpha = new Jigs.TrueReviewAlphaTesterToken(300)
 }
 
 async function ensureUserDBCreated() {

@@ -8,6 +8,8 @@ var helmet = require('helmet')
 var session = require('express-session')
 var uuid = require('uuid')
 var redis = require('redis')
+const Jigs = require('./lib/jigs')
+const run = Jigs.RunTrueReview
 
 const redisClient = redis.createClient();
 const redisStore = require('connect-redis')(session);
@@ -105,5 +107,11 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+run.activate()
+console.log("Starting run instance sync...")
+run.sync().then(r => {
+  console.log('Successfully synced run instance')
+})
 
 module.exports = app;

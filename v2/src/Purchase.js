@@ -43,12 +43,13 @@ export default class Purchase extends React.Component {
     })
   }
   onMBLoad() {
-    var tot = this.state.loadedMBs += 1
+    var tot = this.state.loadedMBs
+    tot += 1
     this.setState({loadedMBs: tot})
   }
   renderMBs() {
     return (
-      <div className="row">
+      <div className="row text-center">
         <div className="col text-center">
           <h4>Reviews</h4>
           <hr/>
@@ -96,7 +97,12 @@ export default class Purchase extends React.Component {
   }
   renderSpinner() {
     if (this.state.loadedMBs !== 4) {
-      return <div className="spinner-grow text-center"/>
+      return (
+        <div className="container text-center">
+          <p>Loading MoneyButton...</p>
+          <div className="spinner-grow text-center"/>
+        </div>
+      )
     }
     return null
   }

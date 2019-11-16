@@ -84,13 +84,18 @@ async function downvoteReview(reviewID, downvotedUser) {
   var pts = getPointsDBJig()
   await pts.sync()
   if (pts.get(reviewID) === null) {
-    pts.set(reviewID, {score: 0, upvotedUsers: [], downvotedUsers: [downvotedUser]})
+    pts.set(reviewID, {score: 0, upvotedUsers: [], downvotedUsers: []})
   }
   var tokes = new Jigs.BadReviewToken(3)
   tokes.send(rev.owner)
   await run.sync()
   var newScore = pts.downvote(reviewID, downvotedUser)
   await tokens.RedeemVote(downvotedUser)
+  await pts.sync()
+  var voters = pts.get(reviewID)
+  if (voters.downvotedUsers.length > 0) {
+    await payVoters(voters.downvotedUsers)
+  }
 }
 
 async function upvoteReview(reviewID, upvotedUser) {
@@ -102,7 +107,7 @@ async function upvoteReview(reviewID, upvotedUser) {
   var pts = getPointsDBJig()
   await pts.sync()
   if (pts.get(reviewID) === null) {
-    pts.set(reviewID, {score: 0, upvotedUsers: [upvotedUser], downvotedUsers: []})
+    pts.set(reviewID, {score: 0, upvotedUsers: [], downvotedUsers: []})
   }
   var tokes = new Jigs.TrueReviewToken(5)
   tokes.send(rev.owner)
@@ -125,6 +130,33 @@ async function upvoteReview(reviewID, upvotedUser) {
   await run.blockchain.broadcast(tx)
   await tokens.RedeemVote(upvotedUser)
   console.log("Successfully sent ["+rev.user+"] 5000 satoshis")
+  await pts.sync()
+  var voters = pts.get(reviewID)
+  console.log(voters)
+  if (voters.upvotedUsers.length > 0) {
+    await payVoters(voters.upvotedUsers)
+  }
+}
+
+async function payVoters(voters) {
+  console.log('Paying curators')
+  console.log(voters)
+  var paymailClient = new PaymailClient(dns, fetch)
+  var purseAddress = new bsv.PrivateKey(PURSE2_PRIVKEY).toAddress().toString()
+  for(var i=0;i<voters.length;i++) {
+    var voter = voters[i]
+    await run.sync()
+    var utxos = await run.blockchain.utxos(purseAddress)
+    var output = await paymailClient.getOutputFor(voter, {
+      senderHandle: 'truereviews@moneybutton.com',
+      amount: 550, // Amount in satoshis
+      senderName: 'True Reviews',
+      purpose: 'Your vote earned you money!',
+    }, PURSE2_PRIVKEY)
+    var out = bsv.Transaction.Output({satoshis: 550, script: output})
+    var tx = new bsv.Transaction().from(utxos).change(purseAddress).addOutput(out).sign(PURSE2_PRIVKEY)
+    await run.blockchain.broadcast(tx)
+  }
 }
  
 async function loadReviews(userID) {
@@ -206,21 +238,21 @@ async function handleReviewCreate(locationOfJig, placeID, params) {
   token.send(keys.pubKey)
   await run.transaction.end()
   await run.sync()
-  // Send user 1000 satoshis
-  console.log('Sending '+params.userID+' 1000 satoshis')
+  // Send user 5000 satoshis
+  console.log('Sending '+params.userID+' 5000 satoshis')
   var paymailClient = new PaymailClient(dns, fetch)
   var purseAddress = new bsv.PrivateKey(PURSE2_PRIVKEY).toAddress().toString()
   var utxos = await run.blockchain.utxos(purseAddress)
   var output = await paymailClient.getOutputFor(params.userID, {
     senderHandle: 'truereviews@moneybutton.com',
-    amount: 1000, // Amount in satoshis
+    amount: 5000, // Amount in satoshis
     senderName: 'True Reviews',
     purpose: 'You created a review!',
   }, PURSE2_PRIVKEY)
-  var out = bsv.Transaction.Output({satoshis: 1000, script: output})
+  var out = bsv.Transaction.Output({satoshis: 5000, script: output})
   var tx = new bsv.Transaction().from(utxos).change(purseAddress).addOutput(out).sign(PURSE2_PRIVKEY)
   await run.blockchain.broadcast(tx)
-  console.log("Successfully sent ["+rev.user+"] 1000 satoshis")
+  console.log("Successfully sent ["+rev.user+"] 5000 satoshis")
   await tokens.RedeemReview(params.userID)
   return rev
 }

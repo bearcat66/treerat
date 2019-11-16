@@ -21,6 +21,14 @@ export default class UserInfo extends React.Component {
     }
   }
   renderTokens() {
+    if (this.props.loadingTokens || !this.state.tokens) {
+      return (
+        <div className="container text-info">
+          <p>Loading credits...</p>
+          <div className="spinner-border spinner-border-sm"/>
+        </div>
+      )
+    }
     if (!this.state.tokens) {
       return null
     }

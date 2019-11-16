@@ -107,6 +107,9 @@ export default class ReviewTable extends React.Component {
           }
         }
       }
+      if (this.props.tokens == null || this.props.tokens.votes === 0) {
+        disableButton = true
+      }
       var profileLink = '/user/' + review.user
       return (
         <div key={index}>

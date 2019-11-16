@@ -1,32 +1,8 @@
 import React, {Component} from 'react';
 import './App.css';
-import Login from './Login';
 import NavBar from './core/NavBar';
-import Transaction from './Transaction';
-import Home from './Home.js';
-import Submit from './Submit.js';
-import Browse from './Browse.js';
-import Search from './Search.js';
-import Purchase from './Purchase.js';
-//import Redeem from './Redeem.js';
-import Profile from './Profile.js';
-import About from './About.js';
-import Contact from './Contact.js';
 import App from './App.js';
-import {Route, Switch, useParams} from "react-router-dom";
-function Tx() {
-  var {id} = useParams()
-  return (
-    <Transaction id={id}/>
-  )
-}
-
-function User() {
-  var {id} = useParams()
-  return (
-    <Profile user={id}/>
-  )
-}
+import {Switch} from "react-router-dom";
 
 class AppRouter extends Component {
   constructor(props) {
@@ -35,6 +11,7 @@ class AppRouter extends Component {
       showPage: "home",
       user: '',
       loggedIn: false,
+      loadingTokens: false,
       profileUser: '',
       navLocations: [
         {title: "About", navLocation: "about"},
@@ -53,7 +30,6 @@ class AppRouter extends Component {
       }
       return res.json()
     }).then(r => {
-      console.log(r)
       this.setState({loggedIn: true, user: r.user, avatar: r.avatarUrl, name: r.name})
       this.setNavBarLocations()
       this.loadTokens(r.user)
@@ -63,6 +39,7 @@ class AppRouter extends Component {
     })
   }
   loadTokens(user) {
+    this.setState({loadingTokens: true})
     fetch('/api/tokens/user/'+user, {
       headers: {'Cache-Control': 'no-cache'},
     }).then(res => {
@@ -72,7 +49,8 @@ class AppRouter extends Component {
         tokens: {
           reviews: r.reviews,
           votes: r.votes
-        }
+        },
+        loadingTokens: false
       })
     }).catch(e => {
       console.error(e)
@@ -135,6 +113,7 @@ class AppRouter extends Component {
           name={this.state.name}
           navLocations = {this.state.navLocations}
           tokens={this.state.tokens}
+          loadingTokens={this.state.loadingTokens}
         />
         <Switch>
           <App
