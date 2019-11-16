@@ -159,8 +159,8 @@ class ReviewPointsDB extends Run.Jig {
 }
 ReviewPointsDB.originTestnet = 'dee4bfc82701c991a451d32c02b7b8ebb7ccd6f50a49e3b217e735170e670135_o1'
 ReviewPointsDB.locationTestnet = 'dee4bfc82701c991a451d32c02b7b8ebb7ccd6f50a49e3b217e735170e670135_o1'
-ReviewPointsDB.originMainnet = '20c971f3306552cd68af696e316499b43fa466fc5fafa9c991abe25fc12b7c89_o1'
-ReviewPointsDB.locationMainnet = '20c971f3306552cd68af696e316499b43fa466fc5fafa9c991abe25fc12b7c89_o1'
+ReviewPointsDB.originMainnet = 'e008634551c5cb858d2d52f3e535b47e5b89eeb190da769b0fb05699e41dee6a_o1'
+ReviewPointsDB.locationMainnet = 'e008634551c5cb858d2d52f3e535b47e5b89eeb190da769b0fb05699e41dee6a_o1'
 
 class Review extends Run.Jig {
   init(reviewLocation, body, rating, user) {
