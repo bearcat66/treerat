@@ -29,6 +29,8 @@ var tokenRouter = require('./routes/tokens');
 var sessionRouter = require('./routes/session');
 var txRouter = require('./routes/transaction');
 
+require('console-stamp')(console, { pattern: 'dd/mm/yyyy HH:MM:ss.l' });
+
 var app = express();
 
 // view engine setup
