@@ -109,8 +109,8 @@ async function upvoteReview(reviewID, upvotedUser) {
   if (pts.get(reviewID) === null) {
     pts.set(reviewID, {score: 0, upvotedUsers: [], downvotedUsers: []})
   }
-  var tokes = new Jigs.TrueReviewToken(5)
-  tokes.send(rev.owner)
+  var tokes = await loadRepTokens()
+  tokes.send(rev.owner, 5)
   await pts.sync()
   var newScore = pts.upvote(reviewID, upvotedUser)
   console.log('Review score was updated')
@@ -231,11 +231,11 @@ async function handleReviewCreate(locationOfJig, placeID, params) {
   console.log('Successfully sent review to user: ' + params.userID)
   run.activate()
   await run.sync()
+  var token = await loadRepTokens()
   run.transaction.begin()
   pointsdb.set(rev.origin, {score: 0, upvotedUsers: [], downvotedUsers: []})
   console.log('Issuing 1 reputation point to: ' + params.userID)
-  var token = new Jigs.TrueReviewToken(1)
-  token.send(keys.pubKey)
+  token.send(keys.pubKey, 1)
   await run.transaction.end()
   await run.sync()
   // Send user 5000 satoshis
@@ -292,6 +292,14 @@ async function createAllLocations() {
   console.log('Creating new AllLocations object')
   new Jigs.AllLocations()
   await run.sync()
+}
+async function loadRepTokens() {
+  run.activate()
+  await run.sync()
+  var token = run.owner.jigs.find(function(i) {
+    return i.constructor.name === 'TrueReviewToken' && i.amount > 100
+  })
+  return token
 }
 
 module.exports = router;

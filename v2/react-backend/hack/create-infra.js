@@ -87,9 +87,10 @@ async function loadPointsDB() {
 async function mintTokens() {
   run.activate()
   await run.sync()
-  var revs = new Jigs.ReviewToken(100000)
-  var votes = new Jigs.VoteToken(100000)
-  //var alpha = new Jigs.TrueReviewAlphaTesterToken(300)
+  var revs = new Jigs.ReviewToken(1000000)
+  var votes = new Jigs.VoteToken(1000000)
+  var alpha = new Jigs.TrueReviewAlphaTesterToken(300)
+  var tr = new Jigs.TrueReviewToken(1000000)
 }
 
 async function ensureUserDBCreated() {
