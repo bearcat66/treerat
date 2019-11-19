@@ -220,7 +220,7 @@ async function handleReviewCreate(log, locationOfJig, placeID, params) {
     await loc.sync()
   }
   //run.transaction.begin()
-  var rev = loc.createReview(params.reviewBody, params.rating, params.userID)a
+  var rev = loc.createReview(params.reviewBody, params.rating, params.userID)
   await run.sync()
   //await loc.sync()
   log.info(params.userID+ ' Successfully created a review for: ' + params.locationName)
