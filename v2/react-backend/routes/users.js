@@ -184,6 +184,7 @@ async function loadUserInfo(log, paymail) {
       coupons.push({amount: jigs[i].amount, placeID: jigs[i].placeID, placeName: name, placeURL: url})
     }
   }
+  log.info('Successfully loaded user info for: ' + paymail)
   var address = bsv.Address.fromPublicKey(bsv.PublicKey.fromHex(keys.pubKey))
   return {reviews: reviewList, locations: locationList, coupons: coupons, tokens: tokens-badTokens, address: address.toString(), profile: user.profile, businessAccount: user.businessAccount, alphaTokens: alphaTokens}
 }
