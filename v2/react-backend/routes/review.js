@@ -165,6 +165,7 @@ async function payVoters(log, voters) {
 }
  
 async function loadReviews(log, userID) {
+  log.info("Loading reviews for: " + userID)
   var user = await users.LoadUser(log, userID)
   var reviewList = []
   run.activate()
@@ -177,9 +178,11 @@ async function loadReviews(log, userID) {
       var pts = ptsdb.get(user.reviews[i].origin)
       reviewList.push({locationName: user.reviews[i].locationName, rating: rev.rating, body: rev.body, points: pts})
     } catch(e) {
+      log.error(e)
       throw e
     }
   }
+  log.info("Successfully loaded reviews for: " + userID)
   return reviewList
 }
 async function handleReviewCreate(log, locationOfJig, placeID, params) {
