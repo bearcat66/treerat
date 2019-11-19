@@ -8,6 +8,7 @@ var opts ={
 function CreateLogger() {
   var manager = logger.createLogManager();
   var createdLog = manager.createLogger(pid);
+  createdLog.setLevel('debug')
   return createdLog
 }
 module.exports.CreateLogger = CreateLogger
