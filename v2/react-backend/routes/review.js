@@ -219,6 +219,7 @@ async function handleReviewCreate(log, locationOfJig, placeID, params) {
     var loc = await instance.load(locationOfJig.location)
     await loc.sync()
   }
+  await run.sync()
   //run.transaction.begin()
   var rev = loc.createReview(params.reviewBody, params.rating, params.userID)
   await run.sync()
