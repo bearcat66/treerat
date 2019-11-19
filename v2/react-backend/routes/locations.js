@@ -6,6 +6,8 @@ var users = require('./users.js')
 var review = require('./review.js')
 var bsv = require('bsv')
 var ecies = require('bsv/ecies')
+const logger = require('../src/logger')
+var log = logger.CreateLogger()
 
 const Run = require('../lib/run.node.min')
 const Jigs = require('../lib/jigs')
@@ -25,7 +27,7 @@ router.get('/', function(req, res, next) {
 
 router.get('/:id', function (req, res) {
   run.activate()
-  console.log('Getting information for location: '+ req.params.id)
+  log.info('Getting information for location: '+ req.params.id)
   var db = getAllLocationsJig()
   db.sync().then(d => {
     var location = d.get(req.params.id)
@@ -43,7 +45,7 @@ router.post('/:id/transfer', function(req, res) {
   transferLocation(req.params.id, req.body.businessID).then(r=> {
     res.json({transferSuccess: true})
   }).catch(e => {
-    console.error(e)
+    log.error(e)
     res.status(409).send(JSON.stringify({'error': e}))
   })
 })
@@ -56,7 +58,7 @@ async function transferLocation(placeID, recipientID) {
   var user = userdb.get(recipientID)
   var loc = allLocs.get(placeID)
   if (loc == null) {
-    console.error('Location doesnt exist')
+    log.error('Location doesnt exist')
     throw 'Location does not exist'
   }
   var location = await run.load(loc.location)
@@ -76,14 +78,14 @@ async function loadLocation (location) {
   var l = await run.load(location)
   await l.sync()
   var location = {placeID: l.placeID, lat: l.lat, lng: l.lng, name: l.name, reviews: []}
-  console.log(l.reviews)
+  log.info(l.reviews)
   var entries = Object.entries(l.reviews)
   var total = entries.length
   var totalScore = 0
   for (var [key, value] of entries) {
-    console.log(key)
+    log.info(key)
     if (key == null || key == 'undefined') {
-      console.error('Found null user key')
+      log.error('Found null user key')
       // I don't know how this got here. Not good!!
       continue
     }
@@ -94,7 +96,7 @@ async function loadLocation (location) {
   }
   var avg = totalScore / total
   avg = Math.round(avg * 10) / 10
-  console.log(avg)
+  log.info(avg)
   location.average = avg
   return location
 }
@@ -114,7 +116,7 @@ function getAllLocationsJig() {
 }
 
 async function createAllLocations() {
-  console.log('Creating new AllLocations object')
+  log.info('Creating new AllLocations object')
   new Jigs.AllLocations()
   await run.sync()
 }
@@ -126,7 +128,7 @@ function getAllLocations() {
 }
 
 async function loadAllLocations() {
-  console.log('Loading all locations...')
+  log.info('Loading all locations...')
   run.activate()
   await run.sync()
   var db = getAllLocationsJig()

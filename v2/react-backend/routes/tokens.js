@@ -23,7 +23,7 @@ router.get('/user/:id', function(req, res) {
   getUserTokens(req.params.id).then(r => {
     res.json(r)
   }).catch(e => {
-    console.error(e)
+    log.error(e)
     res.status(500).send(JSON.stringify({error: e}))
   })
 })
@@ -31,7 +31,7 @@ router.post('/user/:id/reviews', function(req, res) {
   sendReviewTokens(req.params.id, req.body.amount).then(r => {
     res.json({amount: req.body.amount})
   }).catch(e => {
-    console.error(e)
+    log.error(e)
     res.status(500).send(JSON.stringify({error: e}))
   })
 })
@@ -55,7 +55,7 @@ async function sendReviewTokens(paymail, amount) {
   var keys = users.DecryptKeys(user.keys)
   var token = await loadReviewToken()
   token.send(keys.pubKey, amount)
-  console.log("Successfully sent [" + paymail + "] [" + amount + "] review tokens")
+  log.info("Successfully sent [" + paymail + "] [" + amount + "] review tokens")
   return
 }
 
@@ -70,7 +70,7 @@ async function sendVoteTokens(paymail, amount) {
   var keys = users.DecryptKeys(user.keys)
   var token = new Jigs.VoteToken(amount)
   token.send(keys.pubKey)
-  console.log("Successfully sent [" + paymail + "] [" + amount + "] vote tokens")
+  log.info("Successfully sent [" + paymail + "] [" + amount + "] vote tokens")
   return
 }
 
@@ -86,7 +86,7 @@ async function getUserTokens(paymail) {
   try {
     var userRunInstance = await users.LoadUserRunInstance(keys)
   } catch(e) {
-    console.error(e)
+    log.error(e)
   }
   var jigs = userRunInstance.owner.jigs
   var reviews = 0
@@ -106,7 +106,7 @@ async function getUserTokens(paymail) {
 }
 
 async function redeemVoteToken(paymail) {
-  console.log("Redeeming vote token for ["+paymail+"]")
+  log.info("Redeeming vote token for ["+paymail+"]")
   run.activate()
   await run.sync()
   var db = users.GetUserDB()
@@ -118,7 +118,7 @@ async function redeemVoteToken(paymail) {
   try {
     var userRunInstance = await users.LoadUserRunInstance(keys)
   } catch(e) {
-    console.error(e)
+    log.error(e)
   }
   var token = userRunInstance.owner.jigs.find(function(i) {
     return i.constructor.name === 'VoteToken'
@@ -129,16 +129,16 @@ async function redeemVoteToken(paymail) {
   try {
     await token.send(ownerPubKey.toString(), 1)
   } catch(e) {
-    console.error(e)
+    log.error(e)
   }
   await userRunInstance.sync()
   await run.sync()
-  console.log("Redeemed vote token for ["+paymail+"]")
+  log.info("Redeemed vote token for ["+paymail+"]")
   return
 }
 
 async function redeemReviewToken(paymail) {
-  console.log("Redeeming review token for ["+paymail+"]")
+  log.info("Redeeming review token for ["+paymail+"]")
   run.activate()
   await run.sync()
   var db = users.GetUserDB()
@@ -150,7 +150,7 @@ async function redeemReviewToken(paymail) {
   try {
     var userRunInstance = await users.LoadUserRunInstance(keys)
   } catch(e) {
-    console.error(e)
+    log.error(e)
   }
   var token = userRunInstance.owner.jigs.find(function(i) {
     return i.constructor.name === 'ReviewToken'
@@ -161,11 +161,11 @@ async function redeemReviewToken(paymail) {
   try {
     await token.send(ownerPubKey.toString(), 1)
   } catch(e) {
-    console.error(e)
+    log.error(e)
   }
   await userRunInstance.sync()
   await run.sync()
-  console.log("Redeemed review token for ["+paymail+"]")
+  log.info("Redeemed review token for ["+paymail+"]")
   return
 }
 

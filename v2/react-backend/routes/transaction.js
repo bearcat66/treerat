@@ -18,7 +18,7 @@ router.get('/:id', function(req, res) {
   loadTx(req.params.id).then(r => {
     res.send(JSON.stringify({transaction: r}))
   }).catch(e => {
-    console.error(e)
+    log.error(e)
     res.status(404).send(JSON.stringify({error: "TX not found"}))
   })
 })
@@ -62,7 +62,7 @@ function parseJigs(jigs) {
         out.user = jig.user
         break
       default:
-        console.error('No parser for: ' + type)
+        log.error('No parser for: ' + type)
     }
     outs.push(out)
   }

@@ -11,6 +11,8 @@ var dns = require('dns');
 var ecies = require('bsv/ecies')
 var bodyParser = require('body-parser')
 var router = express.Router();
+const logger = require('../src/logger')
+var log = logger.CreateLogger()
 
 const Run = require('../lib/run.node.min')
 const Jigs = require('../lib/jigs')
@@ -26,16 +28,16 @@ const PURSE2_PRIVKEY = Jigs.PURSE2_KEY
 router.post('/:placeID', function(req, res) {
   run.activate()
   //ensureLocationDBCreated()
-  console.log('Creating review for location: ' + req.params.placeID)
+  log.info('Creating review for location: ' + req.params.placeID)
   var locs = getAllLocationsJig()
   var loc = locs.get(req.params.placeID)
   if (loc == null) {
-    console.log('Location does not exist, creating location for ' + req.params.placeID)
+    log.info('Location does not exist, creating location for ' + req.params.placeID)
   }
-  handleReviewCreate(loc, req.params.placeID, req.body).then(r => {
+  handleReviewCreate(log, loc, req.params.placeID, req.body).then(r => {
     res.json({location: r.location})
   }).catch(e => {
-    console.error(e)
+    log.error(e)
     res.status(500).send(JSON.stringify({error: e}))
   })
 })
@@ -113,7 +115,7 @@ async function upvoteReview(reviewID, upvotedUser) {
   tokes.send(rev.owner, 5)
   await pts.sync()
   var newScore = pts.upvote(reviewID, upvotedUser)
-  console.log('Review score was updated')
+  log.info('Review score was updated')
   // Now send user some money
   var paymailClient = new PaymailClient(dns, fetch)
   await run.sync()
@@ -129,18 +131,18 @@ async function upvoteReview(reviewID, upvotedUser) {
   var tx = new bsv.Transaction().from(utxos).change(purseAddress).addOutput(out).sign(PURSE2_PRIVKEY)
   await run.blockchain.broadcast(tx)
   await tokens.RedeemVote(upvotedUser)
-  console.log("Successfully sent ["+rev.user+"] 5000 satoshis")
+  log.info("Successfully sent ["+rev.user+"] 5000 satoshis")
   await pts.sync()
   var voters = pts.get(reviewID)
-  console.log(voters)
+  log.info(voters)
   if (voters.upvotedUsers.length > 0) {
     await payVoters(voters.upvotedUsers)
   }
 }
 
 async function payVoters(voters) {
-  console.log('Paying curators')
-  console.log(voters)
+  log.info('Paying curators')
+  log.info(voters)
   var paymailClient = new PaymailClient(dns, fetch)
   var purseAddress = new bsv.PrivateKey(PURSE2_PRIVKEY).toAddress().toString()
   for(var i=0;i<voters.length;i++) {
@@ -173,7 +175,7 @@ async function loadReviews(userID) {
   }
   return reviewList
 }
-async function handleReviewCreate(locationOfJig, placeID, params) {
+async function handleReviewCreate(log, locationOfJig, placeID, params) {
   run.activate()
   await run.sync()
   var instance = run
@@ -183,20 +185,20 @@ async function handleReviewCreate(locationOfJig, placeID, params) {
   var user = userdb.get(params.userID)
   var pointsdb = getPointsDBJig()
   if (pointsdb == null) {
-    console.log('Creating points jig')
+    log.info('Creating points jig')
     pointsdb = new createPointsDB()
-    console.log('Successfully created DB')
+    log.info('Successfully created DB')
   }
   await pointsdb.sync()
   var locs = getAllLocationsJig()
   await locs.sync()
   if (locationOfJig == null) {
-    console.log('Creating location jig for: '+ params.locationName)
+    log.info('Creating location jig for: '+ params.locationName)
     var loc = createLocation(placeID, params.locationName, params.coords)
     await loc.sync()
-    console.log('Successfully created location:')
+    log.info('Successfully created location:')
     locs.set(placeID, {location: loc.location, coords: params.coords})
-    console.log('Successfully added location to AllLocations jig')
+    log.info('Successfully added location to AllLocations jig')
   } else {
     var loca = locs.get(placeID)
     if (loca.ownedBy != null) {
@@ -220,26 +222,26 @@ async function handleReviewCreate(locationOfJig, placeID, params) {
   run.transaction.begin()
   var rev = loc.createReview(params.reviewBody, params.rating, params.userID)
   //await loc.sync()
-  console.log(params.userID+ ' Successfully created a review for: ' + params.locationName)
+  log.info(params.userID+ ' Successfully created a review for: ' + params.locationName)
   var bug = Buffer.from(user.keys)
   var enc = ecies.bitcoreECIES().privateKey(ownerPrivKey).decrypt(bug)
   var keys = JSON.parse(enc.toString())
-  console.log('Sending review to user: ' + params.userID)
+  log.info('Sending review to user: ' + params.userID)
   rev.send(keys.pubKey)
   run.transaction.end()
   await rev.sync()
-  console.log('Successfully sent review to user: ' + params.userID)
+  log.info('Successfully sent review to user: ' + params.userID)
   run.activate()
   await run.sync()
   var token = await loadRepTokens()
   run.transaction.begin()
   pointsdb.set(rev.origin, {score: 0, upvotedUsers: [], downvotedUsers: []})
-  console.log('Issuing 1 reputation point to: ' + params.userID)
+  log.info('Issuing 1 reputation point to: ' + params.userID)
   token.send(keys.pubKey, 1)
   await run.transaction.end()
   await run.sync()
   // Send user 5000 satoshis
-  console.log('Sending '+params.userID+' 5000 satoshis')
+  log.info('Sending '+params.userID+' 5000 satoshis')
   var paymailClient = new PaymailClient(dns, fetch)
   var purseAddress = new bsv.PrivateKey(PURSE2_PRIVKEY).toAddress().toString()
   var utxos = await run.blockchain.utxos(purseAddress)
@@ -252,7 +254,7 @@ async function handleReviewCreate(locationOfJig, placeID, params) {
   var out = bsv.Transaction.Output({satoshis: 5000, script: output})
   var tx = new bsv.Transaction().from(utxos).change(purseAddress).addOutput(out).sign(PURSE2_PRIVKEY)
   await run.blockchain.broadcast(tx)
-  console.log("Successfully sent ["+rev.user+"] 5000 satoshis")
+  log.info("Successfully sent ["+rev.user+"] 5000 satoshis")
   await tokens.RedeemReview(params.userID)
   return rev
 }
@@ -284,12 +286,12 @@ async function ensurePointsDBCreated() {
   return
 }
 async function createPointsDB() {
-  console.log('Creating Points DB Object')
+  log.info('Creating Points DB Object')
   new Jigs.ReviewPointsDB()
   await run.sync()
 }
 async function createAllLocations() {
-  console.log('Creating new AllLocations object')
+  log.info('Creating new AllLocations object')
   new Jigs.AllLocations()
   await run.sync()
 }

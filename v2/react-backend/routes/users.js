@@ -12,13 +12,15 @@ const MB_OAUTH_ID = process.env.REACT_APP_MBOAUTHID
 const GOOGLE_KEY = process.env.REACT_APP_GOOGLE_API_KEY
 const ownerPrivKey = bsv.PrivateKey.fromWIF(Jigs.OWNER_KEY)
 const ownerPubKey = bsv.PublicKey.fromPrivateKey(ownerPrivKey)
+const logger = require('../src/logger')
+var log = logger.CreateLogger()
 //address: 1D8ESnmZ8SU9MJ1hd5EZs9jwJLwn2h5Egp
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
   run.activate()
   //ensureUserDBCreated()
-  var users = getAllUsers()
+  var users = getAllUsers(log)
   users.then(r=> {
     res.json(r)
   })
@@ -28,12 +30,12 @@ router.get('/', function(req, res, next) {
 router.get('/:id', function(req, res, next) {
   run.activate()
   //ensureUserDBCreated()
-  //console.log(req.session.user.accessToken)
+  //log.info(req.session.user.accessToken)
   loadUserInfo(req.params.id).then(r=> {
     run.activate()
     res.json(r)
   }).catch(e => {
-    console.error(e)
+    log.error(e)
     res.status(404).send(JSON.stringify({"error": e}))
   })
 });
@@ -54,7 +56,7 @@ router.post('/:id', function(req, res) {
   createUser(req.params.id, req.body.profile, req.body.businessAccount).then(r=> {
     res.json(r)
   }).catch(e => {
-    console.error(e)
+    log.error(e)
     res.status(409).send(JSON.stringify({'error': e}))
   })
 })
@@ -80,10 +82,10 @@ async function createUser(id, profile, isBusinessAccount) {
     businessAccount: isBusinessAccount
   }
   db.set(profile.primaryPaymail, userProfile)
-  console.log('User [' + profile.primaryPaymail+'] uploaded to userDB object')
+  log.info('User [' + profile.primaryPaymail+'] uploaded to userDB object')
   await db.sync()
   var address = bsv.Address.fromPublicKey(userPubKey)
-  console.log('Address: '+ address)
+  log.info('Address: '+ address)
   var token = await loadAlphaTesterToken()
   var reviews = await loadReviewToken()
   var votes = await loadVoteToken()
@@ -98,7 +100,7 @@ async function createUser(id, profile, isBusinessAccount) {
 }
 
 async function loadUserProfile(id) {
-  console.log('Loading user profile for: ' + id)
+  log.info('Loading user profile for: ' + id)
   run.activate()
   await run.sync()
   var db = getUserDB()
@@ -111,12 +113,12 @@ async function loadUserProfile(id) {
 }
 
 async function loadUserInfo(paymail) {
-  console.log('Loading user info for: ' + paymail)
+  log.info('Loading user info for: ' + paymail)
   var mbclient = new mb.MoneyButtonClient(MB_OAUTH_ID)
   //await mbclient.setAccessToken(accessToken)
   //var expiration = await mbclient.getExpirationTime()
-  //console.log(expiration)
-  //console.log(Date(expiration))
+  //log.info(expiration)
+  //log.info(Date(expiration))
   run.activate()
   await run.sync()
   var db = getUserDB()
@@ -150,7 +152,7 @@ async function loadUserInfo(paymail) {
   for (var i=0; i < jigs.length; i++) {
     if (jigs[i].constructor.name === 'Review') {
       if (jigs[i].reviewLocation == null) {
-        console.error('Review with no location found: '+ jigs[i].location)
+        log.error('Review with no location found: '+ jigs[i].location)
         continue
       }
       reviewList.push({location: jigs[i].location, locationName: jigs[i].reviewLocation.name, origin: jigs[i].origin})
@@ -201,20 +203,20 @@ function getUserDB() {
 }
 
 async function createUserDB() {
-  console.log('Creating new UserDB object')
+  log.info('Creating new UserDB object')
   await run.sync()
   var db = new Jigs.UserDB()
   await db.sync()
 }
 
-function getAllUsers() {
-  return loadAllUsers().then(r => {
+function getAllUsers(log) {
+  return loadAllUsers(log).then(r => {
     return r
   })
 }
 
-async function loadAllUsers() {
-  console.log("Loading all users...")
+async function loadAllUsers(log) {
+  log.info("Loading all users...")
   var mbclient = new mb.MoneyButtonClient(MB_OAUTH_ID)
   await run.sync()
   var db = getUserDB()

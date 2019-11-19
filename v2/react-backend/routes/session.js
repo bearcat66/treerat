@@ -20,17 +20,17 @@ const MB_CLIENT_SECRET = process.env.MB_CLIENT_SECRET
 router.get('/', function(req, res) {
   //run.activate()
   //ensureUserDBCreated()
-  console.log('Loading session: ' + req.sessionID)
+  log.info('Loading session: ' + req.sessionID)
   if (!req.session.user) {
-    console.error('No user found for session: ' + req.sessionID)
+    log.error('No user found for session: ' + req.sessionID)
     res.status(404).send(JSON.stringify({error: 'no session found'}))
     return
   }
-  console.log('Session ['+ req.sessionID+'] loaded for ['+req.session.user.paymail+'] and expires at ['+req.session.user.expires+'].')
+  log.info('Session ['+ req.sessionID+'] loaded for ['+req.session.user.paymail+'] and expires at ['+req.session.user.expires+'].')
   var now = new Date()
   var expires = new Date(req.session.user.expires)
   if (expires < now) {
-    console.log('Session for ['+req.session.user.paymail+'] has expired. Renewing access token.')
+    log.info('Session for ['+req.session.user.paymail+'] has expired. Renewing access token.')
     getNewAccessToken(req.session.user.accessToken, req.session.user.refreshToken, req.session.user.expires).then(r => {
       req.session.user.accessToken = r.accessToken
       req.session.user.expires = r.expires
@@ -40,7 +40,7 @@ router.get('/', function(req, res) {
   users.LoadUserProfile(req.session.user.paymail).then(r => {
     res.send(JSON.stringify({user: req.session.user.paymail, avatarUrl: r.profile.avatarUrl, name: r.profile.name}))
   }).catch(e => {
-    console.error(e)
+    log.error(e)
     res.status(500).send(JSON.stringify({error: 'failed loading session'}))
   })
 })

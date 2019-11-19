@@ -23,7 +23,7 @@ router.post('/:id', function(req, res) {
     req.session.user = {paymail: req.params.id, accessToken: r.accessToken, refreshToken: r.refreshToken, expires: r.expires}
     res.json(r)
   }).catch(e => {
-    console.error(e)
+    log.error(e)
     res.status(409).send(JSON.stringify({'error': e}))
   })
 })

@@ -31,10 +31,10 @@ router.post('/:placeID/redeem', function(req, res) {
     try {
       res.json({'redeemed': true, "dryRun": req.body.dryRun, "placeID": req.body.placeID, "amount": r.reward})
     } catch(e) {
-      console.error(e)
+      log.error(e)
     }
   }).catch(e => {
-    console.error(e)
+    log.error(e)
     res.status(500).send(JSON.stringify({'error': e, 'redeemed': false}))
   })
 })
@@ -79,7 +79,7 @@ function getRedeemDB() {
 
 async function redeemCode(placeID, userID, code, dryRun) {
   run.activate()
-  console.log('redeeming')
+  log.info('redeeming')
   await run.sync()
   var userdb = run.owner.jigs.find(x => x.constructor.name === 'UserDB')
   await userdb.sync()
@@ -105,7 +105,7 @@ async function redeemCode(placeID, userID, code, dryRun) {
   var bug = Buffer.from(business.keys)
   var enc = ecies.bitcoreECIES().privateKey(ownerPrivKey).decrypt(bug)
   var businessKeys = JSON.parse(enc.toString())
-  console.log('Loading business run instance')
+  log.info('Loading business run instance')
   var userRunInstance = new Run({
     network: Jigs.NETWORK,
     owner: bsv.PrivateKey.fromWIF(businessKeys.privKey),
@@ -117,7 +117,7 @@ async function redeemCode(placeID, userID, code, dryRun) {
 
   var location = await userRunInstance.load(place.location)
   await location.sync()
-  console.log('Available redeemables:')
+  log.info('Available redeemables:')
   for (var i=0;i<location.redeemableRewards.length;i++) {
     var tr = location.redeemableRewards[i]
     if (tr.constructor.name !== 'TrueReview') {
@@ -128,16 +128,16 @@ async function redeemCode(placeID, userID, code, dryRun) {
     if (tr.redeemed) {
       continue
     }
-    console.log(tr.getRedemptionCode() + '  ' + code)
+    log.info(tr.getRedemptionCode() + '  ' + code)
     if (tr.getRedemptionCode() !== code) {
       continue
     }
     if (dryRun) {
-      console.log('Dry run redemption')
+      log.info('Dry run redemption')
       return tr
     }
 
-    console.log("Attempting redeem")
+    log.info("Attempting redeem")
     bug = Buffer.from(user.keys)
     enc = ecies.bitcoreECIES().privateKey(ownerPrivKey).decrypt(bug)
     userKeys = JSON.parse(enc.toString())
@@ -155,7 +155,7 @@ async function redeemCode(placeID, userID, code, dryRun) {
       var r = await fetch('https://api.cryptonator.com/api/full/bsv-usd')
       var res = await r.json()
       var amount = Math.round(1 / res.ticker.price * 100000000)
-      console.log('Sending '+userID+' '+amount+' satoshis')
+      log.info('Sending '+userID+' '+amount+' satoshis')
       var paymailClient = new PaymailClient(dns, fetch)
       await run.sync()
       var purseAddress = new bsv.PrivateKey(Jigs.PURSE2_KEY).toAddress().toString()
@@ -169,10 +169,10 @@ async function redeemCode(placeID, userID, code, dryRun) {
       var out = bsv.Transaction.Output({satoshis: amount, script: output})
       var tx = new bsv.Transaction().from(utxos).change(purseAddress).addOutput(out).sign(Jigs.PURSE2_KEY)
       await run.blockchain.broadcast(tx)
-      console.log("Successfully sent ["+userID+"] "+amount+" satoshis")
+      log.info("Successfully sent ["+userID+"] "+amount+" satoshis")
       return tr
     } catch(e) {
-      console.error(e)
+      log.error(e)
       throw e
     }
     if (red) {

@@ -2,7 +2,6 @@ var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
-var logger = require('morgan');
 var bodyParser = require('body-parser')
 var helmet = require('helmet')
 var session = require('express-session')
@@ -10,22 +9,15 @@ var uuid = require('uuid')
 var redis = require('redis')
 const Jigs = require('./lib/jigs')
 const run = Jigs.RunTrueReview
-
-//Configure Logger
-var pid = process.argv[2]
-var opts ={
-  logFilePath: 'tr.log',
-  timeStampFormat: 'YYYY-MM-DD HH:mm:ss.SSS'
-}
-const manager = require('simple-node-logger').createLogManager();
-const log = manager.createLogger(pid)
+const logger = require('./src/logger.js')
+const log = logger.CreateLogger()
 
 // Establish Redis connection
 const redisClient = redis.createClient();
 const redisStore = require('connect-redis')(session);
 
 redisClient.on('error', (err) => {
-  console.error('Redis error: ', err);
+  log.error('Redis error: ', err);
 });
 
 var indexRouter = require('./routes/index');
@@ -44,7 +36,6 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-app.use(logger('dev'));
 app.use(express.json());
 app.use(helmet())
 app.use(express.urlencoded({ extended: false }));
