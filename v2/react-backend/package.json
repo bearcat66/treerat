@@ -13,7 +13,6 @@
     "bsv": "^0.30.0",
     "clean-css": ">=4.1.11",
     "connect-redis": "^4.0.3",
-    "console-stamp": "^0.2.9",
     "constantinople": ">=3.1.1",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
@@ -25,6 +24,7 @@
     "jade": "~1.11.0",
     "morgan": "~1.9.1",
     "redis": "^2.8.0",
+    "simple-node-logger": "^18.12.23",
     "uuid": "^3.3.3"
   }
 }

@@ -11,6 +11,16 @@ var redis = require('redis')
 const Jigs = require('./lib/jigs')
 const run = Jigs.RunTrueReview
 
+//Configure Logger
+var pid = process.argv[2]
+var opts ={
+  logFilePath: 'tr.log',
+  timeStampFormat: 'YYYY-MM-DD HH:mm:ss.SSS'
+}
+const manager = require('simple-node-logger').createLogManager();
+const log = manager.createLogger(pid)
+
+// Establish Redis connection
 const redisClient = redis.createClient();
 const redisStore = require('connect-redis')(session);
 
@@ -29,10 +39,7 @@ var tokenRouter = require('./routes/tokens');
 var sessionRouter = require('./routes/session');
 var txRouter = require('./routes/transaction');
 
-require('console-stamp')(console, { pattern: 'dd/mm/yyyy HH:MM:ss.l' });
-
 var app = express();
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -46,7 +53,7 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 var sess = {
   genid: (req) => {
-    console.log('Inside the session middleware')
+    log.info('Inside the session middleware')
     if (req.sessionID) {
       return req.sessionID
     }
@@ -99,7 +106,7 @@ app.use(function(req, res, next) {
 
 // error handler
 app.use(function(err, req, res, next) {
-  console.error(err.message)
+  log.error(err.message)
 
   // set locals, only providing error in development
   res.locals.message = err.message;
@@ -111,9 +118,9 @@ app.use(function(err, req, res, next) {
 });
 
 run.activate()
-console.log("Starting run instance sync...")
+log.info("Starting run instance sync...")
 run.sync().then(r => {
-  console.log('Successfully synced run instance')
+  log.info('Successfully synced run instance')
 })
 
 module.exports = app;
