@@ -45,6 +45,9 @@ router.post('/:placeID', function(req, res) {
 router.get('/user/:userID', function(req, res, next) {
   loadReviews(log, req.params.userID).then(r => {
     res.json({reviews: r})
+  }).catch(e => {
+    log.error(e)
+    res.status(500).send(JSON.stringify({error: e}))
   })
 })
 
