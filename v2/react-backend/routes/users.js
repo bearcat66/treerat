@@ -108,6 +108,7 @@ async function loadUserProfile(log, id) {
   if (user == null || Object.entries(user).length === 0) {
     throw new Error('User not found')
   }
+  log.info('Successfully loaded user profile for: ' + id)
   return {profile: user.profile}
 }
 
