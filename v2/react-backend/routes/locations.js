@@ -72,19 +72,19 @@ async function transferLocation(log, placeID, recipientID) {
 }
 
 async function loadLocation (log, location) {
+  log.info('Loading location information for [' + location + ']')
   run.activate()
   await run.sync()
   var l = await run.load(location)
   await l.sync()
   var location = {placeID: l.placeID, lat: l.lat, lng: l.lng, name: l.name, reviews: []}
-  log.info(l.reviews)
+  log.info('Found location [' + l.placeID + ']')
   var entries = Object.entries(l.reviews)
   var total = entries.length
   var totalScore = 0
   for (var [key, value] of entries) {
-    log.info(key)
     if (key == null || key == 'undefined') {
-      log.error('Found null user key')
+      log.error(new Error('Found null user key'))
       // I don't know how this got here. Not good!!
       continue
     }
@@ -95,8 +95,8 @@ async function loadLocation (log, location) {
   }
   var avg = totalScore / total
   avg = Math.round(avg * 10) / 10
-  log.info(avg)
   location.average = avg
+  log.info('Successfully loaded information for location [' + location + ']')
   return location
 }
 

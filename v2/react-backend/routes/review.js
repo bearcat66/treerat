@@ -162,7 +162,7 @@ async function payVoters(log, voters) {
 }
  
 async function loadReviews(log, userID) {
-  var user = await users.LoadUser(userID)
+  var user = await users.LoadUser(log, userID)
   var reviewList = []
   run.activate()
   await run.sync()
