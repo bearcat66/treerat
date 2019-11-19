@@ -15,6 +15,8 @@ const MB_CLIENT_ID = process.env.MB_CLIENT_ID
 const MB_CLIENT_SECRET = process.env.MB_CLIENT_SECRET
 //const ownerPrivKey = bsv.PrivateKey.fromWIF(Jigs.OWNER_KEY)
 //const ownerPubKey = bsv.PublicKey.fromPrivateKey(ownerPrivKey)
+const logger = require('../src/logger')
+var log = logger.CreateLogger()
 
 
 router.get('/', function(req, res) {
@@ -37,7 +39,7 @@ router.get('/', function(req, res) {
       req.session.save()
     })
   }
-  users.LoadUserProfile(req.session.user.paymail).then(r => {
+  users.LoadUserProfile(log, req.session.user.paymail).then(r => {
     res.send(JSON.stringify({user: req.session.user.paymail, avatarUrl: r.profile.avatarUrl, name: r.profile.name}))
   }).catch(e => {
     log.error(e)

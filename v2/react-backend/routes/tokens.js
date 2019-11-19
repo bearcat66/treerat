@@ -17,10 +17,6 @@ const ownerPubKey = bsv.PublicKey.fromPrivateKey(ownerPrivKey)
 const logger = require('../src/logger')
 var log = logger.CreateLogger()
 
-
-router.get('/', function(req, res) {
-  res.send(JSON.stringify({tokens: 'foo'}))
-})
 router.get('/user/:id', function(req, res) {
   getUserTokens(log, req.params.id).then(r => {
     res.json(r)

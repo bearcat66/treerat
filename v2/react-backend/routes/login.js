@@ -14,12 +14,14 @@ const MB_CLIENT_ID = process.env.MB_CLIENT_ID
 const MB_CLIENT_SECRET = process.env.MB_CLIENT_SECRET
 //const ownerPrivKey = bsv.PrivateKey.fromWIF(Jigs.OWNER_KEY)
 //const ownerPubKey = bsv.PublicKey.fromPrivateKey(ownerPrivKey)
+const logger = require('../src/logger')
+var log = logger.CreateLogger()
 
 
 router.post('/:id', function(req, res) {
   //run.activate()
   //ensureUserDBCreated()
-  loginUser(req.params.id, {code: req.body.code, state: req.body.state}).then(r=> {
+  loginUser(log, req.params.id, {code: req.body.code, state: req.body.state}).then(r=> {
     req.session.user = {paymail: req.params.id, accessToken: r.accessToken, refreshToken: r.refreshToken, expires: r.expires}
     res.json(r)
   }).catch(e => {
@@ -28,7 +30,7 @@ router.post('/:id', function(req, res) {
   })
 })
 
-async function loginUser(paymail, oauth) {
+async function loginUser(log, paymail, oauth) {
   try {
     var mbclient = new mb.MoneyButtonClient(MB_OAUTH_ID)
     await mbclient.authorizeWithAuthFlowResponse(oauth, oauth.state, MB_REDIRECT_URI)

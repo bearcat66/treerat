@@ -106,7 +106,7 @@ async function loadUserProfile(log, id) {
   await db.sync()
   var user = db.get(id)
   if (user == null || Object.entries(user).length === 0) {
-    throw 'User not found'
+    throw new Error('User not found')
   }
   return {profile: user.profile}
 }
@@ -151,7 +151,7 @@ async function loadUserInfo(log, paymail) {
   for (var i=0; i < jigs.length; i++) {
     if (jigs[i].constructor.name === 'Review') {
       if (jigs[i].reviewLocation == null) {
-        log.error('Review with no location found: '+ jigs[i].location)
+        log.error(new Error('Review with no location found: '+ jigs[i].location))
         continue
       }
       reviewList.push({location: jigs[i].location, locationName: jigs[i].reviewLocation.name, origin: jigs[i].origin})
@@ -199,13 +199,6 @@ async function ensureUserDBCreated() {
 
 function getUserDB() {
   return run.owner.jigs.find(x => x.constructor.name === 'UserDB')
-}
-
-async function createUserDB() {
-  log.info('Creating new UserDB object')
-  await run.sync()
-  var db = new Jigs.UserDB()
-  await db.sync()
 }
 
 function getAllUsers(log) {
