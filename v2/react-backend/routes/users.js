@@ -124,7 +124,7 @@ async function loadUserInfo(log, paymail) {
   await db.sync()
   var user = db.get(paymail)
   if (user == null || Object.entries(user).length === 0) {
-    throw 'User not found'
+    throw new Error('User not found')
   }
   try {
     var bug = Buffer.from(user.keys)

@@ -18,8 +18,7 @@ const MB_OAUTH_ID = process.env.REACT_APP_MBOAUTHID
 /* GET locations listing. */
 router.get('/', function(req, res, next) {
   run.activate()
-  //ensureLocationDBCreated()
-  var locs = getAllLocations()
+  var locs = getAllLocations(log)
   locs.then(r=> {
     res.json(r)
   })
@@ -35,14 +34,14 @@ router.get('/:id', function (req, res) {
       res.status(404).send('Did not find location')
       return
     }
-    loadLocation(location.location).then(r=> {
+    loadLocation(log, location.location).then(r=> {
       res.json(r)
     })
   })
 });
 
 router.post('/:id/transfer', function(req, res) {
-  transferLocation(req.params.id, req.body.businessID).then(r=> {
+  transferLocation(log, req.params.id, req.body.businessID).then(r=> {
     res.json({transferSuccess: true})
   }).catch(e => {
     log.error(e)
@@ -50,7 +49,7 @@ router.post('/:id/transfer', function(req, res) {
   })
 })
 
-async function transferLocation(placeID, recipientID) {
+async function transferLocation(log, placeID, recipientID) {
   run.activate()
   await run.sync()
   var userdb = run.owner.jigs.find(x => x.constructor.name === 'UserDB')
@@ -72,7 +71,7 @@ async function transferLocation(placeID, recipientID) {
   return
 }
 
-async function loadLocation (location) {
+async function loadLocation (log, location) {
   run.activate()
   await run.sync()
   var l = await run.load(location)
@@ -89,8 +88,8 @@ async function loadLocation (location) {
       // I don't know how this got here. Not good!!
       continue
     }
-    var profile = await users.LoadUserProfile(key)
-    var score = await review.GetScore(value.origin)
+    var profile = await users.LoadUserProfile(log, key)
+    var score = await review.GetScore(log, value.origin)
     totalScore += value.rating
     location.reviews.push({user: profile.profile.primaryPaymail, userID: profile.profile.id, body: value.body, rating: value.rating, origin: value.origin, points: score})
   }
@@ -101,33 +100,17 @@ async function loadLocation (location) {
   return location
 }
 
-
-/* ALL USERDB FUNCTIONS */
-function ensureLocationDBCreated() {
-  var dbjig = getAllLocationsJig()
-  if (dbjig === null || dbjig == null) {
-    createAllLocations()
-  }
-  return
-}
-
 function getAllLocationsJig() {
   return run.owner.jigs.find(x => x.constructor.name === 'AllLocations')
 }
 
-async function createAllLocations() {
-  log.info('Creating new AllLocations object')
-  new Jigs.AllLocations()
-  await run.sync()
-}
-
-function getAllLocations() {
-  return loadAllLocations().then(r => {
+function getAllLocations(log) {
+  return loadAllLocations(log).then(r => {
     return r
   })
 }
 
-async function loadAllLocations() {
+async function loadAllLocations(log) {
   log.info('Loading all locations...')
   run.activate()
   await run.sync()
