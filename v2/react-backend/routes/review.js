@@ -43,7 +43,7 @@ router.post('/:placeID', function(req, res) {
 })
 
 router.get('/user/:userID', function(req, res, next) {
-  loadReviews(req.params.userID).then(r => {
+  loadReviews(log, req.params.userID).then(r => {
     res.json({reviews: r})
   })
 })
