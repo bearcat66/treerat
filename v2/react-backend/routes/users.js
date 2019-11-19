@@ -14,7 +14,6 @@ const ownerPrivKey = bsv.PrivateKey.fromWIF(Jigs.OWNER_KEY)
 const ownerPubKey = bsv.PublicKey.fromPrivateKey(ownerPrivKey)
 const logger = require('../src/logger')
 var log = logger.CreateLogger()
-//address: 1D8ESnmZ8SU9MJ1hd5EZs9jwJLwn2h5Egp
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -53,7 +52,7 @@ router.get('/:id/profile', function(req, res, next) {
 router.post('/:id', function(req, res) {
   run.activate()
   //ensureUserDBCreated()
-  createUser(req.params.id, req.body.profile, req.body.businessAccount).then(r=> {
+  createUser(log, req.params.id, req.body.profile, req.body.businessAccount).then(r=> {
     res.json(r)
   }).catch(e => {
     log.error(e)
@@ -61,7 +60,7 @@ router.post('/:id', function(req, res) {
   })
 })
 
-async function createUser(id, profile, isBusinessAccount) {
+async function createUser(log, id, profile, isBusinessAccount) {
   run.activate()
   await run.sync()
   var db = getUserDB()
