@@ -170,11 +170,15 @@ async function loadReviews(log, userID) {
   run.activate()
   await run.sync()
   for (var i=0;i<user.reviews.length;i++) {
-    var rev = await run.load(user.reviews[i].location)
-    var ptsdb = getPointsDBJig()
-    await ptsdb.sync()
-    var pts = ptsdb.get(user.reviews[i].origin)
-    reviewList.push({locationName: user.reviews[i].locationName, rating: rev.rating, body: rev.body, points: pts})
+    try {
+      var rev = await run.load(user.reviews[i].location)
+      var ptsdb = getPointsDBJig()
+      await ptsdb.sync()
+      var pts = ptsdb.get(user.reviews[i].origin)
+      reviewList.push({locationName: user.reviews[i].locationName, rating: rev.rating, body: rev.body, points: pts})
+    } catch(e) {
+      throw e
+    }
   }
   return reviewList
 }
