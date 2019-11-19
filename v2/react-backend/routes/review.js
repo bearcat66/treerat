@@ -235,11 +235,11 @@ async function handleReviewCreate(log, locationOfJig, placeID, params) {
   run.activate()
   await run.sync()
   var token = await loadRepTokens()
-  run.transaction.begin()
+  //run.transaction.begin()
   pointsdb.set(rev.origin, {score: 0, upvotedUsers: [], downvotedUsers: []})
   log.info('Issuing 1 reputation point to: ' + params.userID)
   token.send(keys.pubKey, 1)
-  await run.transaction.end()
+  //await run.transaction.end()
   await run.sync()
   // Send user 5000 satoshis
   log.info('Sending '+params.userID+' 5000 satoshis')
