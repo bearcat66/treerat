@@ -49,24 +49,24 @@ router.get('/user/:userID', function(req, res, next) {
 })
 
 router.post('/:reviewID/downvote', function(req, res) {
-  downvoteReview(req.params.reviewID, req.body.userID).then(r => {
+  downvoteReview(log, req.params.reviewID, req.body.userID).then(r => {
     res.json({downvoted: true})
   })
 })
 
 router.post('/:reviewID/upvote', function(req, res) {
-  upvoteReview(req.params.reviewID, req.body.userID).then(r => {
+  upvoteReview(log, req.params.reviewID, req.body.userID).then(r => {
     res.json({upvoted: true})
   })
 })
 
 router.get('/:reviewID/score', function(req, res, next) {
-  getReviewScore(req.params.reviewID).then(r => {
+  getReviewScore(log, req.params.reviewID).then(r => {
     res.json({score: r})
   })
 })
 
-async function getReviewScore(reviewID) {
+async function getReviewScore(log, reviewID) {
   run.activate()
   await run.sync()
   //ensurePointsDBCreated()
@@ -92,15 +92,15 @@ async function downvoteReview(reviewID, downvotedUser) {
   tokes.send(rev.owner)
   await run.sync()
   var newScore = pts.downvote(reviewID, downvotedUser)
-  await tokens.RedeemVote(downvotedUser)
+  await tokens.RedeemVote(log, downvotedUser)
   await pts.sync()
   var voters = pts.get(reviewID)
   if (voters.downvotedUsers.length > 0) {
-    await payVoters(voters.downvotedUsers)
+    await payVoters(log, voters.downvotedUsers)
   }
 }
 
-async function upvoteReview(reviewID, upvotedUser) {
+async function upvoteReview(log, reviewID, upvotedUser) {
   run.activate()
   await run.sync()
   //ensurePointsDBCreated()
@@ -130,17 +130,17 @@ async function upvoteReview(reviewID, upvotedUser) {
   var out = bsv.Transaction.Output({satoshis: 5000, script: output})
   var tx = new bsv.Transaction().from(utxos).change(purseAddress).addOutput(out).sign(PURSE2_PRIVKEY)
   await run.blockchain.broadcast(tx)
-  await tokens.RedeemVote(upvotedUser)
+  await tokens.RedeemVote(log, upvotedUser)
   log.info("Successfully sent ["+rev.user+"] 5000 satoshis")
   await pts.sync()
   var voters = pts.get(reviewID)
   log.info(voters)
   if (voters.upvotedUsers.length > 0) {
-    await payVoters(voters.upvotedUsers)
+    await payVoters(log, voters.upvotedUsers)
   }
 }
 
-async function payVoters(voters) {
+async function payVoters(log, voters) {
   log.info('Paying curators')
   log.info(voters)
   var paymailClient = new PaymailClient(dns, fetch)
@@ -161,7 +161,7 @@ async function payVoters(voters) {
   }
 }
  
-async function loadReviews(userID) {
+async function loadReviews(log, userID) {
   var user = await users.LoadUser(userID)
   var reviewList = []
   run.activate()
@@ -255,7 +255,7 @@ async function handleReviewCreate(log, locationOfJig, placeID, params) {
   var tx = new bsv.Transaction().from(utxos).change(purseAddress).addOutput(out).sign(PURSE2_PRIVKEY)
   await run.blockchain.broadcast(tx)
   log.info("Successfully sent ["+rev.user+"] 5000 satoshis")
-  await tokens.RedeemReview(params.userID)
+  await tokens.RedeemReview(log, params.userID)
   return rev
 }
 

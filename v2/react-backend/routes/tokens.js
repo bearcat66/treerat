@@ -14,13 +14,15 @@ const MB_CLIENT_ID = process.env.MB_CLIENT_ID
 const MB_CLIENT_SECRET = process.env.MB_CLIENT_SECRET
 const ownerPrivKey = bsv.PrivateKey.fromWIF(Jigs.OWNER_KEY)
 const ownerPubKey = bsv.PublicKey.fromPrivateKey(ownerPrivKey)
+const logger = require('../src/logger')
+var log = logger.CreateLogger()
 
 
 router.get('/', function(req, res) {
   res.send(JSON.stringify({tokens: 'foo'}))
 })
 router.get('/user/:id', function(req, res) {
-  getUserTokens(req.params.id).then(r => {
+  getUserTokens(log, req.params.id).then(r => {
     res.json(r)
   }).catch(e => {
     log.error(e)
@@ -28,7 +30,7 @@ router.get('/user/:id', function(req, res) {
   })
 })
 router.post('/user/:id/reviews', function(req, res) {
-  sendReviewTokens(req.params.id, req.body.amount).then(r => {
+  sendReviewTokens(log, req.params.id, req.body.amount).then(r => {
     res.json({amount: req.body.amount})
   }).catch(e => {
     log.error(e)
@@ -37,14 +39,14 @@ router.post('/user/:id/reviews', function(req, res) {
 })
 
 router.post('/user/:id/votes', function(req, res) {
-  sendVoteTokens(req.params.id, req.body.amount).then(r => {
+  sendVoteTokens(log, req.params.id, req.body.amount).then(r => {
     res.json({amount: req.body.amount})
   }).catch(e => {
     res.status(500).send(JSON.stringify({error: e}))
   })
 })
 
-async function sendReviewTokens(paymail, amount) {
+async function sendReviewTokens(log, paymail, amount) {
   run.activate()
   await run.sync()
   var db = users.GetUserDB()
@@ -59,7 +61,7 @@ async function sendReviewTokens(paymail, amount) {
   return
 }
 
-async function sendVoteTokens(paymail, amount) {
+async function sendVoteTokens(log, paymail, amount) {
   run.activate()
   await run.sync()
   var db = users.GetUserDB()
@@ -74,7 +76,7 @@ async function sendVoteTokens(paymail, amount) {
   return
 }
 
-async function getUserTokens(paymail) {
+async function getUserTokens(log, paymail) {
   run.activate()
   await run.sync()
   var db = users.GetUserDB()
@@ -105,7 +107,7 @@ async function getUserTokens(paymail) {
   return {votes: votes, reviews: reviews}
 }
 
-async function redeemVoteToken(paymail) {
+async function redeemVoteToken(log, paymail) {
   log.info("Redeeming vote token for ["+paymail+"]")
   run.activate()
   await run.sync()
@@ -137,7 +139,7 @@ async function redeemVoteToken(paymail) {
   return
 }
 
-async function redeemReviewToken(paymail) {
+async function redeemReviewToken(log, paymail) {
   log.info("Redeeming review token for ["+paymail+"]")
   run.activate()
   await run.sync()
