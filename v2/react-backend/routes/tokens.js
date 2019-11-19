@@ -73,6 +73,7 @@ async function sendVoteTokens(log, paymail, amount) {
 }
 
 async function getUserTokens(log, paymail) {
+  log.info("Getting credits for user [" + paymail + "]")
   run.activate()
   await run.sync()
   var db = users.GetUserDB()
@@ -100,6 +101,7 @@ async function getUserTokens(log, paymail) {
       votes += jig.amount
     }
   }
+  log.info("Successfully got credits for user [" + paymail + "]")
   return {votes: votes, reviews: reviews}
 }
 
