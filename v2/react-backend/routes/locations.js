@@ -131,6 +131,7 @@ async function loadAllLocations(log) {
     var l = await run.load(loc.location)
     locationList.push({id: key, location: loc.location, coords: loc.coords, locationName: l.name})
   }
+  log.info('Successfully loaded all locations')
   return locationList
 }
 
