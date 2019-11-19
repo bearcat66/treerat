@@ -30,7 +30,7 @@ router.get('/:id', function(req, res, next) {
   run.activate()
   //ensureUserDBCreated()
   //log.info(req.session.user.accessToken)
-  loadUserInfo(req.params.id).then(r=> {
+  loadUserInfo(log, req.params.id).then(r=> {
     run.activate()
     res.json(r)
   }).catch(e => {
@@ -42,7 +42,7 @@ router.get('/:id', function(req, res, next) {
 router.get('/:id/profile', function(req, res, next) {
   run.activate()
   //ensureUserDBCreated()
-  loadUserProfile(req.params.id).then(r=> {
+  loadUserProfile(log, req.params.id).then(r=> {
     run.activate()
     res.json(r)
   }).catch(e => {
@@ -98,7 +98,7 @@ async function createUser(log, id, profile, isBusinessAccount) {
   return {address: address.toString()}
 }
 
-async function loadUserProfile(id) {
+async function loadUserProfile(log, id) {
   log.info('Loading user profile for: ' + id)
   run.activate()
   await run.sync()
@@ -111,7 +111,7 @@ async function loadUserProfile(id) {
   return {profile: user.profile}
 }
 
-async function loadUserInfo(paymail) {
+async function loadUserInfo(log, paymail) {
   log.info('Loading user info for: ' + paymail)
   var mbclient = new mb.MoneyButtonClient(MB_OAUTH_ID)
   //await mbclient.setAccessToken(accessToken)
