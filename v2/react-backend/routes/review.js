@@ -196,7 +196,7 @@ async function handleReviewCreate(log, locationOfJig, placeID, params) {
     log.info('Creating location jig for: '+ params.locationName)
     var loc = createLocation(placeID, params.locationName, params.coords)
     await loc.sync()
-    log.info('Successfully created location:')
+    log.info('Successfully created location: ' + placeID)
     locs.set(placeID, {location: loc.location, coords: params.coords})
     log.info('Successfully added location to AllLocations jig')
   } else {
@@ -219,8 +219,9 @@ async function handleReviewCreate(log, locationOfJig, placeID, params) {
     var loc = await instance.load(locationOfJig.location)
     await loc.sync()
   }
-  run.transaction.begin()
-  var rev = loc.createReview(params.reviewBody, params.rating, params.userID)
+  //run.transaction.begin()
+  var rev = loc.createReview(params.reviewBody, params.rating, params.userID)a
+  await run.sync()
   //await loc.sync()
   log.info(params.userID+ ' Successfully created a review for: ' + params.locationName)
   var bug = Buffer.from(user.keys)
@@ -228,7 +229,7 @@ async function handleReviewCreate(log, locationOfJig, placeID, params) {
   var keys = JSON.parse(enc.toString())
   log.info('Sending review to user: ' + params.userID)
   rev.send(keys.pubKey)
-  run.transaction.end()
+  //run.transaction.end()
   await rev.sync()
   log.info('Successfully sent review to user: ' + params.userID)
   run.activate()
