@@ -203,6 +203,9 @@ export default class Profile extends Component {
     }
     console.log(this.state.userReviews)
     return this.state.userReviews.reviews.map((review, index) => {
+      if (review == null || review.points == null) {
+        return null
+      }
       return (
         <div className="card" styles="width: 18rem;">
           <div className="card-body">
