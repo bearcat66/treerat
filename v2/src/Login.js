@@ -20,9 +20,7 @@ export default class Login extends React.Component {
   }
 
   componentDidMount() {
-    console.log("Login component did mount called");
     var params = QueryString.parse(this.props.location.search)
-    console.log(params)
     fetch('/api/session').then(res => {
       if (res.status === 404 || res.status === 500) {
         throw new Error('Session not found')
@@ -30,7 +28,6 @@ export default class Login extends React.Component {
       return res.json()
     }).then(r => {
       this.setState({redirect: true})
-      console.log(r)
     }).catch(e => {
       console.error(e)
       this.setState({loggedIn: false})
@@ -122,7 +119,6 @@ export default class Login extends React.Component {
         businessAccount: businessAccount
       })
     }).then(res => res.json()).then(rev => {
-      console.log(rev)
       this.setState({redirect: true})
     })
   }

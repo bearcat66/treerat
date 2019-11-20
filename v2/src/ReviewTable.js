@@ -6,7 +6,6 @@ import {Link} from 'react-router-dom'
 export default class ReviewTable extends React.Component {
   constructor(props) {
     super(props);
-    console.log(this.props.reviews)
     this.upvoteReview = this.upvoteReview.bind(this)
     this.downvoteReview = this.downvoteReview.bind(this)
     this.state = {
@@ -29,7 +28,6 @@ export default class ReviewTable extends React.Component {
         })
       })
       var s = await res.json()
-      console.log(s)
     } catch(e) {
       console.error(e)
     }
@@ -47,7 +45,6 @@ export default class ReviewTable extends React.Component {
       })
     })
     var s = await res.json()
-    console.log(s)
     this.props.loadTokens(this.state.userID)
     this.setState({downvoting: false})
   }

@@ -99,7 +99,6 @@ export default class Redeem extends React.Component {
       })
     }).then(res => res.json()).then(rev =>  {
       this.setState({renderSuccessModal: true})
-      console.log(rev)
     })
   }
 
@@ -122,7 +121,6 @@ export default class Redeem extends React.Component {
       if (!red.redeemed) {
         throw 'Error redeeming code'
       }
-      console.log(red)
       this.setState({invalidRedemptionCode: false, renderReviewForm: true, renderRedeemForm: false, placeID: red.placeID})
     }).catch(e => {
       console.error(e)
@@ -142,7 +140,6 @@ export default class Redeem extends React.Component {
   }
 
   renderRedeemSubmitButton(){
-    console.log(this.state.moneyButtonID)
     if (this.state.moneyButtonID === '' || this.state.badInput) {
       return (
         <Button variant="primary" type="submit" disabled>Redeem Code</Button>
@@ -153,7 +150,6 @@ export default class Redeem extends React.Component {
     )
   }
   renderSubmitButton(){
-    console.log(this.state.moneyButtonID)
     if (this.state.moneyButtonID === '' || this.state.badInput) {
       return (
         <Button variant="primary" type="submit" disabled>Submit Review</Button>
@@ -193,10 +189,7 @@ export default class Redeem extends React.Component {
 
   handleReviewRatingChange(event) {
     event.preventDefault()
-    console.log(event.target.value)
     this.setState({rating: event.target.value})
-    console.log(this.state)
-    console.log(this.state.rating === '')
 
   }
 
@@ -218,13 +211,11 @@ export default class Redeem extends React.Component {
         lng: geocodedPrediction.geometry.location.lng(),
       }
     })
-    console.log(originalPrediction.description)
     this.setState({search: '', address: geocodedPrediction.formatted_address, placeID: geocodedPrediction.place_id, placeDescription: originalPrediction.description})
   }
   
   handleNoResult() {
     this.setState({badInput: true})
-    console.log('No results for ', this.state.search)
   }
   renderPlaceMap() {
 
@@ -287,7 +278,6 @@ export default class Redeem extends React.Component {
   }
 
   handleStatusUpdate(status) {
-    console.log(status)
   }
   render() {
       return (

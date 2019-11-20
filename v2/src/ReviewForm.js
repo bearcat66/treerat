@@ -137,7 +137,6 @@ export default class ReviewForm extends React.Component {
         throw new Error('Redeeming failed')
       }
       result = await res.json()
-      console.log(result)
     }
     fetch('/api/review/'+this.state.placeID, {
       headers: {'Content-Type': 'application/json'},
@@ -164,8 +163,6 @@ export default class ReviewForm extends React.Component {
   }
 
   renderSubmitButton(){
-    console.log('rendering submit button')
-    console.log(this.state.user)
     if (this.state.user === '' || this.state.badInput) {
       return (
         <Button variant="primary" type="submit" disabled>Submit Review</Button>
@@ -252,8 +249,6 @@ export default class ReviewForm extends React.Component {
   }
 
   renderForm() {
-    console.log('rerender')
-    console.log(this.state.placeDescription)
     if (this.state.renderSuccessModal || this.state.renderErrorModal) {
       return null
     }
@@ -324,7 +319,6 @@ export default class ReviewForm extends React.Component {
     )
   }
   handleStatusUpdate(status) {
-    console.log('status')
   }
   render() {
       return (

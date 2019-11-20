@@ -4,7 +4,6 @@ import {Button, Modal} from 'react-bootstrap';
 export default class Profile extends Component {
   constructor(props) {
     super(props)
-    console.log(props.id)
     this.mintCoupon = this.mintCoupon.bind(this)
     this.getCodes = this.getCodes.bind(this)
     this.renderRedemptionCodeModal = this.renderRedemptionCodeModal.bind(this)
@@ -36,7 +35,6 @@ export default class Profile extends Component {
         }
         codes.push(this.state.businessLocations[i].redeemableRewards[j]._redemptionCode)
       }
-      console.log(codes)
       if (this.state.newlyMintedCode !== '') {
         codes.push(this.state.newlyMintedCode)
       }
@@ -78,7 +76,6 @@ export default class Profile extends Component {
       return
     }
     var result = await res.json()
-    console.log(result)
     this.setState({isLoadingBusiness: false, newlyMintedCode: result.redemptionCode, mintSuccess: true})
     return {code: result.redemptionCode}
   }
@@ -163,7 +160,6 @@ export default class Profile extends Component {
           redeemedCount++
         }
       }
-      console.log(location)
       return (
         <div className="container text-center">
           <h1>Business Details</h1>
@@ -201,7 +197,6 @@ export default class Profile extends Component {
     if (this.state.userReviews.length === 0) {
       return null
     }
-    console.log(this.state.userReviews)
     return this.state.userReviews.reviews.map((review, index) => {
       if (review == null || review.points == null) {
         return null
@@ -222,7 +217,6 @@ export default class Profile extends Component {
     if (Object.entries(this.state.user).length === 0) {
       return null
     }
-    console.log(this.state.user.reviews)
     return (
       <div>
         <h3>Paymail: {this.state.user.profile.primaryPaymail}</h3>
@@ -236,7 +230,6 @@ export default class Profile extends Component {
     if (Object.entries(this.state.user).length === 0) {
       return null
     }
-    console.log(this.state.user.coupons)
     return this.state.user.coupons.map((coupon, index) => {
       return (
         <div class="card" styles="width: 18rem;">
