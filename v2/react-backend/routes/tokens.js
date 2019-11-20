@@ -38,6 +38,7 @@ router.post('/user/:id/votes', function(req, res) {
   sendVoteTokens(log, req.params.id, req.body.amount).then(r => {
     res.json({amount: req.body.amount})
   }).catch(e => {
+    log.error(e)
     res.status(500).send(JSON.stringify({error: e}))
   })
 })
@@ -87,6 +88,7 @@ async function getUserTokens(log, paymail) {
   } catch(e) {
     log.error(e)
   }
+  await userRunInstance.sync()
   var jigs = userRunInstance.owner.jigs
   var reviews = 0
   var votes = 0

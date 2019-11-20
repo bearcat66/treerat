@@ -23,6 +23,7 @@
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
     "morgan": "~1.9.1",
+    "pg": "^7.14.0",
     "redis": "^2.8.0",
     "simple-node-logger": "^18.12.23",
     "uuid": "^3.3.3"

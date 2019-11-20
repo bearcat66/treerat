@@ -91,7 +91,6 @@ export class Browse extends React.Component {
     if (this.props.coords !== null) {
       center = {lat: this.props.coords.latitude, lng: this.props.coords.longitude}
       zoom = 14
-      console.log(this.props.coords.latitude)
     }
     if (!this.state.showMap) {
       return null
@@ -99,7 +98,6 @@ export class Browse extends React.Component {
     var revs = this.state.places
     var places = []
     for (var i=0;i<revs.length;i++) {
-      console.log(revs[i].coords)
       var c = revs[i].coords
       places[i] = <Place lat={c.lat} lng={c.lng} name={revs[i].locationName} key={i}/>
     }

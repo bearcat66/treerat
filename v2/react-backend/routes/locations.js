@@ -88,10 +88,12 @@ async function loadLocation (log, location) {
       // I don't know how this got here. Not good!!
       continue
     }
+    log.info(value)
     var profile = await users.LoadUserProfile(log, key)
     var score = await review.GetScore(log, value.origin)
-    totalScore += value.rating
-    location.reviews.push({user: profile.profile.primaryPaymail, userID: profile.profile.id, body: value.body, rating: value.rating, origin: value.origin, points: score})
+    var time = await review.GetReviewTimestamp(log, value.origin)
+    totalScore += parseFloat(value.rating)
+    location.reviews.push({user: profile.profile.primaryPaymail, userID: profile.profile.id, body: value.body, rating: value.rating, origin: value.origin, points: score, timestamp: time})
   }
   var avg = totalScore / total
   avg = Math.round(avg * 10) / 10

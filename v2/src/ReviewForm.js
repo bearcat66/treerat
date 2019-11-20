@@ -290,7 +290,7 @@ export default class ReviewForm extends React.Component {
             </div>
       <div className="form-group" id="reviewFormBody">
         <label>Review Body</label>
-        <textarea className="form-control" rows="3" onChange={this.handleReviewBodyChange} required/>
+        <textarea className="form-control" rows="3" value={this.state.body} onChange={this.handleReviewBodyChange} required/>
       </div>
       <div className="form-group" id="reviewFormRating">
         <label>Rating: {this.state.rating}</label>

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@moneybutton/api-client": "^0.24.3",
+    "@moneybutton/api-client": "^0.31.0",
     "@moneybutton/react-money-button": "^0.31.2",
     "autoprefixer": "7.1.6",
     "bootstrap": "^4.3.1",

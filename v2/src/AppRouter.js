@@ -22,6 +22,7 @@ class AppRouter extends Component {
     this.showProfilePage = this.showProfilePage.bind(this)
     this.loadTokens = this.loadTokens.bind(this)
     this.updateSession = this.updateSession.bind(this)
+    this.setLoadingTokens = this.setLoadingTokens.bind(this)
   }
   componentDidMount() {
     fetch('/api/session').then(res => {
@@ -37,6 +38,9 @@ class AppRouter extends Component {
       console.error(e)
       this.setState({loggedIn: false})
     })
+  }
+  setLoadingTokens() {
+    this.setState({loadingTokens: true})
   }
   loadTokens(user) {
     this.setState({loadingTokens: true})
@@ -119,6 +123,7 @@ class AppRouter extends Component {
           <App
             updateSession={this.updateSession}
             loadTokens={this.loadTokens}
+            setLoadingTokens={this.setLoadingTokens}
             tokens={this.state.tokens}
             user={this.state.user}
             loggedIn={this.state.loggedIn}

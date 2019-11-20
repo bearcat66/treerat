@@ -90,8 +90,8 @@ class ReviewToken extends Run.Token {
 }
 ReviewToken.originTestnet = 'f41a25a9342db5fb5d4a09f45d56aa11a038c78c2f6396e396d8be03152dd50a_o1'
 ReviewToken.locationTestnet = 'f41a25a9342db5fb5d4a09f45d56aa11a038c78c2f6396e396d8be03152dd50a_o1'
-ReviewToken.originMainnet = 'e978dedd616d550735d9b1f9349eff91b0993da6daac0dab0eae98a43a1266eb_o1'
-ReviewToken.locationMainnet = 'e978dedd616d550735d9b1f9349eff91b0993da6daac0dab0eae98a43a1266eb_o1'
+ReviewToken.originMainnet = 'b167a40401eabef31eabffec76a664faf23a1f5244ee27dad8f443cca7e777e1_o1'
+ReviewToken.locationMainnet = 'b167a40401eabef31eabffec76a664faf23a1f5244ee27dad8f443cca7e777e1_o1'
 
 class VoteToken extends Run.Token {
 }

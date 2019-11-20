@@ -1,6 +1,6 @@
 import React from 'react';
 import MoneyButton from '@moneybutton/react-money-button'
-import {Button, Jumbotron} from 'react-bootstrap'
+import {Button, Jumbotron, OverlayTrigger, Tooltip} from 'react-bootstrap'
 import {Link} from 'react-router-dom'
 
 export default class ReviewTable extends React.Component {
@@ -71,7 +71,9 @@ export default class ReviewTable extends React.Component {
       )
     }
 
-    var revs = this.state.reviews.sort(function(a,b){return b.points.score-a.points.score})
+    var revs = this.state.reviews.sort(function(a,b){
+      return b.points.score-a.points.score
+    })
     return revs.map((review, index) => {
       var tx = review.origin.split("_")[0]
       var txUrl = '/tx/'+tx
@@ -80,6 +82,7 @@ export default class ReviewTable extends React.Component {
       var downvoted = false
       var upvoteButtonText = 'Great Review!'
       var downvoteButtonText = 'Bad Review'
+      var tooltipText = 'Use Credit'
       if (review.points.upvotedUsers == null) {
         return null
       }
@@ -92,11 +95,13 @@ export default class ReviewTable extends React.Component {
           downvoteButtonText = 'Voted'
           disableButton = true
           upvoted = true
+          tooltipText= 'Already voted'
         }
       }
       if (!upvoted) {
         for (i=0;i<review.points.downvotedUsers.length;i++) {
           if (review.points.downvotedUsers[i] === this.state.userID) {
+            tooltipText= 'Already voted'
             upvoteButtonText = 'Voted'
             downvoteButtonText = 'Downvoted!'
             disableButton = true
@@ -106,6 +111,7 @@ export default class ReviewTable extends React.Component {
       }
       if (this.props.tokens == null || this.props.tokens.votes === 0) {
         disableButton = true
+        tooltipText = 'Purchase more vote credits'
       }
       var profileLink = '/user/' + review.user
       return (
@@ -117,12 +123,12 @@ export default class ReviewTable extends React.Component {
             <h6 className="card-subtitle mb-2 text-right">Score: {review.points.score}</h6>
             <p className="card-text">{review.body}</p>
             <div className="card-text text-center">
-              <Button disabled={disableButton} variant="primary" size="sm" onClick={() => {
+              <Button disabled={disableButton} alt={tooltipText} title={tooltipText} variant="primary" size="sm" onClick={() => {
                 review.points.score += 5
                 review.points.upvotedUsers.push(this.state.userID)
                 this.upvoteReview(review.origin)
               }}>{upvoteButtonText}</Button>
-              <Button disabled={disableButton} variant="danger" size="sm" onClick={() => {
+              <Button disabled={disableButton} alt={tooltipText} title={tooltipText} variant="danger" size="sm" onClick={() => {
                 review.points.score -= 3
                 review.points.downvotedUsers.push(this.state.userID)
                 this.downvoteReview(review.origin)

@@ -58,7 +58,7 @@ export default class App extends React.Component {
             <User/>
           </Route>
           <Route path="/purchase">
-            <Purchase user={this.props.user} loadTokens={this.props.loadTokens}/>
+            <Purchase user={this.props.user} loadTokens={this.props.loadTokens} setLoadingTokens={this.props.setLoadingTokens}/>
           </Route>
           <Route
             path="/login/"

@@ -75,6 +75,10 @@ app.use(function(req, res, next) {
   }
   next()
 })
+app.use(function(req, res, next) {
+  run.sync()
+  next()
+})
 
 app.use('/api', indexRouter);
 app.use(express.static(path.join(__dirname, 'public')));

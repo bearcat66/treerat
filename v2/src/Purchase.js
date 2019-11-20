@@ -17,6 +17,7 @@ export default class Purchase extends React.Component {
     if (payment.spendAmountUsd[0] === '1') {
       amount = 50
     }
+    this.props.setLoadingTokens()
     fetch('/api/tokens/user/'+this.props.user+'/reviews', {
       headers: {'Content-Type': 'application/json'},
       method: 'post',
@@ -25,6 +26,8 @@ export default class Purchase extends React.Component {
       })
     }).then(r => {
       this.props.loadTokens(this.props.user)
+    }).catch(e => {
+      console.error(e)
     })
   }
   onPaymentSuccessVotes(payment) {
@@ -32,6 +35,7 @@ export default class Purchase extends React.Component {
     if (payment.spendAmountUsd[2] === '7') {
       amount = 100
     }
+    this.props.setLoadingTokens()
     fetch('/api/tokens/user/'+this.props.user+'/votes', {
       headers: {'Content-Type': 'application/json'},
       method: 'post',
@@ -40,6 +44,8 @@ export default class Purchase extends React.Component {
       })
     }).then(r => {
       this.props.loadTokens(this.props.user)
+    }).catch(e => {
+      console.error(e)
     })
   }
   onMBLoad() {

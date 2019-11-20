@@ -69,10 +69,17 @@ router.get('/:reviewID/score', function(req, res, next) {
   })
 })
 
+async function getReviewTimestamp(log, reviewID) {
+  var origin = reviewID.split('_')[0]
+  var rev = await run.blockchain.fetch(origin)
+  var time = new Date(rev.time)
+  log.info('Review ['+reviewID+'] time: ['+ time+']')
+  return rev
+}
+
 async function getReviewScore(log, reviewID) {
   run.activate()
   await run.sync()
-  //ensurePointsDBCreated()
   var rev = await run.load(reviewID)
   await rev.sync()
   var pts = getPointsDBJig()
@@ -80,12 +87,16 @@ async function getReviewScore(log, reviewID) {
   return pts.get(reviewID)
 }
 
-async function downvoteReview(reviewID, downvotedUser) {
+async function downvoteReview(log, reviewID, downvotedUser) {
   run.activate()
   await run.sync()
   //ensurePointsDBCreated()
+  if (reviewID == null) {
+    throw new Error('No review ID to found to load')
+  }
   var rev = await run.load(reviewID)
   await rev.sync()
+  console.log(rev)
   var pts = getPointsDBJig()
   await pts.sync()
   if (pts.get(reviewID) === null) {
@@ -194,9 +205,7 @@ async function handleReviewCreate(log, locationOfJig, placeID, params) {
   var user = userdb.get(params.userID)
   var pointsdb = getPointsDBJig()
   if (pointsdb == null) {
-    log.info('Creating points jig')
-    pointsdb = new createPointsDB()
-    log.info('Successfully created DB')
+    throw new Error('Failed to find pointsdb jig')
   }
   await pointsdb.sync()
   var locs = getAllLocationsJig()
@@ -317,3 +326,4 @@ async function loadRepTokens() {
 
 module.exports = router;
 module.exports.GetScore = getReviewScore
+module.exports.GetReviewTimestamp = getReviewTimestamp
