@@ -137,15 +137,13 @@ async function upvoteReview(log, reviewID, upvotedUser) {
   log.info("Successfully sent ["+rev.user+"] 5000 satoshis")
   await pts.sync()
   var voters = pts.get(reviewID)
-  log.info(voters)
   if (voters.upvotedUsers.length > 0) {
     await payVoters(log, voters.upvotedUsers)
   }
 }
 
 async function payVoters(log, voters) {
-  log.info('Paying curators')
-  log.info(voters)
+  log.info('Paying curators: ' + voters)
   var paymailClient = new PaymailClient(dns, fetch)
   var purseAddress = new bsv.PrivateKey(PURSE2_PRIVKEY).toAddress().toString()
   for(var i=0;i<voters.length;i++) {
@@ -161,6 +159,7 @@ async function payVoters(log, voters) {
     var out = bsv.Transaction.Output({satoshis: 550, script: output})
     var tx = new bsv.Transaction().from(utxos).change(purseAddress).addOutput(out).sign(PURSE2_PRIVKEY)
     await run.blockchain.broadcast(tx)
+  log.info('Successfully paid curators: ' + voters)
   }
 }
  
