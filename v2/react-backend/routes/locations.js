@@ -97,7 +97,7 @@ async function loadLocation (log, location) {
   var avg = totalScore / total
   avg = Math.round(avg * 10) / 10
   location.average = avg
-  log.info('Successfully loaded information for location [' + location + ']')
+  log.info('Successfully loaded information for location [' + location.placeID + ']')
   return location
 }
 
