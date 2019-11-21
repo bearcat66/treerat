@@ -121,6 +121,7 @@ export default class ReviewTable extends React.Component {
             <h5 className="card-title">User: {review.user}</h5>
             <h6 className="card-subtitle mb-2 text-right">Rating: {review.rating}</h6>
             <h6 className="card-subtitle mb-2 text-right">Score: {review.points.score}</h6>
+            <h6 className="card-subtitle mb-2 text-right">Time: {review.time}</h6>
             <p className="card-text">{review.body}</p>
             <div className="card-text text-center">
               <Button disabled={disableButton} alt={tooltipText} title={tooltipText} variant="primary" size="sm" onClick={() => {
