@@ -88,7 +88,6 @@ async function loadLocation (log, location) {
       // I don't know how this got here. Not good!!
       continue
     }
-    log.info(value)
     var profile = await users.LoadUserProfile(log, key)
     var score = await review.GetScore(log, value.origin)
     var time = await review.GetReviewTimestamp(log, value.origin)
