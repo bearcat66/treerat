@@ -90,7 +90,6 @@ async function getReviewScore(log, reviewID) {
 async function downvoteReview(log, reviewID, downvotedUser) {
   run.activate()
   await run.sync()
-  //ensurePointsDBCreated()
   if (reviewID == null) {
     throw new Error('No review ID to found to load')
   }
@@ -117,7 +116,6 @@ async function downvoteReview(log, reviewID, downvotedUser) {
 async function upvoteReview(log, reviewID, upvotedUser) {
   run.activate()
   await run.sync()
-  //ensurePointsDBCreated()
   var rev = await run.load(reviewID)
   await rev.sync()
   var pts = getPointsDBJig()
@@ -238,27 +236,26 @@ async function handleReviewCreate(log, locationOfJig, placeID, params) {
     await loc.sync()
   }
   await run.sync()
-  //run.transaction.begin()
+  run.transaction.begin()
   var rev = loc.createReview(params.reviewBody, params.rating, params.userID)
   await run.sync()
-  //await loc.sync()
   log.info(params.userID+ ' Successfully created a review for: ' + params.locationName)
   var bug = Buffer.from(user.keys)
   var enc = ecies.bitcoreECIES().privateKey(ownerPrivKey).decrypt(bug)
   var keys = JSON.parse(enc.toString())
   log.info('Sending review to user: ' + params.userID)
   rev.send(keys.pubKey)
-  //run.transaction.end()
+  run.transaction.end()
   await rev.sync()
   log.info('Successfully sent review to user: ' + params.userID)
   run.activate()
   await run.sync()
   var token = await loadRepTokens()
-  //run.transaction.begin()
+  run.transaction.begin()
   pointsdb.set(rev.origin, {score: 0, upvotedUsers: [], downvotedUsers: []})
   log.info('Issuing 1 reputation point to: ' + params.userID)
   token.send(keys.pubKey, 1)
-  //await run.transaction.end()
+  await run.transaction.end()
   await run.sync()
   // Send user 5000 satoshis
   log.info('Sending '+params.userID+' 5000 satoshis')
