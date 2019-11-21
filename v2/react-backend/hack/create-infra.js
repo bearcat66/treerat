@@ -15,9 +15,9 @@ const RunTrueReview = new Run ({
 })
 
 var run = RunTrueReview
-//ensureUserDBCreated()
-//ensurePointsDBCreated()
-//ensureLocationDBCreated()
+ensureUserDBCreated()
+ensurePointsDBCreated()
+ensureLocationDBCreated()
 mintTokens()
 
 
