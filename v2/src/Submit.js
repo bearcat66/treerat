@@ -2,8 +2,30 @@ import React from 'react';
 import ReviewForm from './ReviewForm'
 import {Button} from 'react-bootstrap'
 import {Link} from 'react-router-dom'
+import { withRouter } from 'react-router'
 
-export default class Submit extends React.Component {
+class Submit extends React.Component {
+  constructor(props) {
+    super(props);
+    var placeID = ''
+    var address = ''
+    var coords = {}
+    var placeDescription = ''
+    if (props.location != null && props.location.state != null) {
+      placeID = props.location.state.placeID
+      address = props.location.state.address
+      coords = props.location.state.coords
+      placeDescription = props.location.state.placeDescription
+    }
+    this.state = {
+      place: {
+        placeID: placeID,
+        address: address,
+        coords: coords,
+        placeDescription: placeDescription
+      }
+    }
+  }
   renderReviewForm() {
     if (this.props.tokens == null || this.props.tokens.reviews === 0) {
       return (
@@ -13,8 +35,9 @@ export default class Submit extends React.Component {
         </div>
       )
     }
+    console.log(this.state.place)
     return (
-      <ReviewForm user={this.props.user} navigateTo={this.props.navigateTo} loadTokens={this.props.loadTokens}/>
+      <ReviewForm user={this.props.user} navigateTo={this.props.navigateTo} loadTokens={this.props.loadTokens} selectedPlace={this.state.place}/>
     )
   }
   render() {
@@ -29,3 +52,5 @@ export default class Submit extends React.Component {
     );
   }
 }
+
+export default withRouter(Submit);

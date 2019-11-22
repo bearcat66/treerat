@@ -24,6 +24,18 @@ export default class ReviewForm extends React.Component {
     this.handleReviewRatingChange = this.handleReviewRatingChange.bind(this)
     this.handleReviewCodeChange = this.handleReviewCodeChange.bind(this)
     this.closeModal = this.closeModal.bind(this)
+    var placeID = ''
+    var address = ''
+    var placeDescription = ''
+    var coords = {lat: 59.93, lng: 30.33}
+    var showMap = false
+    if (props.selectedPlace != null) {
+      placeID = props.selectedPlace.placeID
+      address = props.selectedPlace.address
+      placeDescription = props.selectedPlace.placeDescription
+      coords = props.selectedPlace.coords
+      showMap = true
+    }
 
     this.state = {
       badInput: false,
@@ -31,14 +43,14 @@ export default class ReviewForm extends React.Component {
       name: '',
       body: '',
       search: '',
-      placeID: '',
-      placeDescription: '',
-      address: '',
+      placeID: placeID,
+      placeDescription: placeDescription,
+      address: address,
       rating: '5',
       reviewTx: '',
       redeemCode: '',
-      coords: {lat: 59.93, lng: 30.33},
-      renderMap: false,
+      coords: coords,
+      renderMap: showMap,
       submitted: false,
       codeValid: false,
       renderSuccessModal: false,

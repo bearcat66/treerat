@@ -114,14 +114,15 @@ export default class ReviewTable extends React.Component {
         tooltipText = 'Purchase more vote credits'
       }
       var profileLink = '/user/' + review.user
+      var time = new Date(review.timestamp)
       return (
         <div key={index}>
         <div className="card" styles="width: 10rem;">
           <div className="card-body">
-            <h5 className="card-title">User: {review.user}</h5>
+            <h6 className="card-subtitle mb-2 text-right">{time.toLocaleString()}</h6>
+            <h5 className="card-title">{review.user}</h5>
             <h6 className="card-subtitle mb-2 text-right">Rating: {review.rating}</h6>
             <h6 className="card-subtitle mb-2 text-right">Score: {review.points.score}</h6>
-            <h6 className="card-subtitle mb-2 text-right">Time: {review.timestamp}</h6>
             <p className="card-text">{review.body}</p>
             <div className="card-text text-center">
               <Button disabled={disableButton} alt={tooltipText} title={tooltipText} variant="primary" size="sm" onClick={() => {
@@ -146,6 +147,7 @@ export default class ReviewTable extends React.Component {
           </div>
           <hr/>
           <Link to={txUrl} className="card-link">View TX</Link>
+          <ul/>
           <Link to={profileLink} className="card-link">{review.user}'s Profile</Link>
           </div>
         </div>

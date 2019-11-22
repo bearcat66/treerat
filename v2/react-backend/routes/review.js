@@ -74,7 +74,7 @@ async function getReviewTimestamp(log, reviewID) {
   var rev = await run.blockchain.fetch(origin)
   var time = new Date(rev.time)
   log.info('Review ['+reviewID+'] time: ['+ time+']')
-  return rev
+  return time
 }
 
 async function getReviewScore(log, reviewID) {

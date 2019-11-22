@@ -2,6 +2,7 @@ import React from 'react';
 import {Button, Modal} from 'react-bootstrap'
 import GoogleMapLoader from 'react-google-maps-loader'
 import GooglePlacesSuggest from 'react-google-places-suggest'
+import {Link} from 'react-router-dom'
 import ReviewTable from './ReviewTable.js';
 
 //const UnwriterAPIKey = process.env.REACT_APP_UNWRITERAPIKEY
@@ -21,6 +22,10 @@ export default class Search extends React.Component {
     this.transferLocation = this.transferLocation.bind(this)
     this.state = {
       search: '',
+      coords: {
+        lat: 1,
+        lng: 1
+      },
       placeID: '',
       reviewList: [],
       placeDescription: '',
@@ -38,15 +43,26 @@ export default class Search extends React.Component {
   }
 
   handleSelectSuggest(geocodedPrediction, originalPrediction) {
-    this.setState({search: '', address: geocodedPrediction.formatted_address, placeID: geocodedPrediction.place_id, placeDescription: originalPrediction.description})
+    this.setState({
+      search: '',
+      coords: {
+        lat: geocodedPrediction.geometry.location.lat(),
+        lng: geocodedPrediction.geometry.location.lng(),
+      },
+      address: geocodedPrediction.formatted_address,
+      placeID: geocodedPrediction.place_id,
+      placeDescription: originalPrediction.description,
+      loadingReviews: true
+    })
     getReviews(geocodedPrediction.place_id).then(r => {
       if (r == null) {
         this.setState({locationDNE: true})
         return
       }
-      this.setState({reviews: r.reviews, average: r.average, locationSelected: true, locationDNE: false})
+      this.setState({reviews: r.reviews, average: r.average, locationSelected: true, locationDNE: false, loadingReviews: false})
     }).catch(e => {
       console.error(e)
+      this.setState({loadingReviews: false, locationDNE: true})
     })
   }
   
@@ -58,23 +74,61 @@ export default class Search extends React.Component {
   handleStatusUpdate(status) {
   }
   renderReviewTable() {
+    if (this.state.loadingReviews) {
+      return (
+        <div className='container text-center'>
+          <hr/>
+          <p>Loading location...</p>
+          <div className='spinner-grow'/>
+        </div>
+      )
+    }
     if (this.state.locationDNE) {
       return (
         <div>
           <hr/>
           <h4>No Reviews Found</h4>
+          <Link
+            to={{
+              pathname: '/submit',
+              state: {
+                placeID: this.state.placeID,
+                address: this.state.address,
+                placeDescription: this.state.placeDescription,
+                coords: this.state.coords
+              }
+            }}>
+            <Button variant="primary" size="lg">Review this location!</Button>
+          </Link>
         </div>
       )
     }
     if (this.state.locationSelected) {
-      return <ReviewTable
-                navigateTo={this.props.navigateTo}
-                reviews={this.state.reviews}
-                userID={this.props.user}
-                averageRating={this.state.average}
-                tokens={this.props.tokens}
-                loadTokens={this.props.loadTokens}
-              />
+      return(
+        <div>
+          <hr/>
+          <Link
+            to={{
+              pathname: '/submit',
+              state: {
+                placeID: this.state.placeID,
+                address: this.state.address,
+                placeDescription: this.state.placeDescription,
+                coords: this.state.coords
+              }
+            }}>
+            <Button variant="primary" size="lg">Review this location!</Button>
+          </Link>
+          <ReviewTable
+            navigateTo={this.props.navigateTo}
+            reviews={this.state.reviews}
+            userID={this.props.user}
+            averageRating={this.state.average}
+            tokens={this.props.tokens}
+            loadTokens={this.props.loadTokens}
+          />
+        </div>
+      )
     }
     return null
   }
@@ -190,7 +244,5 @@ function getReviews(placeID) {
     return res.json()
   }).then(r => {
     return r
-  }).catch(e => {
-    console.error(e)
   })
 }

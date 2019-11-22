@@ -4,6 +4,8 @@ import './App.css';
 import GoogleMap from 'google-map-react';
 import {geolocated} from 'react-geolocated';
 import Place from './Place';
+import {Button} from 'react-bootstrap';
+import {Link} from 'react-router-dom';
  
 const MY_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY
 
@@ -20,6 +22,8 @@ export class Browse extends React.Component {
       isLoading: false,
       placeID: '',
       placeName: '',
+      coords: {},
+      address: '',
       reviews: [],
       places: []
     }
@@ -30,7 +34,13 @@ export class Browse extends React.Component {
     })
   }
   handleMapClick(event) {
-    this.setState({placeID: this.state.places[event].id, isLoading: true, placeName: this.state.places[event].locationName})
+    console.log(this.state.places[event])
+    this.setState({
+      placeID: this.state.places[event].id,
+      isLoading: true,
+      placeName: this.state.places[event].locationName,
+      coords: this.state.places[event].coords
+    })
     loadPlace(this.state.places[event].id).then(r=>{
       this.setState({reviews: r.reviews, isLoading: false, average: r.average})
     })
@@ -54,6 +64,17 @@ export class Browse extends React.Component {
     return (
       <div className='container-fluid'>
         <hr/>
+        <Link
+          to={{
+            pathname: '/submit',
+            state: {
+              placeID: this.state.placeID,
+              placeDescription: this.state.placeName,
+              coords: this.state.coords
+            }
+          }}>
+          <Button variant="primary" size="lg">Review this location!</Button>
+        </Link>
         <ReviewTable
           reviews={this.state.reviews}
           userID={this.props.user}
