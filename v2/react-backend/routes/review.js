@@ -27,7 +27,6 @@ const PURSE2_PRIVKEY = Jigs.PURSE2_KEY
 /* GET locations listing. */
 router.post('/:placeID', function(req, res) {
   run.activate()
-  //ensureLocationDBCreated()
   log.info('Creating review for location: ' + req.params.placeID)
   var locs = getAllLocationsJig()
   var loc = locs.get(req.params.placeID)
@@ -197,7 +196,6 @@ async function handleReviewCreate(log, locationOfJig, placeID, params) {
   run.activate()
   await run.sync()
   var instance = run
-  //ensurePointsDBCreated()
   var userdb = users.GetUserDB()
   await userdb.sync()
   var user = userdb.get(params.userID)
@@ -229,7 +227,7 @@ async function handleReviewCreate(log, locationOfJig, placeID, params) {
         app: Jigs.APP_ID
       })
       userRunInstance.activate()
-      userRunInstance.sync()
+      await userRunInstance.sync()
       instance = userRunInstance
     }
     var loc = await instance.load(locationOfJig.location)
@@ -287,31 +285,7 @@ function getAllLocationsJig() {
 function getPointsDBJig() {
   return run.owner.jigs.find(x => x.constructor.name === 'ReviewPointsDB')
 }
-async function ensureLocationDBCreated() {
-  var dbjig = getAllLocationsJig()
-  if (dbjig === null || dbjig == null) {
-    await createAllLocations()
-  }
-  return
-}
 
-async function ensurePointsDBCreated() {
-  var dbjig = getPointsDBJig()
-  if (dbjig === null || dbjig == null) {
-    await createPointsDB()
-  }
-  return
-}
-async function createPointsDB() {
-  log.info('Creating Points DB Object')
-  new Jigs.ReviewPointsDB()
-  await run.sync()
-}
-async function createAllLocations() {
-  log.info('Creating new AllLocations object')
-  new Jigs.AllLocations()
-  await run.sync()
-}
 async function loadRepTokens() {
   run.activate()
   await run.sync()
