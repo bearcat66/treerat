@@ -166,7 +166,6 @@ async function redeemReviewToken(log, paymail) {
     log.error(e)
   }
   await userRunInstance.sync()
-  await run.sync()
   log.info("Redeemed review token for ["+paymail+"]")
   return
 }
