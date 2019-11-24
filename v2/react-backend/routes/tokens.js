@@ -134,7 +134,6 @@ async function redeemVoteToken(log, paymail) {
     log.error(e)
   }
   await userRunInstance.sync()
-  await run.sync()
   log.info("Redeemed vote token for ["+paymail+"]")
   return
 }

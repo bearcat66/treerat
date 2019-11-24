@@ -69,6 +69,8 @@ router.get('/:reviewID/score', function(req, res, next) {
 })
 
 async function getReviewTimestamp(log, reviewID) {
+  run.activate()
+  await run.sync()
   var origin = reviewID.split('_')[0]
   var rev = await run.blockchain.fetch(origin)
   var time = new Date(rev.time)
@@ -141,8 +143,8 @@ async function upvoteReview(log, reviewID, upvotedUser) {
   var out = bsv.Transaction.Output({satoshis: 5000, script: output})
   var tx = new bsv.Transaction().from(utxos).change(purseAddress).addOutput(out).sign(PURSE2_PRIVKEY)
   await run.blockchain.broadcast(tx)
-  await tokens.RedeemVote(log, upvotedUser)
   log.info("Successfully sent ["+rev.user+"] 5000 satoshis")
+  await tokens.RedeemVote(log, upvotedUser)
   await pts.sync()
   var voters = pts.get(reviewID)
   if (voters.upvotedUsers.length > 0) {
@@ -151,6 +153,8 @@ async function upvoteReview(log, reviewID, upvotedUser) {
 }
 
 async function payVoters(log, voters) {
+  run.activate()
+  await run.sync()
   log.info('Paying curators: ' + voters)
   var paymailClient = new PaymailClient(dns, fetch)
   var purseAddress = new bsv.PrivateKey(PURSE2_PRIVKEY).toAddress().toString()
@@ -167,8 +171,8 @@ async function payVoters(log, voters) {
     var out = bsv.Transaction.Output({satoshis: 550, script: output})
     var tx = new bsv.Transaction().from(utxos).change(purseAddress).addOutput(out).sign(PURSE2_PRIVKEY)
     await run.blockchain.broadcast(tx)
-  log.info('Successfully paid curators: ' + voters)
   }
+  log.info('Successfully paid curators: ' + voters)
 }
  
 async function loadReviews(log, userID) {
