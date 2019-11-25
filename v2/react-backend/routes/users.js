@@ -89,8 +89,8 @@ async function createUser(log, id, profile, isBusinessAccount) {
     reviews.send(keys.pubKey, 25)
     votes.send(keys.pubKey, 50)
   } else {
-    reviews.send(keys.pubKey, 5)
-    votes.send(keys.pubKey, 10)
+    reviews.send(keys.pubKey, 10)
+    votes.send(keys.pubKey, 20)
   }
   run.transaction.end()
   await run.sync()

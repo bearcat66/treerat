@@ -32,7 +32,7 @@ export default class Purchase extends React.Component {
   }
   onPaymentSuccessVotes(payment) {
     var amount = 50
-    if (payment.spendAmountUsd[2] === '7') {
+    if (payment.spendAmountUsd[2] === '5') {
       amount = 100
     }
     this.props.setLoadingTokens()
@@ -62,7 +62,7 @@ export default class Purchase extends React.Component {
           {this.renderSpinner()}
           <MoneyButton
             to='truereviews@moneybutton.com'
-            amount='.005'
+            amount='.25'
             currency='USD'
             label='Ten Reviews'
             onLoad={this.onMBLoad}
@@ -83,7 +83,7 @@ export default class Purchase extends React.Component {
           {this.renderSpinner()}
           <MoneyButton
             to='truereviews@moneybutton.com'
-            amount='.4'
+            amount='.3'
             currency='USD'
             label='Fifty Votes'
             onLoad={this.onMBLoad}
@@ -91,7 +91,7 @@ export default class Purchase extends React.Component {
           />
           <MoneyButton
             to='truereviews@moneybutton.com'
-            amount='.75'
+            amount='.5'
             currency='USD'
             label='Hundred Votes'
             onLoad={this.onMBLoad}
