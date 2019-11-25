@@ -4,7 +4,7 @@ export default class About extends React.Component {
   render() {
     return (
       <div className="jumbotron jumbotron-transparent-25">
-        <h3 className="text-center">About Us</h3>
+        <h3 className="text-center">About True Reviews</h3>
         <hr/>
         <div className="container bg-light">
           <h5 className="text-center">What is True Reviews?</h5>
@@ -14,6 +14,37 @@ export default class About extends React.Component {
             taken on TrueReviews is an onchain Bitcoin transaction. There are
             three main components to the platform: Reviews, Reputation, and
             Rewards.</p>
+          <hr/>
+          <h5 className="text-center">Registration</h5>
+          <p>
+            To register for True Reviews, you must have a Money Button account.
+            Go to https://moneybutton.com to create an account if you don’t
+            have one already. True Reviews uses your Money Button default
+            paymail as your identity across the site,  so be sure to set this
+            to something appropriate before registering for True Reviews.
+
+            To register, swipe the Money Button on our home page. This will
+            create an onchain user account with True Reviews and store your
+            reputation and tokens.
+
+            With registration your user account is credited with 10 reviews and
+            10 votes. Try out creating a review by visiting the “Submit” page,
+            and check out the “Browse” page to find other reviews nearby. You
+            can vote on any review using your vote tokens.
+          </p>
+          <hr/>
+          <h5 className="text-center">How Do I Make Money?</h5>
+          <p>
+            Good question! Every vote your review gets from other users, you
+            earn 5000 satoshis. Users can also tip you for your review if they
+            find it particularly helpful. If you vote on another users’ review,
+            for every other voter that votes the same way as you, you will earn
+            550 satoshis.
+
+            At current prices of BSV, your review becomes profitable if 5 or
+            more people vote on it, and your votes become profitable if 20 or
+            more people agree with you!
+          </p>
           <hr/>
           <h5 className="text-center">Reviews</h5>
           <p>
