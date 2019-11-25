@@ -25,7 +25,9 @@ export default class Purchase extends React.Component {
         amount: amount
       })
     }).then(r => {
-      this.props.loadTokens(this.props.user)
+      setTimeout(() => {
+        this.props.loadTokens(this.props.user)
+      }, 1500)
     }).catch(e => {
       console.error(e)
     })
@@ -43,7 +45,9 @@ export default class Purchase extends React.Component {
         amount: amount
       })
     }).then(r => {
-      this.props.loadTokens(this.props.user)
+      setTimeout(() => {
+        this.props.loadTokens(this.props.user)
+      }, 1500)
     }).catch(e => {
       console.error(e)
     })
