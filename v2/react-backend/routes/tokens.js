@@ -83,7 +83,7 @@ async function getUserTokens(log, paymail) {
   await db.sync()
   var user = db.get(paymail)
   if (user == null) {
-    throw 'user not found'
+    throw new Error('User ['+paymail+'] not found')
   }
   var keys = users.DecryptKeys(user.keys)
   try {

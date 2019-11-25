@@ -19,7 +19,6 @@ var log = logger.CreateLogger()
 /* GET users listing. */
 router.get('/', function(req, res, next) {
   run.activate()
-  //ensureUserDBCreated()
   var users = getAllUsers(log)
   users.then(r=> {
     res.json(r)
@@ -29,8 +28,6 @@ router.get('/', function(req, res, next) {
 
 router.get('/:id', function(req, res, next) {
   run.activate()
-  //ensureUserDBCreated()
-  //log.info(req.session.user.accessToken)
   loadUserInfo(log, req.params.id).then(r=> {
     run.activate()
     res.json(r)
@@ -42,7 +39,6 @@ router.get('/:id', function(req, res, next) {
 
 router.get('/:id/profile', function(req, res, next) {
   run.activate()
-  //ensureUserDBCreated()
   loadUserProfile(log, req.params.id).then(r=> {
     run.activate()
     res.json(r)
@@ -52,7 +48,6 @@ router.get('/:id/profile', function(req, res, next) {
 });
 router.post('/:id', function(req, res) {
   run.activate()
-  //ensureUserDBCreated()
   createUser(log, req.params.id, req.body.profile, req.body.businessAccount).then(r=> {
     res.json(r)
   }).catch(e => {
@@ -204,16 +199,6 @@ async function loadUserInfo(log, paymail) {
   log.info('Successfully loaded user info for: ' + paymail)
   var address = bsv.Address.fromPublicKey(bsv.PublicKey.fromHex(keys.pubKey))
   return {reviews: reviewList, locations: locationList, coupons: coupons, tokens: tokens-badTokens, address: address.toString(), profile: user.profile, businessAccount: user.businessAccount, alphaTokens: alphaTokens}
-}
-
-/* ALL USERDB FUNCTIONS */
-async function ensureUserDBCreated() {
-  await run.sync()
-  var dbjig = getUserDB()
-  if (dbjig === null || dbjig == null) {
-    await createUserDB()
-  }
-  return
 }
 
 function getUserDB() {
