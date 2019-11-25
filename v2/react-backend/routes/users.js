@@ -91,7 +91,7 @@ async function createUser(log, id, profile, isBusinessAccount) {
   var votes = await loadVoteToken()
   run.activate()
   run.transaction.begin()
-  if isAlphaUser(profile.primaryPaymail) {
+  if (isAlphaUser(profile.primaryPaymail)) {
     token.send(keys.pubKey, 1)
     reviews.send(keys.pubKey, 25)
     votes.send(keys.pubKey, 50)
