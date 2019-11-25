@@ -81,6 +81,8 @@ async function getUserTokens(log, paymail) {
   await run.sync()
   var db = users.GetUserDB()
   await db.sync()
+  log.info(db)
+  log.info(db.get(paymail))
   var user = db.get(paymail)
   if (user == null) {
     throw new Error('User ['+paymail+'] not found')

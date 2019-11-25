@@ -1,4 +1,3 @@
-var mb = require('@moneybutton/api-client')
 var bsv = require('bsv')
 var ecies = require('bsv/ecies')
 var fs = require('fs')
@@ -9,7 +8,6 @@ var router = express.Router();
 const Run = require('../lib/run.node.min')
 const Jigs = require('../lib/jigs')
 const run = Jigs.RunTrueReview
-const MB_OAUTH_ID = process.env.REACT_APP_MBOAUTHID
 const GOOGLE_KEY = process.env.REACT_APP_GOOGLE_API_KEY
 const ownerPrivKey = bsv.PrivateKey.fromWIF(Jigs.OWNER_KEY)
 const ownerPubKey = bsv.PublicKey.fromPrivateKey(ownerPrivKey)
@@ -126,11 +124,6 @@ async function loadUserProfile(log, id) {
 
 async function loadUserInfo(log, paymail) {
   log.info('Loading user info for: ' + paymail)
-  var mbclient = new mb.MoneyButtonClient(MB_OAUTH_ID)
-  //await mbclient.setAccessToken(accessToken)
-  //var expiration = await mbclient.getExpirationTime()
-  //log.info(expiration)
-  //log.info(Date(expiration))
   run.activate()
   await run.sync()
   var db = getUserDB()
@@ -213,7 +206,6 @@ function getAllUsers(log) {
 
 async function loadAllUsers(log) {
   log.info("Loading all users...")
-  var mbclient = new mb.MoneyButtonClient(MB_OAUTH_ID)
   await run.sync()
   var db = getUserDB()
   if (db == null) {
