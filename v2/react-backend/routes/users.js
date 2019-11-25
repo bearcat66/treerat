@@ -1,6 +1,7 @@
 var mb = require('@moneybutton/api-client')
 var bsv = require('bsv')
 var ecies = require('bsv/ecies')
+var fs = require('fs')
 
 var express = require('express');
 var router = express.Router();
@@ -90,12 +91,28 @@ async function createUser(log, id, profile, isBusinessAccount) {
   var votes = await loadVoteToken()
   run.activate()
   run.transaction.begin()
-  token.send(keys.pubKey, 1)
-  reviews.send(keys.pubKey, 5)
-  votes.send(keys.pubKey, 10)
+  if isAlphaUser(profile.primaryPaymail) {
+    token.send(keys.pubKey, 1)
+    reviews.send(keys.pubKey, 25)
+    votes.send(keys.pubKey, 50)
+  } else {
+    reviews.send(keys.pubKey, 5)
+    votes.send(keys.pubKey, 10)
+  }
   run.transaction.end()
   await run.sync()
   return {address: address.toString()}
+}
+
+function isAlphaUser(user) {
+  var raw = fs.readFileSync('../hack/data/alpha-user-stats.json')
+  var data = JSON.parse(raw)
+  for (i=0;i<data.length;i++) {
+    if (user === data[i].paymail) {
+      return true
+    }
+  }
+  return false
 }
 
 async function loadUserProfile(log, id) {
