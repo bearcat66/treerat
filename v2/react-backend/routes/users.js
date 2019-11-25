@@ -105,7 +105,7 @@ async function createUser(log, id, profile, isBusinessAccount) {
 }
 
 function isAlphaUser(user) {
-  var raw = fs.readFileSync('../hack/data/alpha-user-stats.json')
+  var raw = fs.readFileSync('./hack/data/alpha-user-stats.json')
   var data = JSON.parse(raw)
   for (i=0;i<data.length;i++) {
     if (user === data[i].paymail) {
