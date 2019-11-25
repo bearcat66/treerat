@@ -2,7 +2,7 @@ var mb = require('@moneybutton/api-client')
 var bsv = require('bsv')
 var ecies = require('bsv/ecies')
 var fs = require('fs')
-
+var path = require("path")
 var express = require('express');
 var router = express.Router();
 
@@ -105,7 +105,7 @@ async function createUser(log, id, profile, isBusinessAccount) {
 }
 
 function isAlphaUser(user) {
-  var raw = fs.readFileSync('./hack/data/alpha-user-stats.json')
+  var raw = fs.readFileSync(path.resolve(__dirname, '../hack/data/alpha-user-stats.json'))
   var data = JSON.parse(raw)
   for (i=0;i<data.length;i++) {
     if (user === data[i].paymail) {
