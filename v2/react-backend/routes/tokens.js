@@ -47,6 +47,7 @@ async function sendReviewTokens(log, paymail, amount) {
   run.activate()
   await run.sync()
   var db = users.GetUserDB()
+  await db.sync()
   var user = db.get(paymail)
   if (user == null) {
     throw 'user not found'
@@ -62,6 +63,7 @@ async function sendVoteTokens(log, paymail, amount) {
   run.activate()
   await run.sync()
   var db = users.GetUserDB()
+  await db.sync()
   var user = db.get(paymail)
   if (user == null) {
     throw 'user not found'
@@ -78,6 +80,7 @@ async function getUserTokens(log, paymail) {
   run.activate()
   await run.sync()
   var db = users.GetUserDB()
+  await db.sync()
   var user = db.get(paymail)
   if (user == null) {
     throw 'user not found'
@@ -112,6 +115,7 @@ async function redeemVoteToken(log, paymail) {
   run.activate()
   await run.sync()
   var db = users.GetUserDB()
+  await db.sync()
   var user = db.get(paymail)
   if (user == null) {
     throw 'user not found'
@@ -143,9 +147,10 @@ async function redeemReviewToken(log, paymail) {
   run.activate()
   await run.sync()
   var db = users.GetUserDB()
+  await db.sync()
   var user = db.get(paymail)
   if (user == null) {
-    throw 'user not found'
+    throw new Error('User ['+paymail+'] not found')
   }
   var keys = users.DecryptKeys(user.keys)
   try {

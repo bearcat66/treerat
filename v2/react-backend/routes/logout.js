@@ -11,13 +11,15 @@ var router = express.Router();
 const MB_OAUTH_ID = process.env.REACT_APP_MBOAUTHID
 const MB_CLIENT_ID = process.env.MB_CLIENT_ID
 const MB_CLIENT_SECRET = process.env.MB_CLIENT_SECRET
-//const ownerPrivKey = bsv.PrivateKey.fromWIF(Jigs.OWNER_KEY)
-//const ownerPubKey = bsv.PublicKey.fromPrivateKey(ownerPrivKey)
+const logger = require('../src/logger')
+var log = logger.CreateLogger()
 
 
 router.post('/:id', function(req, res) {
+  log.info('Logging out user ['+req.params.id+']')
   req.session.destroy()
   res.json(JSON.stringify({'loggedOut': true}))
+  log.info('Successfully logged out user ['+req.params.id+']')
 })
 
 module.exports = router;
