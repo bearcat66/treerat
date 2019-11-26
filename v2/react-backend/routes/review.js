@@ -89,6 +89,7 @@ async function getReviewScore(log, reviewID) {
 }
 
 async function downvoteReview(log, reviewID, downvotedUser) {
+  log.info('User ['+downvotedUser+'] Downvoting review ['+reviewID+']...')
   run.activate()
   await run.sync()
   if (reviewID == null) {
@@ -115,6 +116,7 @@ async function downvoteReview(log, reviewID, downvotedUser) {
 }
 
 async function upvoteReview(log, reviewID, upvotedUser) {
+  log.info('User ['+upvotedUser+'] Upvoting review ['+reviewID+']...')
   run.activate()
   await run.sync()
   var rev = await run.load(reviewID)

@@ -83,6 +83,9 @@ export default class ReviewTable extends React.Component {
       var upvoteButtonText = 'Great Review!'
       var downvoteButtonText = 'Bad Review'
       var tooltipText = 'Use Credit'
+      if (review.points == null) {
+        return null
+      }
       if (review.points.upvotedUsers == null) {
         return null
       }
