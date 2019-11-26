@@ -25,6 +25,7 @@ class AppRouter extends Component {
     this.setLoadingTokens = this.setLoadingTokens.bind(this)
   }
   componentDidMount() {
+    this.setState({loadingTokens: true})
     fetch('/api/session').then(res => {
       if (res.status === 404 || res.status === 500) {
         throw new Error('Session not found')
@@ -36,7 +37,7 @@ class AppRouter extends Component {
       this.loadTokens(r.user)
     }).catch(e => {
       console.error(e)
-      this.setState({loggedIn: false})
+      this.setState({loggedIn: false, loadingTokens: false})
     })
   }
   setLoadingTokens() {
@@ -61,6 +62,7 @@ class AppRouter extends Component {
     })
   }
   updateSession() {
+    this.setState({loadingTokens: true})
     fetch('/api/session').then(res => {
       if (res.status === 404 || res.status === 500) {
         throw new Error('Session not found')
@@ -73,7 +75,7 @@ class AppRouter extends Component {
       this.loadTokens(r.user)
     }).catch(e => {
       console.error(e)
-      this.setState({loggedIn: false})
+      this.setState({loggedIn: false, loadingTokens: false})
     })
   }
 
