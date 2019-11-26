@@ -93,7 +93,7 @@ export default class Login extends React.Component {
         <h2>Please swipe the MoneyButton to register:</h2>
         <MoneyButton
           to='truereviews@moneybutton.com'
-          amount='.001'
+          amount='.25'
           currency='USD'
           label='Register'
           onPayment={this.onPaymentSuccessBusiness}
