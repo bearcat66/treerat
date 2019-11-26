@@ -127,8 +127,6 @@ async function loadAllLocations(log) {
       continue
     }
     var loc = db.get(key)
-    run.activate()
-    await run.sync()
     var l = await run.load(loc.location)
     locationList.push({id: key, location: loc.location, coords: loc.coords, locationName: l.name})
   }
