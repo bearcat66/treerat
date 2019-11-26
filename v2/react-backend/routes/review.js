@@ -97,7 +97,6 @@ async function downvoteReview(log, reviewID, downvotedUser) {
   }
   var rev = await run.load(reviewID)
   await rev.sync()
-  console.log(rev)
   var pts = getPointsDBJig()
   await pts.sync()
   if (pts.get(reviewID) === null) {
