@@ -98,6 +98,11 @@ export default class Login extends React.Component {
           label='Register'
           onPayment={this.onPaymentSuccessBusiness}
         />
+        <p>Note: Registering with True Reviews automatically grants you 10
+          Review Credits and 20 Vote Credits. If you were a previous True
+          Review Alpha Tester you will retain your alpha tester token and will
+          instead receive 25 Review Credits and 50 Vote Credits once
+          registered!</p>
       </div>
     )
   }
