@@ -66,7 +66,7 @@ class NavBar extends Component {
         <div className='col justify-content-end text-right'>
           <UserInfo userInfo={this.state.user} tokens={this.state.tokens} loadingTokens={this.props.loadingTokens}/>
           <ul/>
-          {!this.state.loggedIn ? <button className="btn btn-link" onClick={GetMBToken}>Login in with MB</button> : null }
+          {!this.state.loggedIn && !this.props.loadingTokens ? <button className="btn btn-link" onClick={GetMBToken}>Login in with MB</button> : null }
           {this.state.loggedIn ? <button className="btn btn-link" onClick={() => {
             logOut(this.state.paymail)
           }}>Log Out</button> : null }

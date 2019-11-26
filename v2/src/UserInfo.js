@@ -16,7 +16,6 @@ export default class UserInfo extends React.Component {
       this.setState({user: this.props.userInfo})
     }
     if (this.props.tokens !== prevProps.tokens) {
-      console.log(this.props.tokens)
       this.setState({tokens: this.props.tokens})
     }
   }

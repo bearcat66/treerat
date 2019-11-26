@@ -82,11 +82,6 @@ class AppRouter extends Component {
   showProfilePage() {
     this.setState({showPage: 'profile'})
   }
-  userExists(yes) {
-    console.log(yes)
-    this.setState({loggedIn: yes})
-    this.setNavBarLocations()
-  }
   setNavBarLocations() {
     if (this.state.loggedIn) {
       this.setState({
