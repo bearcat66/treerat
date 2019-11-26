@@ -62,7 +62,7 @@ export default class App extends React.Component {
           </Route>
           <Route
             path="/login/"
-            render={(props) => <Login {...props} updateSession={this.props.updateSession}/>}
+            render={(props) => <Login {...props} updateSession={this.props.updateSession} setLoadingTokens={this.props.setLoadingTokens}/>}
           />
         </Switch>
       </div>
