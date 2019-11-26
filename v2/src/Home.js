@@ -15,7 +15,7 @@ class Home extends Component {
   renderPlaceHolder() {
     return (
       <div className="container text-center">
-        <h1>True Reviews</h1>
+        <h1>True Reviews (Alpha v2.0)</h1>
         <p>The place for high-quality reviews!</p>
       </div>
     )
