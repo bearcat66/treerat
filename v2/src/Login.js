@@ -50,6 +50,7 @@ export default class Login extends React.Component {
       return null
     }
     console.log("Login redirect called");
+    this.props.setLoadingTokens()
     setTimeout(this.props.updateSession, 1500)
     return (<Redirect to="/"/>)
   }
