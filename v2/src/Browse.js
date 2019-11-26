@@ -103,6 +103,7 @@ export class Browse extends React.Component {
       return (
         <div className='container text-center'>
           <p>Loading Map...</p>
+          <p>Please don't refresh the page</p>
           <div className='spinner-grow'/>
         </div>
       )

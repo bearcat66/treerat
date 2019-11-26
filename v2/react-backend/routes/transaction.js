@@ -3,6 +3,8 @@ var bsv = require('bsv')
 
 var express = require('express');
 var router = express.Router();
+const logger = require('../src/logger')
+var log = logger.CreateLogger()
 
 const Run = require('../lib/run.node.min')
 const Jigs = require('../lib/jigs')
