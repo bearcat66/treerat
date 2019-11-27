@@ -11,10 +11,11 @@ import Profile from './Profile.js';
 import About from './About.js';
 import Contact from './Contact.js';
 import {Route, Switch, useParams} from "react-router-dom";
-function Tx() {
+function Tx(props) {
   var {id} = useParams()
+  console.log(props)
   return (
-    <Transaction id={id}/>
+    <Transaction id={id} user={props.user} tokens={props.tokens} loadTokens={props.loadTokens}/>
   )
 }
 
@@ -52,7 +53,7 @@ export default class App extends React.Component {
             <Submit user={this.props.user} tokens={this.props.tokens} loadTokens={this.props.loadTokens}/>
           </Route>
           <Route path="/tx/:id">
-            <Tx/>
+            <Tx tokens={this.props.tokens} user={this.props.user} loadTokens={this.props.loadTokens}/>
           </Route>
           <Route path="/user/:id">
             <User/>

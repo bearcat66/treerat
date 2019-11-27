@@ -139,7 +139,7 @@ export default class ReviewTable extends React.Component {
           <div className="card-text text-center">
             <h6 className="card-subtitle mb-2 text-center">Leave a tip!</h6>
             <MoneyButton
-              to={review.userID}
+              to={review.user}
               currency='USD'
               editable
             />
