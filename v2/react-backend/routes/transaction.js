@@ -3,6 +3,7 @@ var bsv = require('bsv')
 
 var express = require('express');
 var router = express.Router();
+var review = require('./review.js')
 const logger = require('../src/logger')
 var log = logger.CreateLogger()
 
@@ -39,11 +40,11 @@ async function loadTx(id) {
     }
     jigs.push(jig)
   }
-  var out = parseJigs(jigs)
+  var out = await parseJigs(jigs)
   return out
 }
 
-function parseJigs(jigs) {
+async function parseJigs(jigs) {
   var outs = []
   for (var i=0;i<jigs.length;i++) {
     var jig = jigs[i]
@@ -59,9 +60,14 @@ function parseJigs(jigs) {
         out.reviewCount = revs.length
         break
       case 'Review':
+        var time = await review.GetReviewTimestamp(log, jig.origin)
+        var score = await review.GetScore(log, jig.origin)
         out.body =  jig.body
         out.rating = jig.rating
         out.user = jig.user
+        out.origin = jig.origin
+        out.points = score
+        out.timestamp = time
         break
       default:
         log.error('No parser for: ' + type)

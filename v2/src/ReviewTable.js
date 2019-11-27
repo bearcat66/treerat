@@ -49,6 +49,9 @@ export default class ReviewTable extends React.Component {
     this.setState({downvoting: false})
   }
   renderLocationInfo() {
+    if (this.props.reviewsOnly) {
+      return null
+    }
     return (
       <div>
         <h3>Total Reviews: {this.state.reviews.length}</h3>
@@ -61,14 +64,7 @@ export default class ReviewTable extends React.Component {
   //this actually creates the cells in the reviewTable, if changing the properties when moving to jigs then we need to remove / update properties here (and remove headers from render fuinction)
   renderTableData() {
     if (this.state.reviews == null) {
-      return (
-        <div>
-          <h5>No reviews found</h5>
-          <Button onClick={() => {
-            this.props.navigateTo('submit')
-          }}>Create the first review!</Button>
-        </div>
-      )
+      return null
     }
 
     var revs = this.state.reviews.sort(function(a,b){

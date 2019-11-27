@@ -13,7 +13,6 @@ export class Browse extends React.Component {
   constructor(props) {
     super(props)
     this.handleMapClick = this.handleMapClick.bind(this)
-    this.handleUpvote = this.handleUpvote.bind(this)
     this.state = {
       average: 0,
       loadingLocations: true,
@@ -45,10 +44,6 @@ export class Browse extends React.Component {
       this.setState({reviews: r.reviews, isLoading: false, average: r.average})
     })
   }
-  handleUpvote() {
-    this.setState({placeID: this.state.placeID})
-    this.props.loadTokens()
-  }
   renderReviewTable() {
     if (this.state.placeID === '') {
       return null
@@ -78,8 +73,6 @@ export class Browse extends React.Component {
         <ReviewTable
           reviews={this.state.reviews}
           userID={this.props.user}
-          handleUpvote={this.handleUpvote}
-          navigateTo={this.props.navigateTo}
           averageRating={this.state.average}
           tokens={this.props.tokens}
           loadTokens={this.props.loadTokens}

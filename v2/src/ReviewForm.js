@@ -6,6 +6,7 @@ import Place from './Place';
 import GoogleMapLoader from 'react-google-maps-loader'
 import GooglePlacesSuggest from 'react-google-places-suggest'
 import {Link} from 'react-router-dom'
+import {TwitterShareButton} from 'react-twitter-embed';
 
 const MY_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY
 
@@ -100,6 +101,10 @@ export default class ReviewForm extends React.Component {
         <Modal.Body>
           <p>Congratulations! You have earned 1 reputation point. Thanks for reviewing {this.state.placeDescription}</p>
           {this.state.redeemCode !== '' ? <p>You have successfully redeemed your code for a dollar!</p> : null}
+          <TwitterShareButton
+            url={'https://truereviews.io'+txUrl}
+            options={{ text: 'I just reviewed '+this.state.placeDescription + ' and earned money!', via: 'truereviews_io' }}
+          />
         </Modal.Body>
 
         <Modal.Footer>

@@ -1,7 +1,8 @@
 import React from 'react';
-import GoogleMap from 'google-map-react'
+import GoogleMap from 'google-map-react';
 import Place from './Place';
-import {Button} from 'react-bootstrap'
+import ReviewTable from './ReviewTable';
+import {Button} from 'react-bootstrap';
 const MY_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY
 
 export default class Transaction extends React.Component {
@@ -35,6 +36,7 @@ export default class Transaction extends React.Component {
     if (this.state.jigs == null) {
       return null
     }
+
     return this.state.jigs.map((jig, index) => {
       switch(jig.type) {
         case 'Location':
@@ -61,14 +63,20 @@ export default class Transaction extends React.Component {
           )
 
         case 'Review':
+          var reviewList = []
+          reviewList.push(jig)
           return (
             <div class="card" styles="width: 18rem;">
               <div class="card-body">
                 <h3 class="card-title">{jig.type}</h3>
                 <hr/>
-                <h6 class="card-subtitle mb-2 text-center">{jig.body}</h6>
-                <h6 class="card-subtitle mb-2 text-right">Rating: {jig.rating}</h6>
-                <h6 class="card-subtitle mb-2 text-center">User: {jig.user}</h6>
+                <ReviewTable
+                  reviews={reviewList}
+                  userID={this.props.user}
+                  tokens={this.props.tokens}
+                  loadTokens={this.props.loadTokens}
+                  reviewsOnly={true}
+                />
               </div>
             </div>
           )
