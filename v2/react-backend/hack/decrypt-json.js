@@ -13,6 +13,6 @@ function decryptRunData (encrypted) {
     throw new Error(`unable to parse decrypted run data\n\n${e.toString()}\n\n${decrypted}`)
   }
 }
-var enc = "_ispY]iF<_iG][GiFis10HHt7r)]z]f$]9%1C#07]HG]r7py]}t][G]}YHt7py]}t_P}Ui4iY]CHiF_i7py]}iFi|]cIc8mgeTYEms0mg]0mIYmEY]:cddOsIEs8sIY08s8YOedY:I]seY0|YeI8O|mm/pdiU4ip9}]riFieO80:TTYgEmI]dYsEg0:s]IE]e|mmIc|EImedOO8O0YY|se8s8g8EOdc0|de|OTOeeiUN4i0sG$p}HiF<N4iD$'HiFeU"
-console.log(decryptRunData(enc))
+var enc = "_ispY]iF<N4i0sG$p}HiF<_iG0r']GiFi/$ei4i`]G#pYiFiH]Gi4i0r'HiF<i8egEII8m|ge]EOd0:dY]|mOdcc]eeOETe|]O]]gcOdgse8Td|8sYm0s|EedYYTec/pOi4_iHspr]iFe4i)CfpG]YRH]rHiF<N4iYp9}fpG]YRH]rHiF<NUNU4_iG0r']GiFi/$di4i`]G#pYiFiH]}Yi4i0r'HiF<ieOYc0OcTYdIT0TsEemc|gmYseEE|geId:0Ym|]T8O|s:|8:Oeccg0ITcs0]8ses8esi4dNUN4iD$'HiF:U"
+console.log(decryptRunData(enc).actions[0])
 
