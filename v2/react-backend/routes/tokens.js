@@ -80,7 +80,6 @@ async function getUserTokens(log, paymail) {
   run.activate()
   await run.sync()
   var db = users.GetUserDB()
-  await db.sync()
   var user = db.get(paymail)
   if (user == null) {
     throw new Error('User ['+paymail+'] not found')
@@ -91,7 +90,6 @@ async function getUserTokens(log, paymail) {
   } catch(e) {
     log.error(e)
   }
-  await userRunInstance.sync()
   var jigs = userRunInstance.owner.jigs
   var reviews = 0
   var votes = 0
