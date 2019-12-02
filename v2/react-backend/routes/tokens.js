@@ -98,11 +98,9 @@ async function getUserTokens(log, paymail) {
   for (var i=0; i< jigs.length; i++) {
     var jig = jigs[i]
     if (jig.constructor.name === 'ReviewToken') {
-      await jig.sync()
       reviews += jig.amount
     }
     if (jig.constructor.name === 'VoteToken') {
-      await jig.sync()
       votes += jig.amount
     }
   }
@@ -137,7 +135,6 @@ async function redeemVoteToken(log, paymail) {
   } catch(e) {
     log.error(e)
   }
-  await userRunInstance.sync()
   log.info("Redeemed vote token for ["+paymail+"]")
   return
 }
@@ -169,7 +166,6 @@ async function redeemReviewToken(log, paymail) {
   } catch(e) {
     log.error(e)
   }
-  await userRunInstance.sync()
   log.info("Redeemed review token for ["+paymail+"]")
   return
 }
