@@ -398,7 +398,8 @@ const starApiHost = 'https://api.star.store'
 const apis = [
   {
     name: 'star',
-    broadcastUrl: network => `${starApiHost}/v1/${network}/tx`,
+    broadcastUrl: network => `https://api.bitindex.network/api/v3/${network}/tx/send`,
+    //broadcastUrl: network => `${starApiHost}/v1/${network}/tx`,
     broadcastData: tx => { return { rawtx: tx.toBuffer().toString('hex') } },
     fetchUrl: (network, txid) => `${starApiHost}/v1/${network}/tx/${txid}`,
     fetchResp: data => jsonToTx(data),

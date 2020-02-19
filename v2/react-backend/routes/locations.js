@@ -25,6 +25,14 @@ router.get('/', function(req, res, next) {
   })
 });
 
+router.get('/coingeek', function(req, res, next) {
+  run.activate()
+  var locs = getCGLocations(log)
+  locs.then(r=> {
+    res.json(r)
+  })
+});
+
 router.get('/:id', function (req, res) {
   run.activate()
   log.info('Getting information for location: '+ req.params.id)
@@ -131,6 +139,37 @@ function getAllLocations(log) {
   return loadAllLocations(log).then(r => {
     return r
   })
+}
+
+function getCGLocations(log) {
+  return loadCGLocations(log).then(r => {
+    return r
+  })
+}
+
+async function loadCGLocations(log) {
+  log.info('Loading CoinGeek locations...')
+  run.activate()
+  await run.sync()
+  var db = getAllLocationsJig()
+  if (db == null) {
+    return null
+  }
+  await db.sync()
+  var entries = Object.entries(db)
+  var locationList = []
+  for (var [key,value] of entries) {
+    if (key === 'owner' || key === 'satoshis' || key === 'location' || key === 'origin') {
+      continue
+    }
+    var loc = db.get(key)
+    if (loc.coords.lat > 51 && loc.coords.lat < 52 && loc.coords.lng < 0 && loc.coords.lng > -1) {
+      var l = await run.load(loc.location)
+      locationList.push({id: key, location: loc.location, coords: loc.coords, locationName: l.name})
+    }
+  }
+  log.info('Successfully loaded all locations')
+  return locationList
 }
 
 async function loadAllLocations(log) {

@@ -133,7 +133,10 @@ async function upvoteReview(log, reviewID, upvotedUser) {
     pts.set(reviewID, {score: 0, upvotedUsers: [], downvotedUsers: []})
   }
   var tokes = await loadRepTokens()
+  await tokes.sync()
+  console.log(tokes)
   tokes.send(rev.owner, 5)
+  await tokes.sync()
   await pts.sync()
 
   var voters = pts.get(reviewID)
@@ -487,10 +490,16 @@ function getPointsDBJig() {
 async function loadRepTokens() {
   run.activate()
   await run.sync()
-  var token = run.owner.jigs.find(function(i) {
-    return i.constructor.name === 'TrueReviewToken' && i.amount > 100
-  })
-  return token
+  var jigs = run.owner.jigs
+  for (var i=0;i<jigs.length;i++) {
+    if (jigs[i].constructor.name === 'TrueReviewToken') {
+      await jigs[i].sync()
+      if (jigs[i].amount > 100) {
+        return jigs[i]
+      }
+    }
+  }
+  return null
 }
 
 module.exports = router;
