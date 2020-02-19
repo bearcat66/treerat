@@ -12,6 +12,7 @@ import About from './About.js';
 import Contact from './Contact.js';
 import Location from './Location.js';
 import Following from './Following.js';
+import Coingeek from './Coingeek.js';
 import {Route, Switch, useParams} from "react-router-dom";
 function Tx(props) {
   var {id} = useParams()
@@ -49,6 +50,16 @@ export default class App extends React.Component {
           </Route>
           <Route path="/browse">
             <Browse
+              user={this.props.user}
+              tokens={this.props.tokens}
+              loadNotifications={this.props.loadNotifications}
+              following={this.props.following}
+              followedBy={this.props.followedBy}
+              loggedIn={this.props.loggedIn}
+            />
+          </Route>
+          <Route path="/coingeek">
+            <Coingeek
               user={this.props.user}
               tokens={this.props.tokens}
               loadNotifications={this.props.loadNotifications}

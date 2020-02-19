@@ -163,7 +163,7 @@ async function loadCGLocations(log) {
       continue
     }
     var loc = db.get(key)
-    if (loc.coords.lat > 51 && loc.coords.lat < 52 && loc.coords.lng < 0 && loc.coords.lng > -1) {
+    if (loc.coords.lat > 50.5 && loc.coords.lat < 52.5 && loc.coords.lng < 0.2 && loc.coords.lng > -1) {
       var l = await run.load(loc.location)
       locationList.push({id: key, location: loc.location, coords: loc.coords, locationName: l.name})
     }
