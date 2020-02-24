@@ -47,13 +47,13 @@ export default class UserInfo extends React.Component {
     if (this.props.notifications != null && this.props.notifications.length !== 0) {
       return (
         <div>
-          <img alt='notifications' className="navbar-expand-lg" src='icons/bell-fill.svg' height="40px" id="notificationIcon" onClick={this.props.toggleNotifications}/>
+          <img alt='notifications' className="navbar-expand-lg" src='/icons/bell-fill.svg' height="40px" id="notificationIcon" onClick={this.props.toggleNotifications}/>
           <Badge pill variant='dark' id='notificationBadge'>{this.props.notifications.length}</Badge>
         </div>
       )
     }
     return (
-      <img alt='notifications' className="navbar-expand-lg" src='icons/bell.svg' height="40px" id="notificationIcon" onClick={this.props.toggleNotifications}/>
+      <img alt='notifications' className="navbar-expand-lg" src='/icons/bell.svg' height="40px" id="notificationIcon" onClick={this.props.toggleNotifications}/>
     )
   }
   renderDropdown() {

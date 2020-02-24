@@ -37,7 +37,7 @@ const RunTrueReview = new Run ({
   app: APP_ID,
   blockchain: blockchainServer,
   state: new redisStateCache(),
-  logger: console
+  //logger: console
 })
 
 class UserDB extends Run.Jig {

@@ -427,7 +427,6 @@ export default class ReviewCard extends React.Component {
         }
       }
     }
-    console.log(this.props.user)
     if (this.props.tokens == null || this.props.tokens.votes === 0 || this.props.user == null || this.props.user === '') {
       disableButton = true
       tooltipText = 'Log in to vote'

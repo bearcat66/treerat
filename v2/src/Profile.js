@@ -26,7 +26,6 @@ export default class Profile extends Component {
       newlyMintedCode: '',
       businessLocations: []
     }
-    console.log(this.props.following)
     this.getUserInformation(this.props.profile)
   }
   componentDidUpdate(prevProps) {
@@ -225,7 +224,7 @@ export default class Profile extends Component {
       }
       console.log(review)
       return (
-        <ReviewCard key={index} location={review.location} tokens={this.props.tokens} review={review} loadNotifications={this.props.loadNotifications} userID={this.props.user}/>
+        <ReviewCard key={index} location={review.location} tokens={this.props.tokens} review={review} loadNotifications={this.props.loadNotifications} user={this.props.user}/>
       )
         /*return (
         <div className="card" styles="width: 18rem;">

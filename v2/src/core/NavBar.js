@@ -54,7 +54,7 @@ class NavBar extends Component {
         <div>
           <div className="container-fluid">
             <a className="navbar-brand" href="/">
-              <img alt="logo" src="tr-logo.png" height="50" width="150" style={{padding: '2px'}}/>
+              <img alt="logo" src="/tr-logo.png" height="50" width="150" style={{padding: '2px'}}/>
             </a>
           </div>
           <div className='col'>
