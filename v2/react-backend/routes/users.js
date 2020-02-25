@@ -293,6 +293,8 @@ async function createUserJig(log, paymail, userEntry) {
   var db = getUserDB()
   await db.sync()
   db.set(paymail, newEntry)
+  await db.sync()
+  await run.sync()
   log.info('Successfully created user jig for user ['+paymail+']')
   return userJig
 }

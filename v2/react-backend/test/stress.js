@@ -88,4 +88,4 @@ async function nextAction() {
 
 console.log(`Running stress test on ${HOST} (${NETWORK}net)`)
 
-nextAction()
+//nextAction()

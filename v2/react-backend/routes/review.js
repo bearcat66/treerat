@@ -117,6 +117,7 @@ async function downvoteReview(log, reviewID, downvotedUser) {
   if (payees.length > 0) {
     await payVoters(log, payees, rev.reviewLocation.name)
   }
+  await run.sync()
   await users.AddNotification(log, rev.user, downvotedUser + ' downvoted your review for '+rev.reviewLocation.name+' costing you 3 reputation points')
 }
 
