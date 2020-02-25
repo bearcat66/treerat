@@ -135,7 +135,7 @@ async function upvoteReview(log, reviewID, upvotedUser) {
   }
   var tokes = await loadRepTokens()
   await tokes.sync()
-  console.log(tokes)
+  await run.sync()
   tokes.send(rev.owner, 5)
   await tokes.sync()
   await pts.sync()
@@ -354,7 +354,6 @@ async function convertLocation(log, location) {
     }
     var keys = users.DecryptKeys(user.keys)
     var points = pointsdb.get(value.origin)
-    console.log(keys.pubKey)
     run.transaction.begin()
     rev.send(keys.pubKey)
     pointsdb.set(rev.origin, {score: points.score, upvotedUsers: points.upvotedUsers, downvotedUsers: points.downvotedUsers})

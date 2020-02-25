@@ -473,8 +473,8 @@ export default class ReviewForm extends React.Component {
           buttonText='Choose images'
           onChange={this.onDrop}
           imgExtension={['.jpg', '.png', 'jpeg']}
-          label={"Max size: 5mb; accepted: jpg|jpeg|png"}
-          maxFileSize={5000001}
+          label={"Max size: 8mb; accepted: jpg|jpeg|png"}
+          maxFileSize={8000001}
         />
       </div>
       <ul/>

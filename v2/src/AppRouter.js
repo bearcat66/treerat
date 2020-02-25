@@ -150,7 +150,7 @@ class AppRouter extends Component {
       <div id='notificationOverlay' style={{display: 'block'}} onClick={this.toggleNotifications}>
         <div className="text-center" id='notificationText'>
           <ul/>
-          <Card.Img variant="top" src="icons/bell.svg" height="40px"/>
+          <Card.Img variant="top" src="/icons/bell.svg" height="40px"/>
           <Card.Title>Notifications</Card.Title>
           <hr/>
           <ListGroup className="list-group-flush">
