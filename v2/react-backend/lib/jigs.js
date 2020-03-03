@@ -35,7 +35,7 @@ const RunTrueReview = new Run ({
   owner: OWNER,
   purse: PURSE,
   app: APP_ID,
-  //blockchain: blockchainServer,
+  blockchain: blockchainServer,
   state: new redisStateCache(),
   //logger: console
 })
