@@ -393,7 +393,7 @@ function jsonToTx (json) {
 // REST APIs
 // ------------------------------------------------------------------------------------------------
 
-const starApiHost = 'https://api.star.store'
+const starApiHost = 'https://api.run.network'
 
 const apis = [
   {
