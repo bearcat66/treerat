@@ -21,7 +21,6 @@ export default class UserInfo extends React.Component {
     if (body === 1) {
       this.setState({bitPicURL: 'https://bitpic.network/u/'+paymail})
     }
-    console.log(this.state.bitPicURL)
   }
   componentDidUpdate(prevProps) {
     if (Object.entries(prevProps.userInfo).length !== Object.entries(this.props.userInfo).length && Object.entries(this.props.userInfo).length > 0) {

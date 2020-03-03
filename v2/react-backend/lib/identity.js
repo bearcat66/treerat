@@ -39,11 +39,11 @@ class Identity extends Run.Jig {
       return
     }
     this.personalInformation = {
-      name: name,
-      phone: phone,
-      address: address,
-      email: email,
-      paymail: paymail
+      name: params.name,
+      phone: params.phone,
+      address: params.address,
+      email: params.email,
+      paymail: params.paymail
     }
     this.attestations = []
     this.satoshis = 0

@@ -94,6 +94,10 @@ async function getReviewScore(log, reviewID) {
 }
 
 async function downvoteReview(log, reviewID, downvotedUser) {
+  if (downvotedUser == null || downvotedUser === '') {
+    throw new Error('Upvoting user not defined')
+    return
+  }
   log.info('User ['+downvotedUser+'] Downvoting review ['+reviewID+']...')
   run.activate()
   await run.sync()
@@ -122,6 +126,10 @@ async function downvoteReview(log, reviewID, downvotedUser) {
 }
 
 async function upvoteReview(log, reviewID, upvotedUser) {
+  if (upvotedUser == null || upvotedUser === '') {
+    throw new Error('Upvoting user not defined')
+    return
+  }
   log.info('User ['+upvotedUser+'] Upvoting review ['+reviewID+']...')
   run.activate()
   await run.sync()
@@ -176,6 +184,9 @@ async function payVoters(log, voters, locationName) {
   var purseAddress = new bsv.PrivateKey(PURSE2_PRIVKEY).toAddress().toString()
   for(var i=0;i<voters.length;i++) {
     var voter = voters[i]
+    if (voter === '') {
+      continue
+    }
     await run.sync()
     var utxos = await run.blockchain.utxos(purseAddress)
     var output = await paymailClient.getOutputFor(voter, {

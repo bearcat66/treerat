@@ -8,6 +8,7 @@ const OWNER = process.env.TR_OWNER
 const PURSE = process.env.TR_PURSE
 const logger = require('../src/logger')
 const APP_ID = "TrueReviews"
+const assert = require('assert')
 class redisStateCache {
   async get(location) {
     var value = await redisGet(location)
@@ -28,7 +29,6 @@ redisClient.on('error', (err) => {
   log.error('Redis error: ', err)
 })
 
-var assert = require('assert');
 const MockRun = new Run ({
   //blockchain: 'bitindex',
   network: 'mock',
@@ -42,32 +42,45 @@ const MockRun = new Run ({
 
 const run = MockRun
 
-async function RunTests() {
-  var succeded = testBadIdentityCreate()
-  if (!succeded) {
-    log.error('Tests FAILED')
-    return
+async function testBadIdentityCreate() {
+  run.activate()
+  await run.sync()
+  var success = 0
+  log.debug('Synced Mock Run instance...')
+  try {
+    var params = {name: '', phone: '800-100-1000', address: '65 Highway Ln', email: 'bob@gmail.com', paymail: 'bob@moneybutton.com'}
+    var id = new ID.Identity(params)
+  } catch(e) {
+    log.debug(e.message)
+    return true
   }
-  log.info('Tests Succeeded!')
+  return false
 }
 
-
-async function testBadIdentityCreate() {
-  log.info('Testing ID creation...')
+async function testValidIdentityCreate() {
   run.activate()
   await run.sync()
   log.debug('Synced Mock Run instance...')
   try {
-    var id = new ID.Identity(null, '800-100-1000', '65 Highway Ln', 'bob@gmail.com', 'bob@moneybutton.com')
-    log.debug(id)
-    id = new ID.Identity('Bob Dylan', '', '65 Highway Ln', 'bob@gmail.com', 'bob@moneybutton.com')
-    log.debug(id)
+    var params = {name: 'Bob Dylan', phone: '800-100-1000', address: '65 Highway Ln', email: 'bob@gmail.com', paymail: 'bob@moneybutton.com'}
+    var id = new ID.Identity(params)
   } catch(e) {
-    console.error(e)
-    succeeded = true
+    log.error(e)
+    return null
   }
-  return succeeded
-
+  return id
 }
 
-RunTests()
+describe('Test Suite', function() {
+  it('test bad identity create', async function() {
+    var succeeded = await testBadIdentityCreate()
+    assert.ok(succeeded)
+  })
+  it('test valid identity create', async function() {
+    var id = await testValidIdentityCreate()
+    log.debug(id)
+    assert.notEqual(id, null)
+    assert.equal(id.personalInformation.name, "Bob Dylan")
+  })
+})
+

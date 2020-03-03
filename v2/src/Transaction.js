@@ -40,6 +40,7 @@ export default class Transaction extends React.Component {
     return this.state.jigs.map((jig, index) => {
       switch(jig.type) {
         case 'Location':
+        case 'LocationV01':
           var zoom = 14
           var coords = {lat: jig.lat, lng: jig.lng}
           return (
@@ -63,6 +64,7 @@ export default class Transaction extends React.Component {
           )
 
         case 'Review':
+        case 'ReviewV01':
           var reviewList = []
           reviewList.push(jig)
           return (

@@ -6,6 +6,27 @@ import {Switch} from "react-router-dom";
 import {Button, Card, ListGroup, ListGroupItem} from 'react-bootstrap';
 import './AppRouter.css';
 
+const alphabet = ' abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`1234567890-=~!@#$%^&*()_+,./;\'[]\\<>?:"{}|'
+const shuffled = 't08sY]m\'#$Dy1`}pCKrHG)f9[uq%3\\ha=!ZVMkJ-*L"xz67R? W~@wdO:Ecg|ITe52.+{ovBj>(&,/Q4lA;^<NPnXSFi_Ub'
+const encArr = alphabet.split('')
+const decArr = shuffled.split('')
+const UnwriterAPIKey = process.env.REACT_APP_UNWRITERAPIKEY
+
+const query = {
+  "v": 3,
+  "q": {
+    "find": {"out.s2": "run", "out.s4": "TrueReviews"},
+    "limit": 50
+  },
+  "r": {
+    "f": " [.[] | {tx: .tx, outs: .out[] | {data: .s5, longdata: .ls5}}]"
+  }
+}
+
+var queryJSON = JSON.stringify(query)
+var queryb64 = new Buffer.from(queryJSON).toString('base64')
+var url = "https://genesis.bitdb.network/s/1FnauZ9aUH2Bex6JzdcV4eNX7oLSSEbxtN/"+queryb64
+
 class AppRouter extends Component {
   constructor(props) {
     super(props);
@@ -36,6 +57,14 @@ class AppRouter extends Component {
     this.updateSession = this.updateSession.bind(this)
     this.setLoadingUser = this.setLoadingUser.bind(this)
     this.toggleNotifications = this.toggleNotifications.bind(this)
+    /*this.bitsocket = new EventSource(url)
+    this.bitsocket.onmessage = this.handleBitsocketMessage*/
+  }
+  handleBitsocketMessage(e) {
+    var message = filterSocketMessage(e.data)
+    if (message === null) {
+      return
+    }
   }
   componentDidMount() {
     this.setState({loadingUser: true})
@@ -192,11 +221,22 @@ class AppRouter extends Component {
         </Switch>
         <footer className="text-center" style={{color: '#1a6bbe'}}>
           <font size="-6">
-            <p>Version: Alpha-0.2.1</p>
+            <p>Version: Alpha-0.3.0</p>
           </font>
         </footer>
       </div>
     );
+  }
+}
+
+function filterSocketMessage(msg) {
+  var m = JSON.parse(msg)
+  if (m.type === 'open') {
+    return null
+  }
+  console.log(m.data)
+  for (var i=0;i<m.data.length;i++) {
+    console.log(m.data[i])
   }
 }
 

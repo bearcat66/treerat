@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import UserInfo from '../UserInfo'
 import {GetMBToken, LogOutOfMB} from '../MB'
 import ButtonList from './navbar_helpers/ButtonList';
+import {Toast} from 'react-bootstrap'
 
 class NavBar extends Component {
   constructor(props) {
@@ -10,7 +11,8 @@ class NavBar extends Component {
       loggedIn: false,
       user: {},
       paymail: '',
-      navLocations: props.navLocations
+      navLocations: props.navLocations,
+      showToast: true
     }
   }
   componentDidMount() {
@@ -47,9 +49,41 @@ class NavBar extends Component {
       })
     }
   }
+  setShow(show) {
+    this.setState({showToast: show})
+  }
+  renderToasts() {
+    var show = this.state.showToast
+    return (
+      <Toast onClose={() => this.setShow(false)} show={show} delay={3000} autohide>
+        <Toast.Header>
+          <img src="/icons/alert-square-fill.svg" height='20' width='20' className="rounded mr-2" alt="" />
+          <strong className="mr-auto">Bootstrap</strong>
+          <small>2 seconds ago</small>
+        </Toast.Header>
+        <Toast.Body>Heads up, toasts will stack automatically</Toast.Body>
+      </Toast>
+    )
+  }
+  renderToastHolder() {
+    return (
+      <div
+        aria-live="polite"
+        aria-atomic="true"
+        class="d-flex justify-content-center align-items-center"
+        style={{
+          position: 'relative',
+          maxHeight: 0,
+          top: -75,
+        }}>
+          {this.renderToasts()}
+        </div>
+    )
+  }
 
   render() {
     return (
+      <div>
       <nav className="navbar navbar-light bg-light navbar-expand-lg">
         <div>
           <div className="container-fluid">
@@ -75,6 +109,8 @@ class NavBar extends Component {
           }}>Log Out</button> : null }
         </div>
       </nav>
+      {/*this.renderToastHolder()*/}
+    </div>
     );
   }
 }

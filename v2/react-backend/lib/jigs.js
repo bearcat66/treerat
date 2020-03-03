@@ -105,8 +105,8 @@ class BadReviewToken extends Run.Token {
 }
 //BadReviewToken.originTestnet = ''
 //BadReviewToken.locationTestnet = ''
-BadReviewToken.originMainnet = 'ae94892dc90e083098dace705ecc632742d3318decfa4521d76d8c1892699967_o1'
-BadReviewToken.locationMainnet = 'ae94892dc90e083098dace705ecc632742d3318decfa4521d76d8c1892699967_o1'
+BadReviewToken.originMainnet = '6c49216a6dcfc99235e6523facab196b75315bb0b4f1b9cd4dd419fd77bfb836_o1'
+BadReviewToken.locationMainnet = '6c49216a6dcfc99235e6523facab196b75315bb0b4f1b9cd4dd419fd77bfb836_o1'
 
 class TrueReviewAlphaTesterToken extends Run.Token {
 }

@@ -64,7 +64,7 @@ export default class ReviewCard extends React.Component {
       headers: {'Content-Type': 'application/json'},
       method: 'post',
       body: JSON.stringify({
-        userID: this.state.userID
+        userID: this.props.user
       })
     })
     var s = await res.json()

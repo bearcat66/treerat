@@ -223,6 +223,20 @@ async function loadUserJig(user) {
   return jig
 }
 
+async function setLatestUserJig(user, newLocation) {
+  if (user == null || user === '' || newLocation == null || newLocation === '') {
+    throw new Error('Invalid params to setting latest user jig')
+    return
+  }
+  var db = getUserDB()
+  var userEntry = db.get(user)
+  var newEntry = {
+  }
+  var jig = await run.load(userEntry.userOrigin)
+  await jig.sync()
+  return jig
+}
+
 async function clearNotifications(log, user) {
   log.info('Clearing notifications for user: '+user)
   run.activate()
