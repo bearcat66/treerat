@@ -85,29 +85,30 @@ class NavBar extends Component {
     return (
       <div>
       <nav className="navbar navbar-light bg-light navbar-expand-lg">
-        <div>
-          <div className="container-fluid">
-            <a className="navbar-brand" href="/">
-              <img alt="logo" src="/tr-logo.png" height="50" width="150" style={{padding: '2px'}}/>
-            </a>
-          </div>
-          <div className='col'>
-	          <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+        <div className="container-fluid">
+	  <div className="row" style={{width:'100%'}}>
+            <div className='col-6 col-md'>
+	      <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
               <i className="material-icons">list</i>
-            </button>
-            <div className="collapse navbar-collapse" id="navbarContent">
-              <ButtonList links={this.state.navLocations} navigateTo={this.props.navigateTo} />
+              </button>
+              <div className="collapse navbar-collapse" id="navbarContent">
+                <ButtonList links={this.state.navLocations} navigateTo={this.props.navigateTo} />
+              </div>
             </div>
-          </div>
-        </div>
-        <div className='col justify-content-end text-right'>
-          <UserInfo userInfo={this.state.user} tokens={this.state.tokens} loadingUser={this.props.loadingUser} toggleNotifications={this.props.toggleNotifications} notifications={this.props.notifications}/>
-          <ul/>
-          {!this.state.loggedIn && !this.props.loadingUser ? <button className="btn btn-link" onClick={GetMBToken}>Login in with MB</button> : null }
-          {this.state.loggedIn ? <button className="btn btn-link" onClick={() => {
-            logOut(this.state.paymail)
-          }}>Log Out</button> : null }
-        </div>
+	    <div className="col d-none d-lg-block text-center">
+	      <a className="navbar-brand" href="/">
+	        <img alt="logo" src="tr-logo.png" height="50" width="150" style={{padding: '2px'}}/>
+	      </a>
+	    </div>
+            <div className='col-6 col-md justify-content-end text-right'>
+              <UserInfo userInfo={this.state.user} tokens={this.state.tokens} loadingUser={this.props.loadingUser} toggleNotifications={this.props.toggleNotifications} notifications={this.props.notifications}/>
+              {!this.state.loggedIn && !this.props.loadingUser ? <button className="btn btn-link" onClick={GetMBToken}>Login in with MB</button> : null }
+              {this.state.loggedIn ? <button className="btn btn-link" onClick={() => {
+                logOut(this.state.paymail)
+              }}>Log Out</button> : null }
+            </div>
+	  </div>
+	</div>
       </nav>
       {/*this.renderToastHolder()*/}
     </div>
