@@ -45,14 +45,14 @@ export default class UserInfo extends React.Component {
   renderNotificationIcon() {
     if (this.props.notifications != null && this.props.notifications.length !== 0) {
       return (
-        <div>
-          <img alt='notifications' className="navbar-expand-lg" src='/icons/bell-fill.svg' height="40px" id="notificationIcon" onClick={this.props.toggleNotifications}/>
-          <Badge pill variant='dark' id='notificationBadge'>{this.props.notifications.length}</Badge>
+        <div className="align-self-center">
+          <img alt='notifications' src='/icons/bell-fill.svg' height="40px" id="notificationIcon" onClick={this.props.toggleNotifications}/>
+	      {/*<Badge pill variant='dark' id='notificationBadge'>{this.props.notifications.length}</Badge>*/}
         </div>
       )
     }
     return (
-      <img alt='notifications' className="navbar-expand-lg" src='/icons/bell.svg' height="40px" id="notificationIcon" onClick={this.props.toggleNotifications}/>
+      <img alt='notifications' className="align-self-center"  src='/icons/bell.svg' height="40px" id="notificationIcon" onClick={this.props.toggleNotifications}/>
     )
   }
   renderDropdown() {
@@ -88,17 +88,31 @@ export default class UserInfo extends React.Component {
     }
     
     return (
-      <div className="justify-content-end">
-        <div style={{paddingTop: '20px'}}>
-          <Link to='/profile' title={this.state.user.name}>
-            {this.state.user.name}
-            <img alt='avatar' className="navbar-expand-sm avatar-small" src={imageURL} style={{marginLeft: '10px', width: '50px', height: '50px'}}/>
-          </Link>
-        </div>
-        <ul/>
-        {this.renderNotificationIcon()}
+      <div className="">	    
+        <ul className="nav navbar-nav-right justify-content-end">
+          <li className="nav-item d-flex">
+	    {this.renderNotificationIcon()}
+	  </li>
+	  <li className="nav-item dropdown">
+            <a className="nav-link dropdown-toggle" href='#' data-toggle="dropdown" title={this.state.user.name}>
+              <img alt='avatar' className="avatar-small" src={imageURL} style={{marginLeft: '10px', width: '40px', height: '40px'}}/>
+            </a>
+	    <div className="dropdown-menu dropdown-menu-right">
+	      <a className="dropdown-item" href="/profile">View Profile</a>
+	      <a className="dropdown-item" href="#" onClick={() => {logOut(this.state.user)}}>Log Out</a>
+	    </div>
+	  </li>
+        </ul>
       </div>
     );
   }
+}
+
+async function logOut(user) {
+  var res = await fetch('/api/logout/'+user, {
+    headers: {'Content-Type': 'application/json'},
+    method: 'post'
+  })
+  window.location.reload()
 }
 

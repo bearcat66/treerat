@@ -81,3 +81,12 @@ body {
   box-shadow: 3px 10px 10px grey;
   margin-bottom: 15px;
 }
+
+.dropdown-toggle:after { 
+  content: none 
+}
+
+.navbar-nav-right>li {
+  display: inline-block;
+}
+
